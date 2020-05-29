@@ -5,6 +5,7 @@ import java.awt.event.*;
 
 
 public class MainWindow extends JDialog {
+    private TFEManager manager;
     static final String WORKING_DIRECTORY = "/Users/luispedraza/OneDrive - Universidad Internacional de La Rioja/TFE-MANAGER";
     private JPanel contentPane;
     private JButton buttonOK;
@@ -14,6 +15,7 @@ public class MainWindow extends JDialog {
     private JTextArea logTextArea;
 
     public MainWindow() {
+        manager = new TFEManager(MainWindow.WORKING_DIRECTORY);
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -68,8 +70,10 @@ public class MainWindow extends JDialog {
         fc.setFileFilter(new FileNameExtensionFilter("Archivo zip", "zip"));
         int returnVal = fc.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            String fileName = fc.getSelectedFile().getName();
-            logInfo("Descromprimiendo el archivo de propuestas: " + fileName);
+            String filePath = fc.getSelectedFile().getAbsolutePath();
+            logInfo("Descromprimiendo el archivo de propuestas: " + filePath);
+            manager.unzipProposals(filePath, MainWindow.WORKING_DIRECTORY);
+
         }
     }
 

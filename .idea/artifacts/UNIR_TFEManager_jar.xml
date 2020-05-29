@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="UNIR-TFEManager:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/UNIR_TFEManager_jar</output-path>
+    <root id="archive" name="UNIR-TFEManager.jar">
+      <element id="module-output" name="UNIR-TFEManager" />
+    </root>
+  </artifact>
+</component>

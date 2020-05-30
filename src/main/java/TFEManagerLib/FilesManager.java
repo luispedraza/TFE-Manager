@@ -1,3 +1,5 @@
+package TFEManagerLib;
+
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
@@ -7,7 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Dictionary;
 
 /**
  * Esta clase se encarga de todas las operaciones relacionadas
@@ -65,7 +66,12 @@ public class FilesManager {
                     if (getExtension(file.getFileName().toString()).equals("pdf")) {
                         System.out.println("Buscando información de propuesta en : " + file.getFileName());
                         ProposalInfo proposalInfo = PDFManager.parseProposal(file.toString());
+
                         if (!proposalInfo.isEmpty()) {
+                            // Corregimos nombre y appelidos para uniformizar según nombre de carpetas
+                            proposalInfo.put("nombre", name);
+                            proposalInfo.put("apellido", surname);
+                            System.out.println(proposalInfo.toString());
                             proposals.add(proposalInfo);
                         }
                     }

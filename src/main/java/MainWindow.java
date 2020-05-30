@@ -1,3 +1,5 @@
+import TFEManagerLib.TFEManager;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.*;

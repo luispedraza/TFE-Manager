@@ -1,3 +1,5 @@
+package TFEManagerLib;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
@@ -5,10 +7,6 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
 
 /**
  * Clase para leer los contenidos de un formulario en pdf
@@ -22,7 +20,7 @@ public class PDFManager {
             PDAcroForm form = catalog.getAcroForm();
             if (form != null) {
                 for (PDField field : form.getFields()) {
-                    System.out.println(field.getPartialName() + "====>" + field.getValueAsString());
+                    // System.out.println(field.getPartialName() + "====>" + field.getValueAsString());
                     proposalInfo.put(field.getPartialName(), field.getValueAsString());
                 }
             }
@@ -30,6 +28,7 @@ public class PDFManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        // System.out.println(proposalInfo.toString());
         return proposalInfo;
     }
 }

@@ -35,17 +35,22 @@ public class TFEManager {
      * @param proposalsPath: Directorio que contiene las propuestas
      * @return: Resultado del proceso
      */
-    public ArrayList<ProposalInfo> loadProposals(String proposalsPath) throws IOException {
+    public ArrayList<ProposalInfo> loadProposalsFromDisc(String proposalsPath) throws IOException {
         // Cargamos la información de las propuestas
         this.proposals = filesManager.loadProposals(proposalsPath);
         return this.proposals;
     }
 
-    public void saveProposals(Path excelFile) throws IOException {
+    public void saveProposalsToExcel(Path excelFile) throws IOException {
         // La guardamos en el archivo excel
         if (this.proposals != null) {
             excelManager.saveProposalsInfo(proposals);
         }
+    }
+
+    public void createReviews() {
+        ArrayList<ProposalInfo> proposals = excelManager.readProposalsInfo();
+
     }
 
 }

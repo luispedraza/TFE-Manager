@@ -22,9 +22,35 @@ import java.util.ResourceBundle;
 public class ExcelManager {
     private static final String DEFAULT_EXCEL_NAME = "lista_maestra.xlsx";
     private static final String PROPOSALS_SHEET = "PROPUESTAS";
+    private static final String PROPOSALS_TABLE_NAME = "PROPUESTAS";
     private Path filePath;  // La ruta de la lista maestra con la que trabajamos
     private static final ArrayList<String> PROPOSALS_HEADERS = new ArrayList<String>(
-            Arrays.asList("apellido", "nombre", "pais", "titulo", "tipo")
+            Arrays.asList("apellido",
+                    "nombre",
+                    "pais",
+                    "titulo",
+                    "tipo",
+                    "revisor1",
+                    "revisor2",
+                    "veredicto1",
+                    "veredicto2",
+                    "veredictoglobal")
+    );
+    private static final String REVIEWERS_SHEET = "REVISORES";
+    private static final String REVIEWERS_TABLE_NAME = "REVISORES";
+    private static final ArrayList<String> REVIEWERS_HEADERS = new ArrayList<String>(
+            Arrays.asList("ID",
+                    "NOMBRE",
+                    "E-MAIL",
+                    "MAXIMO")
+    );
+    private static final String DIRECTOR_SHEET = "REVISORES";
+    private static final String DIRECTOR_TABLE_NAME = "REVISORES";
+    private static final ArrayList<String> DIRECTOR_HEADERS = new ArrayList<String>(
+            Arrays.asList("ID",
+                    "NOMBRE",
+                    "E-MAIL",
+                    "MAXIMO")
     );
 
     /** Carga el archivo de configuraciónd de una lista maestra
@@ -101,7 +127,7 @@ public class ExcelManager {
      */
     private XSSFTable getTable(XSSFSheet sheet, String tableName) {
         for (XSSFTable table : sheet.getTables()) {
-            if (table.getName() == tableName) {
+            if (table.getName().equals(tableName)) {
                 return table;
             }
         }
@@ -113,7 +139,32 @@ public class ExcelManager {
      * @return
      */
     public ArrayList<ProposalInfo>  readProposalsInfo() {
-        return null;
+        ArrayList<ProposalInfo> proposals = new ArrayList<ProposalInfo>();
+        XSSFWorkbook wb = getWorkbook();
+        XSSFSheet sheet = getSheet(wb, PROPOSALS_SHEET);
+        XSSFTable table = getTable(sheet, PROPOSALS_TABLE_NAME);
+        System.out.println(table);
+
+        int startRow = table.getStartRowIndex();
+        int endRow = table.getEndRowIndex();
+        int startColumn = table.getStartColIndex();
+        int endColumn = table.getEndColIndex();
+        System.out.println("Coordenadas de la tabla " + PROPOSALS_TABLE_NAME + ": "+ startRow + "-" + endRow + "-" + startColumn + "-" + endColumn);
+
+        for (int i = startRow+1; i<=endRow; i++) {
+            ProposalInfo p = new ProposalInfo();
+            XSSFRow row = sheet.getRow(i);
+            for (int j = startColumn; j <= endColumn; j++) {
+                XSSFCell c = row.getCell(j);
+                if (c != null) {
+                    p.put(PROPOSALS_HEADERS.get(j), c.getStringCellValue());
+                }
+            }
+            proposals.add(p);
+        }
+        System.out.println(String.format("Leídas %d propuestas", proposals.size()));
+        System.out.println(proposals);
+        return proposals;
     }
 
     /**
@@ -124,13 +175,13 @@ public class ExcelManager {
         XSSFWorkbook wb = getWorkbook();
         XSSFSheet sheet = getSheet(wb, PROPOSALS_SHEET);
 
-        XSSFTable table = getTable(sheet, "PROPUESTAS");
+        XSSFTable table = getTable(sheet, PROPOSALS_TABLE_NAME);
         if (table == null) {
             // Set which area the table should be placed in
             AreaReference reference = wb.getCreationHelper().createAreaReference(
                 new CellReference(0, 0), new CellReference(info.size(), PROPOSALS_HEADERS.size()-1));
             table = sheet.createTable(reference);
-            table.setName("PROPUESTAS");
+            table.setName(PROPOSALS_TABLE_NAME);
             table.setDisplayName("Propuestas");
              // For now, create the initial style in a low-level way
             table.getCTTable().addNewTableStyleInfo();

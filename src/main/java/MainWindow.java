@@ -75,6 +75,42 @@ public class MainWindow extends JDialog {
                 saveProposals();
             }
         });
+        createReviews.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                createReviews();
+            }
+        });
+        sendReviews.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sendReviews();
+            }
+        });
+        loadReviewsResults.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadReviewsResults();
+            }
+        });
+        generateVerdict.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                generateVerdict();
+            }
+        });
+        generateGradings.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                generateGradings();
+            }
+        });
+        loadProgress.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadProgress();
+            }
+        });
     }
 
 
@@ -111,7 +147,7 @@ public class MainWindow extends JDialog {
             String proposalsPath = chooser.getSelectedFile().getAbsolutePath();
             logInfo("Cargando las propuestas contenidas en : " + proposalsPath);
             try {
-                manager.loadProposals(proposalsPath);
+                manager.loadProposalsFromDisc(proposalsPath);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -124,11 +160,54 @@ public class MainWindow extends JDialog {
      */
     private void saveProposals() {
         try {
-            manager.saveProposals(null);
+            manager.saveProposalsToExcel(null);
         } catch (IOException e) {
             logInfo(e.toString());
         }
     }
+
+    /**
+     * Generación de paquetes para los revisores
+     */
+    private void createReviews() {
+        manager.createReviews();
+    }
+
+    /**
+     * Envío de paquetes a los revisores
+     */
+    private void sendReviews() {
+
+    }
+
+    /**
+     * Lectura de las revisiones recibidas desde el disco
+     */
+    private void loadReviewsResults() {
+
+    }
+
+    /**
+     * Generación de los veredictos y guardado en la lista maestra
+     */
+    private void generateVerdict() {
+
+    }
+
+    /**
+     * Generación de la resolución en la lista maestra
+     */
+    private void generateGradings() {
+
+    }
+
+    /**
+     * Carga de la información de progreso de revisión para una entrega
+     */
+    private void loadProgress() {
+
+    }
+
 
     private void logInfo(String info) {
         logTextArea.setText(

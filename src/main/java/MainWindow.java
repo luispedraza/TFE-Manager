@@ -1,7 +1,7 @@
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.*;
-
+import java.io.IOException;
 
 
 public class MainWindow extends JDialog {
@@ -13,6 +13,7 @@ public class MainWindow extends JDialog {
     private JButton unzipProposals;
     private JButton loadProposals;
     private JTextArea logTextArea;
+    private JButton saveProposals;
 
     public MainWindow() {
         manager = new TFEManager(MainWindow.WORKING_DIRECTORY);
@@ -53,7 +54,21 @@ public class MainWindow extends JDialog {
                 unzipProposals();
             }
         });
+        loadProposals.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadProposals();
+            }
+        });
+        saveProposals.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveProposals();
+            }
+        });
     }
+
+
 
     private void onOK() {
         // add your code here
@@ -74,6 +89,35 @@ public class MainWindow extends JDialog {
             logInfo("Descromprimiendo el archivo de propuestas: " + filePath);
             manager.unzipProposals(filePath, MainWindow.WORKING_DIRECTORY);
 
+        }
+    }
+
+    private void loadProposals() {
+        // chooser.setCurrentDirectory(new java.io.File("."));
+        final JFileChooser chooser = new JFileChooser(MainWindow.WORKING_DIRECTORY);
+        chooser.setDialogTitle("Elija el directorio que contiene las propuestas");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            String proposalsPath = chooser.getSelectedFile().getAbsolutePath();
+            logInfo("Cargando las propuestas contenidas en : " + proposalsPath);
+            try {
+                manager.loadProposals(proposalsPath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    /** Se guarda la información de las propuestas
+     *
+     */
+    private void saveProposals() {
+        try {
+            manager.saveProposals(null);
+        } catch (IOException e) {
+            logInfo(e.toString());
         }
     }
 

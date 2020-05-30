@@ -18,65 +18,18 @@ import java.util.Map;
 public class ExcelManager {
     private static final String DEFAULT_EXCEL_NAME = "lista_maestra.xlsx";
     private static final String PROPOSALS_SHEET = "PROPUESTAS";
-    Path filePath;
+    private Path filePath;  // La ruta de la lista maestra con la que trabajamos
 
+    /**
+     * Constructor del gestor de listas maestras
+     * @param workingDirectory: Directorio de trabajo
+     * @param fileName: Nombre de la lista maestra
+     */
     public ExcelManager(String workingDirectory, String fileName) {
         if (fileName == null) {
             fileName = DEFAULT_EXCEL_NAME;
         }
         filePath = Paths.get(workingDirectory, fileName);
-    }
-
-    /**
-     * Se guarda la información de las propuestas
-     * @param info: un array de diccionarios con la información de las propuestas
-     */
-    public void _saveProposalsInfo(ArrayList info) throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet(PROPOSALS_SHEET);
-        // Set which area the table should be placed in
-        AreaReference reference = wb.getCreationHelper().createAreaReference(
-                new CellReference(0, 0), new CellReference(2, 2));
-
-        // Create
-        XSSFTable table = sheet.createTable(reference);
-        table.setName("propuestas");
-        table.setDisplayName("Propuestas");
-
-        // For now, create the initial style in a low-level way
-        table.getCTTable().addNewTableStyleInfo();
-        table.getCTTable().getTableStyleInfo().setName("TableStyleMedium2");
-
-        // Style the table
-        XSSFTableStyleInfo style = (XSSFTableStyleInfo) table.getStyle();
-        style.setName("TableStyleMedium2");
-        style.setShowColumnStripes(true);
-        style.setShowRowStripes(true);
-        style.setFirstColumn(false);
-        style.setLastColumn(false);
-
-
-        // Set the values for the table
-        XSSFRow row;
-        XSSFCell cell;
-        for (int i = 0; i < 3; i++) {
-            // Create row
-            row = sheet.createRow(i);
-            for (int j = 0; j < 3; j++) {
-                // Create cell
-                cell = row.createCell(j);
-                if (i == 0) {
-                    cell.setCellValue("Column" + (j + 1));
-                } else {
-                    cell.setCellValue((i + 23) * (j + 21));
-                }
-            }
-        }
-        // Save:
-        try (FileOutputStream outputStream = new FileOutputStream(filePath.toString())) {
-            wb.write(outputStream);
-            wb.close();
-        }
     }
 
     /**
@@ -133,7 +86,7 @@ public class ExcelManager {
             }
 
         }
-        // Save:
+        // Guaradamos el libro:
         try (FileOutputStream outputStream = new FileOutputStream(filePath.toString())) {
             wb.write(outputStream);
             wb.close();

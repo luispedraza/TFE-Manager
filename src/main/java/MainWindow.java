@@ -14,6 +14,13 @@ public class MainWindow extends JDialog {
     private JButton loadProposals;
     private JTextArea logTextArea;
     private JButton saveProposals;
+    private JButton createReviews;
+    private JButton sendReviews;
+    private JButton loadReviewsResults;
+    private JButton saveReviewsResult;
+    private JButton generateVerdict;
+    private JButton generateGradings;
+    private JButton loadProgress;
 
     public MainWindow() {
         manager = new TFEManager(MainWindow.WORKING_DIRECTORY);

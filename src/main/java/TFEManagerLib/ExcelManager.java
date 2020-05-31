@@ -3,6 +3,7 @@ package TFEManagerLib;
 
 
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
@@ -11,10 +12,7 @@ import org.apache.poi.xssf.usermodel.*;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 // http://poi.apache.org/components/spreadsheet/examples.html#xssf-only
 /**
  * Esta clase sirve para gestionar un archivo Excel
@@ -179,7 +177,6 @@ public class ExcelManager {
              */
         }
 
-
         // Set the values for the table
         XSSFRow row;
         XSSFCell cell;
@@ -206,6 +203,68 @@ public class ExcelManager {
             }
 
         }
+        saveWorkbook(wb);
+    }
+
+    /** Función de ayuda para encontrar la fila en que se encuentra un alumno
+     *
+     * @param name
+     * @param surname
+     * @return
+     */
+    int findStudentRow(XSSFSheet sheet, String surname, String name) {
+        int surnameColumn = this.PROPOSALS_HEADERS.indexOf("apellido");
+        int nameColumn = this.PROPOSALS_HEADERS.indexOf("nombre");
+
+        XSSFRow row = null;
+        for (int i=0; i<=sheet.getLastRowNum(); i++) {
+            row = sheet.getRow(i);
+            if (row.getCell(surnameColumn).getStringCellValue().equals(surname)) {
+                if (row.getCell(nameColumn).getStringCellValue().equals(name)) {
+                    System.out.println("Encontrado: " + surname + name);
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    /** Guarda en la lista maestra los resultados de las propuestas junto con la decisión global
+     *
+     * @param reviews
+     */
+    public void saveReviewsResults(HashMap<String, ArrayList<ReviewInfo>> reviews) throws IOException {
+        XSSFWorkbook wb = getWorkbook();
+        XSSFSheet sheet = getSheet(wb, PROPOSALS_SHEET);
+        XSSFTable table = getTable(sheet, PROPOSALS_TABLE_NAME);
+        int review1Column = this.PROPOSALS_HEADERS.indexOf("veredicto1");
+        int review2Column = this.PROPOSALS_HEADERS.indexOf("veredicto2");
+        int resultColumn = this.PROPOSALS_HEADERS.indexOf("veredictoglobal");
+        // TODO: Habría que comprobar que la tabla es no nula para dar más robustez.
+        XSSFRow row = null;
+        XSSFCell cell = null;
+        for (String proposalName : reviews.keySet()) {
+            // Las revisiones de la propuesta actual:
+            ArrayList<ReviewInfo> proposalReviews = reviews.get(proposalName);
+            String[] surname_name = proposalName.split("\\s*,\\s*");
+            System.out.println(surname_name[0]);
+            System.out.println(surname_name[1]);
+            int studentRow = findStudentRow(sheet, surname_name[0], surname_name[1]);
+            if (studentRow != -1) {
+                row = sheet.getRow(studentRow);
+                cell = row.getCell(review1Column);
+                if (cell == null) {
+                    cell = row.createCell(review1Column);
+                }
+                cell.setCellValue(proposalReviews.get(0).getStatus());
+                cell = row.getCell(review2Column);
+                if (cell == null) {
+                    cell = row.createCell(review2Column);
+                }
+                cell.setCellValue(proposalReviews.get(1).getStatus());
+            }
+        }
+
         saveWorkbook(wb);
     }
 }

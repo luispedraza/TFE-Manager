@@ -1,3 +1,9 @@
 Manifest-Version: 1.0
 Main-Class: MainWindow
+Class-Path: poi-ooxml-schemas-4.1.2.jar zip4j-2.6.0.jar poi-4.1.2.jar pd
+ fbox-2.0.19.jar commons-io-2.7.jar gson-2.8.6.jar xmlbeans-3.1.0.jar co
+ mmons-collections4-4.4.jar curvesapi-1.06.jar fontbox-2.0.19.jar common
+ s-math3-3.6.1.jar SparseBitSet-1.2.jar javax.mail-1.6.2.jar commons-cod
+ ec-1.13.jar javax.mail-api-1.6.2.jar commons-logging-1.2.jar activation
+ -1.1.jar commons-compress-1.19.jar poi-ooxml-4.1.2.jar
 

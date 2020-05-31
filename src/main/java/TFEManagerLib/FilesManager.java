@@ -11,6 +11,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Esta clase se encarga de todas las operaciones relacionadas
@@ -27,8 +30,17 @@ public class FilesManager {
     private final String REVIEW_GUIDE_FILE = "IndicacionesRevisores.pdf";
     private final String REVIEW_TEMPLATE_FILE = "ReviewTemplate.pdf";
 
-
     private String wd;
+
+    private String getDocsPath() {
+        return Paths.get(this.wd, this.DOCS_FOLDER).toString();
+    };
+    private String getReviewsPath() {
+        return Paths.get(this.wd, this.REVIEWS_FOLDER).toString();
+    };
+    private String getProposalsPath() {
+        return Paths.get(this.wd, PROPOSALS_FOLDER).toString();
+    }
 
     /**
      * Utilidad para encontrar la extensión de un archivo
@@ -54,6 +66,12 @@ public class FilesManager {
         }
     }
 
+    /** Función de utilidad para comprimir información
+     *
+     * @param origin
+     * @param destination
+     * @throws ZipException
+     */
     public void zipFolder(String origin, String destination) throws ZipException {
         ZipFile zipFile = new ZipFile(destination);
         File targetFile = new File(origin);
@@ -115,11 +133,11 @@ public class FilesManager {
     }
 
     public void saveReviewersInfo(ArrayList<ReviewerInfo> revieweres) throws IOException {
-        String docsPath = Paths.get(this.wd, this.DOCS_FOLDER).toString();
-        String reviewsPath = Paths.get(this.wd, this.REVIEWS_FOLDER).toString();
+        String docsPath = getDocsPath();
+        String reviewsPath = getReviewsPath();
         makeDir(reviewsPath);
         // Directorio que contiene las propuestas
-        File proposalsDir = new File(Paths.get(this.wd, PROPOSALS_FOLDER).toString());
+        File proposalsDir = new File(getProposalsPath());
 
         int reviewerIndex = 0;
         // recorremos la lista de revisores:
@@ -140,22 +158,12 @@ public class FilesManager {
                 makeDir(pPath);
                 // Buscamos la propuesta del alumno en el directorio de propuestas
                 System.out.println("Buscando la propuesta de " + proposalFolderName + " para " + r.getName());
-                for (File proposalOrigin : proposalsDir.listFiles(
-                        new FilenameFilter() {
-                            @Override
-                            public boolean accept(File dir, String name) {
-                                return (new File(dir, name).isDirectory() && name.startsWith(proposalFolderName));
-                            }
-                        }
-                )) {
+                for (File proposalOrigin : Objects.requireNonNull(proposalsDir.listFiles(
+                        (dir, name) -> (new File(dir, name).isDirectory() && name.startsWith(proposalFolderName))
+                ))) {
                     System.out.println("Encontrada en : ");
                     System.out.println(proposalOrigin);
-                    for (File f : new File(proposalOrigin, ATTACHMENTS_FOLDER).listFiles(new FilenameFilter() {
-                        @Override
-                        public boolean accept(File dir, String name) {
-                            return name.endsWith(".pdf");
-                        }
-                    })) {
+                    for (File f : Objects.requireNonNull(new File(proposalOrigin, ATTACHMENTS_FOLDER).listFiles((dir, name) -> name.endsWith(".pdf")))) {
                         System.out.println(f.toString());
                         // Copiamos y renombramos la ropuesta
                         String proposalFormPath = Paths.get(pPath, proposalFolderName+".pdf").toString();
@@ -168,10 +176,9 @@ public class FilesManager {
                         // Rellenamos campos preliminaares en la propuesta:
                         // TODO: Esto se puede optimizar rellenando en un único paso
                         PDFManager pdfManager = new PDFManager(reviewFormPath);
-                        pdfManager.fillForm("nombre_alumno", proposalFolderName);
+                        pdfManager.fillForm("nombre", p.get("nombre"));
+                        pdfManager.fillForm("apellido", p.get("apellido"));
                         pdfManager.fillForm("titulo", p.get("titulo"));
-
-
                     }
                 }
             }
@@ -179,5 +186,32 @@ public class FilesManager {
             // finalmente comprimimos el paquete del revisor
             zipFolder(rPath, Paths.get(reviewsPath, r.getName()+".zip").toString());
         }
+    }
+
+    public HashMap<String, ArrayList<ReviewInfo>> loadReviewsResults() {
+        HashMap<String, ArrayList<ReviewInfo>> reviews =  new HashMap<>();
+
+        File reviewsFolder = new File(getReviewsPath());
+
+        for (File reviewer : Objects.requireNonNull(reviewsFolder.listFiles((dir, name) -> new File(dir, name).isDirectory()))) {
+            System.out.println("Buscando revisiones en: " + reviewer);
+            String reviewerName = reviewer.getName();
+            for (File proposal : Objects.requireNonNull(reviewer.listFiles((dir, name) -> new File(dir, name).isDirectory()))) {
+                System.out.println(proposal);
+                String proposalName = proposal.getName();
+                for (File pdfFile : Objects.requireNonNull(proposal.listFiles((dir, name) -> name.endsWith(".pdf")))) {
+                    System.out.println(pdfFile);
+                    PDFManager pdfManager = new PDFManager(pdfFile.getAbsolutePath());
+                    ReviewInfo info = pdfManager.parseReview();
+                    if (info != null) {
+                        //System.out.println(info);
+                        ArrayList<ReviewInfo> proposalReviews = reviews.getOrDefault(proposalName, new ArrayList<>());
+                        proposalReviews.add(info);
+                        reviews.put(proposalName, proposalReviews);
+                    }
+                }
+            }
+        }
+        return reviews;
     }
 }

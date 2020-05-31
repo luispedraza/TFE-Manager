@@ -7,6 +7,7 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Clase para leer los contenidos de un formulario en pdf
@@ -48,9 +49,9 @@ public class PDFManager {
         }
     }
 
-    public ProposalInfo parseProposal() {
+    private void getFormInfo(HashMap<String, String> info) {
         String filePath = this.filePath;
-        ProposalInfo proposalInfo = new ProposalInfo();
+
         try {
             PDDocument doc = PDDocument.load(new File(filePath));
             PDDocumentCatalog catalog = doc.getDocumentCatalog();
@@ -58,14 +59,28 @@ public class PDFManager {
             if (form != null) {
                 for (PDField field : form.getFields()) {
                     // System.out.println(field.getPartialName() + "====>" + field.getValueAsString());
-                    proposalInfo.put(field.getPartialName(), field.getValueAsString());
+                    info.put(field.getPartialName(), field.getValueAsString());
                 }
             }
             doc.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // System.out.println(proposalInfo.toString());
+    }
+
+    public ProposalInfo parseProposal() {
+        ProposalInfo proposalInfo = new ProposalInfo();
+        getFormInfo(proposalInfo);
         return proposalInfo;
+    }
+
+    public ReviewInfo parseReview() {
+        ReviewInfo info = new ReviewInfo();
+        getFormInfo(info);
+        // Aquí es posible hacer comprobaciones y filtrados para el caso de revisiones.
+        if (info.containsKey("resultado")) {
+            return info;
+        }
+        return null;
     }
 }

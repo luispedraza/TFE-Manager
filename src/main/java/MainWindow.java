@@ -1,5 +1,7 @@
+import TFEManagerLib.MailManager;
 import TFEManagerLib.TFEManager;
 
+import javax.mail.MessagingException;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.*;
@@ -182,14 +184,23 @@ public class MainWindow extends JDialog {
      * Envío de paquetes a los revisores
      */
     private void sendReviews() {
-
+        MailManager mail = new MailManager(null, null);
+        try {
+            mail.send();
+        } catch (MessagingException e) {
+            logInfo(e.toString());
+        }
     }
 
     /**
      * Lectura de las revisiones recibidas desde el disco
      */
     private void loadReviewsResults() {
-
+        try {
+            manager.loadReviewsResults();
+        } catch (IOException e) {
+            logInfo(e.toString());
+        }
     }
 
     /**

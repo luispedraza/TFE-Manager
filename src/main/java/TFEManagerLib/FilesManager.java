@@ -151,9 +151,14 @@ public class FilesManager {
                         copyFile(f.toString(), proposalFormPath);
                         // Copiamos el formulario de revisión
                         String reviewFormName = String.format("Review_%d.pdf", reviewerIndex);
-                        String reviewFormaPath = Paths.get(pPath, reviewFormName).toString();
+                        String reviewFormPath = Paths.get(pPath, reviewFormName).toString();
                         copyFile(Paths.get(docsPath, REVIEW_TEMPLATE_FILE).toString(),
-                                reviewFormaPath);
+                                reviewFormPath);
+                        // Rellenamos campos preliminaares en la propuesta:
+                        PDFManager pdfManager = new PDFManager(reviewFormPath);
+                        pdfManager.fillForm("nombre_alumno", proposalFolderName);
+                        pdfManager.fillForm("titulo", p.get("titulo"));
+
                     }
                 }
             }

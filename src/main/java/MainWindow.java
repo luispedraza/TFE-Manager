@@ -6,7 +6,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.*;
 import java.io.IOException;
-
+// Noa sobre manifest: https://stackoverflow.com/questions/20952713/wrong-manifest-mf-in-intellij-idea-created-jar
 
 public class MainWindow extends JDialog {
     private TFEManager manager;

@@ -1,7 +1,14 @@
 package TFEManagerLib;
 
+
+// Ejemplo de envío de mensajes: https://www.baeldung.com/java-email
+// Sobre el uso de resources https://www.jetbrains.com/help/idea/content-roots.html
+
 import javax.mail.*;
 import javax.mail.internet.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Properties;
 
 /** Clase para gestión de correo:
@@ -16,19 +23,21 @@ public class MailManager {
     private String password;
 
     public MailManager(String username, String password) {
-        if (username!=null) {
-            this.username = username;
-        } else {
-            this.username = System.getenv("MAIL_USERNAME");
-        }
-        if (password!=null) {
-            this.password = password;
-        } else {
-            this.password = System.getenv("MAIL_PASSWORD");
-        }
+        this.username = username;
+        this.password = password;
     }
 
-    public void send() throws MessagingException {
+
+    /** Envía un mensaje a un destinatario
+     *
+     * @param destinationMail: email del destinatario
+     * @param subject: asunto del mensaje
+     * @param content: contenido del mensaje
+     * @param attachments: adjuntos del mensaje (lista de archivos)
+     * @throws MessagingException
+     * @throws IOException
+     */
+    public void send(String destinationMail, String subject, String content, ArrayList<File> attachments) throws MessagingException, IOException {
         Properties prop = new Properties();
         prop.put("mail.smtp.auth", true);
         prop.put("mail.smtp.starttls.enable", "true");
@@ -43,17 +52,26 @@ public class MailManager {
         });
         // Construcción y envío del mensaje
         Message message = new MimeMessage(session);
+        System.out.println(username);
         message.setFrom(new InternetAddress(username));
         message.setRecipients(
-                Message.RecipientType.TO, InternetAddress.parse("luispedraza@gmail.com"));
-        message.setSubject("envío de mensaje");
-        String msg = "A ver si lleva";
-
-        MimeBodyPart mimeBodyPart = new MimeBodyPart();
-        mimeBodyPart.setContent(msg, "text/html");
-
+                Message.RecipientType.TO, InternetAddress.parse(destinationMail));
+        message.setSubject(subject);
+        // para el contenido del mensaje:
         Multipart multipart = new MimeMultipart();
+        // el contenido
+        MimeBodyPart mimeBodyPart = new MimeBodyPart();
+        mimeBodyPart.setContent(content, "text/html");
         multipart.addBodyPart(mimeBodyPart);
+
+        // Los adjuntos, si los hay
+        if (attachments != null) {
+            for (File f : attachments) {
+                mimeBodyPart = new MimeBodyPart();
+                mimeBodyPart.attachFile(f);
+                multipart.addBodyPart(mimeBodyPart);
+            }
+        }
 
         message.setContent(multipart);
 

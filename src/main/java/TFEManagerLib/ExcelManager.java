@@ -24,34 +24,13 @@ public class ExcelManager {
     private static final String PROPOSALS_SHEET = "PROPUESTAS";
     private static final String PROPOSALS_TABLE_NAME = "PROPUESTAS";
     private Path filePath;  // La ruta de la lista maestra con la que trabajamos
-    private static final ArrayList<String> PROPOSALS_HEADERS = new ArrayList<String>(
-            Arrays.asList("apellido",
-                    "nombre",
-                    "pais",
-                    "titulo",
-                    "tipo",
-                    "revisor1",
-                    "revisor2",
-                    "veredicto1",
-                    "veredicto2",
-                    "veredictoglobal")
-    );
+    private static final ArrayList<String> PROPOSALS_HEADERS = ProposalInfo.FIELDS;
     private static final String REVIEWERS_SHEET = "REVISORES";
     private static final String REVIEWERS_TABLE_NAME = "REVISORES";
-    private static final ArrayList<String> REVIEWERS_HEADERS = new ArrayList<String>(
-            Arrays.asList("ID",
-                    "NOMBRE",
-                    "E-MAIL",
-                    "MAXIMO")
-    );
+    private static final ArrayList<String> REVIEWERS_HEADERS = ReviewerInfo.FIELDS;
     private static final String DIRECTOR_SHEET = "REVISORES";
     private static final String DIRECTOR_TABLE_NAME = "REVISORES";
-    private static final ArrayList<String> DIRECTOR_HEADERS = new ArrayList<String>(
-            Arrays.asList("ID",
-                    "NOMBRE",
-                    "E-MAIL",
-                    "MAXIMO")
-    );
+    private static final ArrayList<String> DIRECTOR_HEADERS = DirectorInfo.FIELDS;
 
     /** Carga el archivo de configuraciónd de una lista maestra
      * del archivo de configuración en formato json

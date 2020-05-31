@@ -1,8 +1,22 @@
 package TFEManagerLib;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class ProposalInfo extends HashMap<String, String> {
+    public static final ArrayList<String> FIELDS = new ArrayList<String>(
+            Arrays.asList("apellido",
+                    "nombre",
+                    "pais",
+                    "titulo",
+                    "tipo",
+                    "revisor1",
+                    "revisor2",
+                    "veredicto1",
+                    "veredicto2",
+                    "veredictoglobal")
+    );
     public String toString(){
         String info = "PROPUESTA DEL ALUMNO: " +
                 this.get("apellido") +

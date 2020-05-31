@@ -49,7 +49,7 @@ public class TFEManager {
         }
     }
 
-    public void createReviews() {
+    public void createReviews() throws IOException {
         HashMap<String, ReviewerInfo> reviewers = new HashMap<>();
         ArrayList<ProposalInfo> proposals = excelManager.readProposalsInfo();
 
@@ -64,9 +64,11 @@ public class TFEManager {
             r2.addProposal(p);
             reviewers.put(r2Name, r2);
         }
-        System.out.println(
-                new ArrayList<>(reviewers.values())
-        );
+        // Hasta aquí tenemos gnerados una lista con la información de revisores
+        ArrayList<ReviewerInfo> revieweres = new ArrayList<>(reviewers.values());
+        System.out.println( revieweres);
+        // Lo pasamos al gestor de archivos para que cree la estructura de información
+        filesManager.saveReviewersInfo(revieweres);
 
     }
 

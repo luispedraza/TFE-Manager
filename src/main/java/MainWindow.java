@@ -170,7 +170,12 @@ public class MainWindow extends JDialog {
      * Generación de paquetes para los revisores
      */
     private void createReviews() {
-        manager.createReviews();
+        try {
+            manager.createReviews();
+        } catch (IOException e) {
+            logInfo(e.toString());
+        }
+
     }
 
     /**

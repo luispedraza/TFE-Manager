@@ -6,7 +6,8 @@ import java.util.HashMap;
 
 public class ProposalInfo extends HashMap<String, String> {
     public static final ArrayList<String> FIELDS = new ArrayList<String>(
-            Arrays.asList("apellido",
+            Arrays.asList("ID",
+                    "apellido",
                     "nombre",
                     "pais",
                     "titulo",
@@ -37,5 +38,9 @@ public class ProposalInfo extends HashMap<String, String> {
                 this.get("revisor2") +
                 System.lineSeparator();
         return info;
+    }
+
+    public String getFolderName() {
+        return String.join(", ", this.get("apellido"), this.get("nombre"));
     }
 }

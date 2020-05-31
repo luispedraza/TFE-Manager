@@ -22,7 +22,7 @@ public class ReviewerInfo extends HashMap<String, String> {
         this.put("NOMBRE", name);
         this.proposals = new ArrayList<ProposalInfo>();
     }
-    
+
     public String toString() {
         String info = "INFORMACIÓN DEL REVISOR " + this.get("NOMBRE") + System.lineSeparator();
         info += String.format(" Tiene asignadas %d propuestas", proposals.size());
@@ -36,6 +36,14 @@ public class ReviewerInfo extends HashMap<String, String> {
      */
     public void addProposal(ProposalInfo p) {
         proposals.add(p);
+    }
+
+    public ArrayList<ProposalInfo> getProposals() {
+        return this.proposals;
+    }
+
+    public String getName() {
+        return this.get("NOMBRE");
     }
 
 }

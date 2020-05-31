@@ -12,7 +12,14 @@ import java.io.IOException;
  * Clase para leer los contenidos de un formulario en pdf
  */
 public class PDFManager {
-    public static ProposalInfo parseProposal(String filePath) {
+
+    String filePath;
+    public PDFManager(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public ProposalInfo parseProposal() {
+        String filePath = this.filePath;
         ProposalInfo proposalInfo = new ProposalInfo();
         try {
             PDDocument doc = PDDocument.load(new File(filePath));

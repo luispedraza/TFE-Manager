@@ -54,6 +54,17 @@ public class FilesManager {
         }
     }
 
+    public void zipFolder(String origin, String destination) throws ZipException {
+        ZipFile zipFile = new ZipFile(destination);
+        File targetFile = new File(origin);
+        if (targetFile.isFile()) {
+            zipFile.addFile(targetFile);
+        } else if (targetFile.isDirectory()) {
+            zipFile.addFolder(targetFile);
+        }
+
+    }
+
     public ArrayList<ProposalInfo> loadProposals(String proposalsPath) throws IOException {
         ArrayList<ProposalInfo> proposals = new ArrayList<ProposalInfo>();
         File dir = new File(proposalsPath);
@@ -129,7 +140,7 @@ public class FilesManager {
                 makeDir(pPath);
                 // Buscamos la propuesta del alumno en el directorio de propuestas
                 System.out.println("Buscando la propuesta de " + proposalFolderName + " para " + r.getName());
-                for (File pDir : proposalsDir.listFiles(
+                for (File proposalOrigin : proposalsDir.listFiles(
                         new FilenameFilter() {
                             @Override
                             public boolean accept(File dir, String name) {
@@ -138,8 +149,8 @@ public class FilesManager {
                         }
                 )) {
                     System.out.println("Encontrada en : ");
-                    System.out.println(pDir);
-                    for (File f : new File(pDir, ATTACHMENTS_FOLDER).listFiles(new FilenameFilter() {
+                    System.out.println(proposalOrigin);
+                    for (File f : new File(proposalOrigin, ATTACHMENTS_FOLDER).listFiles(new FilenameFilter() {
                         @Override
                         public boolean accept(File dir, String name) {
                             return name.endsWith(".pdf");
@@ -155,13 +166,18 @@ public class FilesManager {
                         copyFile(Paths.get(docsPath, REVIEW_TEMPLATE_FILE).toString(),
                                 reviewFormPath);
                         // Rellenamos campos preliminaares en la propuesta:
+                        // TODO: Esto se puede optimizar rellenando en un único paso
                         PDFManager pdfManager = new PDFManager(reviewFormPath);
                         pdfManager.fillForm("nombre_alumno", proposalFolderName);
                         pdfManager.fillForm("titulo", p.get("titulo"));
 
+
                     }
                 }
             }
+
+            // finalmente comprimimos el paquete del revisor
+            zipFolder(rPath, Paths.get(reviewsPath, r.getName()+".zip").toString());
         }
     }
 }

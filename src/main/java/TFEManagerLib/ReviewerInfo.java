@@ -18,8 +18,19 @@ public class ReviewerInfo extends HashMap<String, String> {
                     "MAXIMO")
     );
 
-    public ReviewerInfo(String name) {
-        this.put("NOMBRE", name);
+    public ReviewerInfo(String name, int max, String email) {
+        this.put("NOMBRE", name);   // Nombre del revisor
+        this.put("MAX", Integer.toString(max));       // Máximo de propuestas
+        this.put("E-MAIL", email);
+        this.proposals = new ArrayList<ProposalInfo>();
+    }
+
+    /**
+     * Para crear copias a partir de un HashMap
+     * @param r
+     */
+    public ReviewerInfo(HashMap<String, String> r) {
+        super(r);
         this.proposals = new ArrayList<ProposalInfo>();
     }
 
@@ -46,4 +57,7 @@ public class ReviewerInfo extends HashMap<String, String> {
         return this.get("NOMBRE");
     }
 
+    public String getEmail() {
+        return this.get("E-MAIL");
+    }
 }

@@ -1,6 +1,7 @@
 package TFEManagerLib;
 
 import freemarker.template.TemplateException;
+import org.apache.commons.io.FilenameUtils;
 
 import javax.mail.MessagingException;
 import java.io.File;
@@ -62,12 +63,12 @@ public class TFEManager {
 
         for (ProposalInfo p : proposals) {
             String r1Name = p.get("revisor1");
-            ReviewerInfo r1 = reviewers.getOrDefault(r1Name, new ReviewerInfo(r1Name));
+            ReviewerInfo r1 = reviewers.getOrDefault(r1Name, new ReviewerInfo(r1Name, 0, null));
             r1.addProposal(p);
             reviewers.put(r1Name, r1);
 
             String r2Name = p.get("revisor2");
-            ReviewerInfo r2 = reviewers.getOrDefault(r2Name, new ReviewerInfo(r2Name));
+            ReviewerInfo r2 = reviewers.getOrDefault(r2Name, new ReviewerInfo(r2Name, 0, null));
             r2.addProposal(p);
             reviewers.put(r2Name, r2);
         }
@@ -75,7 +76,7 @@ public class TFEManager {
         ArrayList<ReviewerInfo> revieweres = new ArrayList<>(reviewers.values());
         System.out.println(revieweres);
         // Lo pasamos al gestor de archivos para que cree la estructura de información
-        filesManager.saveReviewersInfo(revieweres);
+        filesManager.saveReviewPacks(revieweres);
 
     }
 
@@ -88,32 +89,48 @@ public class TFEManager {
         excelManager.saveReviewsResults(reviews);
     }
 
-
     /**
      * envío de las propuestas a los revisores
      */
-    public void sendReviews() throws IOException, TemplateException, MessagingException {
-        MailManager m = new MailManager(null, null);
-        String content = "";
-
-        Map<String, Object> input = new HashMap<String, Object>();
-        input.put("name", "Luis Pedraza");
-        input.put("titulation", "Máster Interuniversitario en Mecánica de Fluidos Computacional");
-        input.put("date", "27 de abril");
-
-        content = m.getReviewEmailContent(input);
+    public void sendReviews() throws Exception {
 
         String username = System.getenv("MAIL_USERNAME");
         String password = System.getenv("MAIL_PASSWORD");
-        MailManager mail = new MailManager(username, password);
-        ArrayList<File> attachments = new ArrayList<File>();
-        attachments.add(new File("/Users/luispedraza/OneDrive - Universidad Internacional de La Rioja/TFE-MANAGER/Revisores/Gómez, Alonso.zip"));
-        attachments.add(new File("/Users/luispedraza/OneDrive - Universidad Internacional de La Rioja/TFE-MANAGER/Revisores/Pedraza, Luis.zip"));
 
-        mail.send("luispedraza@gmail.com",
-                "Asunto del mensaje",
-                content,
-                attachments);
+        // Obtenemos los zips con las revisiones
+        ArrayList<File> zipFiles = filesManager.loadReviewPacks();
+
+        for (File zf : zipFiles) {
+            String reviewerName = FilenameUtils.removeExtension(zf.getName());
+        }
+        // Obtenemos las información de los revisores, con los correos
+        HashMap<String, ReviewerInfo> reviewers =  excelManager.readReviewersInfo();
+
+        // Comenzamos los envíos
+        // Recorremos todos los zips para enviar su revisor:
+        for (File zf : zipFiles) {
+            String reviewerName = FilenameUtils.removeExtension(zf.getName());
+            ReviewerInfo r = reviewers.get(reviewerName);
+            if (r == null) {
+                throw new Exception("No se ha encontrado del revisor del archivo " + zf.getAbsolutePath());
+            } else {
+                MailManager mail = new MailManager(username, password);
+                // El cuerpo del mensaje
+                Map<String, Object> input = new HashMap<>();
+                input.put("name", r.getName());
+                input.put("titulation", "Máster Interuniversitario en Mecánica de Fluidos Computacional");
+                input.put("date", "27 de abril");
+                String content = mail.getReviewEmailContent(input);
+
+                ArrayList<File> attachments = new ArrayList<File>();
+                attachments.add(zf);
+
+                mail.send(r.getEmail(),
+                        "Revisiones de propuestas de TFM",
+                        content,
+                        attachments);
+            }
+        }
     }
 
 

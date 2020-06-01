@@ -4,6 +4,7 @@ package TFEManagerLib;
 
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
@@ -212,7 +213,7 @@ public class ExcelManager {
      * @param surname
      * @return
      */
-    int findStudentRow(XSSFSheet sheet, String surname, String name) {
+    private int findStudentRow(XSSFSheet sheet, String surname, String name) {
         int surnameColumn = this.PROPOSALS_HEADERS.indexOf("apellido");
         int nameColumn = this.PROPOSALS_HEADERS.indexOf("nombre");
 
@@ -266,5 +267,70 @@ public class ExcelManager {
         }
 
         saveWorkbook(wb);
+    }
+
+    /** función de utilidad para leer los datos en una tabla **
+     *
+     * @param sheetName: Nombre de la hoja que contiene la tabla
+     * @param tableName: Nombre de la tabla que buscamos
+     * @return
+     */
+    private ArrayList<HashMap<String, String>> readTable(String sheetName, String tableName) {
+        ArrayList<HashMap<String, String>> result = new ArrayList<>();
+        ArrayList<String> headers = new ArrayList<>();
+        DataFormatter formatter = new DataFormatter();  // Para trabajar con celdas con diferentes tipos de datos
+
+        XSSFWorkbook wb = getWorkbook();
+        XSSFSheet sheet = getSheet(wb, sheetName);
+        XSSFTable table = getTable(sheet, tableName);
+        System.out.println(table);
+
+        int startRow = table.getStartRowIndex();
+        int endRow = table.getEndRowIndex();
+        int startColumn = table.getStartColIndex();
+        int endColumn = table.getEndColIndex();
+        System.out.println("Coordenadas de la tabla " + tableName + ": "+ startRow + "-" + endRow + "-" + startColumn + "-" + endColumn);
+
+        XSSFRow row;
+        XSSFCell cell;
+        int i;
+        int j;
+        for (i = startRow; i <= endRow; i++) {
+            row = sheet.getRow(i);
+            if (i==startRow) {
+                for (j = startColumn; j<= endColumn; j++) {
+                    cell = row.getCell(j);
+                    if (cell != null) {
+                        headers.add(formatter.formatCellValue(cell));
+                    }
+                }
+                continue;
+            }
+            // El objeto que almacenará la información de la fila
+            HashMap<String, String> info = new HashMap<>(table.getRowCount()-1);
+
+            for (j = startColumn; j <= endColumn; j++) {
+                cell = row.getCell(j);
+                if (cell != null) {
+                    info.put(headers.get(j), formatter.formatCellValue(cell));
+                }
+            }
+            result.add(info);
+        }
+        System.out.println(String.format("Leídas %d filas de información", result.size()));
+        System.out.println(result);
+        return result;
+    }
+    /**
+     * se carga de la lista maestra la información de los revisores
+     * @return
+     */
+    public HashMap<String, ReviewerInfo> readReviewersInfo() {
+        HashMap<String, ReviewerInfo> result = new HashMap<>();
+        ArrayList<HashMap<String, String>> tableInfo = readTable(REVIEWERS_SHEET, REVIEWERS_TABLE_NAME);
+        for (HashMap<String, String> r : tableInfo) {
+            result.put(r.get("NOMBRE"), new ReviewerInfo(r));
+        }
+        return result;
     }
 }

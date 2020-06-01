@@ -132,16 +132,21 @@ public class FilesManager {
         FileUtils.copyFile(new File(origin), new File(destiny));
     }
 
-    public void saveReviewersInfo(ArrayList<ReviewerInfo> revieweres) throws IOException {
-        String docsPath = getDocsPath();
-        String reviewsPath = getReviewsPath();
+    /**
+     * Esta función guarda en el disco los paquetes de revisión, llegando a generar el zip
+     * @param reviewers: son los revisores
+     * @throws IOException
+     */
+    public void saveReviewPacks(ArrayList<ReviewerInfo> reviewers) throws IOException {
+        String docsPath = getDocsPath();        // Contiene la documentación que adjuntaremos
+        String reviewsPath = getReviewsPath();  // Ruta donde se almacenarán las revisiones (ws/revisores)
         makeDir(reviewsPath);
         // Directorio que contiene las propuestas
         File proposalsDir = new File(getProposalsPath());
 
         int reviewerIndex = 0;
         // recorremos la lista de revisores:
-        for (ReviewerInfo r : revieweres) {
+        for (ReviewerInfo r : reviewers) {
             reviewerIndex++;
             String rPath = Paths.get(reviewsPath, r.getName()).toString();
             makeDir(rPath);
@@ -183,28 +188,43 @@ public class FilesManager {
                 }
             }
 
-            // finalmente comprimimos el paquete del revisor
+            // Finalmente comprimimos el paquete del revisor
             zipFolder(rPath, Paths.get(reviewsPath, r.getName()+".zip").toString());
         }
     }
 
+
+    /** Obtiene todos los paquetes de revisión
+     */
+    public ArrayList<File> loadReviewPacks() {
+        ArrayList result = new ArrayList<File>();
+        File reviewsFolder = new File(getReviewsPath());    // la carpeta donde están las revisiones
+        for (File zipFile : Objects.requireNonNull(reviewsFolder.listFiles((dir, name) -> name.endsWith(".zip")))) {
+            System.out.println(zipFile);
+            result.add(zipFile);
+        }
+        return result;
+    }
+
+
+
+    /**
+     * Lee del disco los resultados de las revisiones
+     * @return Un mapeado entre el nombre de cada alumno y los resultados de las dos revisiones.
+     */
     public HashMap<String, ArrayList<ReviewInfo>> loadReviewsResults() {
         HashMap<String, ArrayList<ReviewInfo>> reviews =  new HashMap<>();
-
-        File reviewsFolder = new File(getReviewsPath());
+        File reviewsFolder = new File(getReviewsPath());    // la carpeta donde están las revisiones (wb/Revisores)
 
         for (File reviewer : Objects.requireNonNull(reviewsFolder.listFiles((dir, name) -> new File(dir, name).isDirectory()))) {
             System.out.println("Buscando revisiones en: " + reviewer);
-            String reviewerName = reviewer.getName();
             for (File proposal : Objects.requireNonNull(reviewer.listFiles((dir, name) -> new File(dir, name).isDirectory()))) {
                 System.out.println(proposal);
                 String proposalName = proposal.getName();
                 for (File pdfFile : Objects.requireNonNull(proposal.listFiles((dir, name) -> name.endsWith(".pdf")))) {
-                    System.out.println(pdfFile);
                     PDFManager pdfManager = new PDFManager(pdfFile.getAbsolutePath());
                     ReviewInfo info = pdfManager.parseReview();
                     if (info != null) {
-                        //System.out.println(info);
                         ArrayList<ReviewInfo> proposalReviews = reviews.getOrDefault(proposalName, new ArrayList<>());
                         proposalReviews.add(info);
                         reviews.put(proposalName, proposalReviews);

@@ -192,6 +192,7 @@ public class MainWindow extends JDialog {
         try {
             manager.sendReviews();
         } catch (Exception e){
+            e.printStackTrace();
             logInfo(e.toString());
         }
     }

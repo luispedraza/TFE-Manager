@@ -7,6 +7,7 @@ import java.util.HashMap;
 public class ReviewInfo extends HashMap<String, String> {
     public static final ArrayList<String> FIELDS = new ArrayList<String>(
             Arrays.asList("nombre_alumno",
+                    "nombre_revisor",
                     "adecuacion",
                     "alcance",
                     "amenazas",

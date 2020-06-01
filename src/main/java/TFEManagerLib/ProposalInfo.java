@@ -18,6 +18,15 @@ public class ProposalInfo extends HashMap<String, String> {
                     "veredicto2",
                     "veredictoglobal")
     );
+
+    /** Para inicializar el objeto a partir de un HashMap según se leen del excel
+     *
+     * @param p: HashMap con la información sacada de Excel
+     */
+    public ProposalInfo(HashMap<String, String> p) {
+        super(p);
+    }
+
     public String toString(){
         String info = "PROPUESTA DEL ALUMNO: " +
                 this.get("apellido") +

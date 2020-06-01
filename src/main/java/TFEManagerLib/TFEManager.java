@@ -90,7 +90,7 @@ public class TFEManager {
     }
 
     /**
-     * envío de las propuestas a los revisores
+     * Envío de las propuestas a los revisores
      */
     public void sendReviews() throws Exception {
 
@@ -135,7 +135,7 @@ public class TFEManager {
 
 
     /**
-     * envío de los trabajos a los directores
+     * Envío de los trabajos a los directores
      */
     public void sendToDirectors() {
 

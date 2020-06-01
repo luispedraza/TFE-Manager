@@ -15,6 +15,10 @@ public class ReviewInfo extends HashMap<String, String> {
                     "valoracion")
     );
 
+    public ReviewInfo(HashMap<String, String> info) {
+        super(info);
+    }
+
     /** devuelve el estado de aceptación de la propuesta
      *
      * @return

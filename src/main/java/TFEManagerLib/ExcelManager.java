@@ -116,32 +116,14 @@ public class ExcelManager {
      * Lee la información que contiene la lista maestra sobre las propuestas
      * @return
      */
-    public ArrayList<ProposalInfo>  readProposalsInfo() {
-        ArrayList<ProposalInfo> proposals = new ArrayList<ProposalInfo>();
-        XSSFWorkbook wb = getWorkbook();
-        XSSFSheet sheet = getSheet(wb, PROPOSALS_SHEET);
-        XSSFTable table = getTable(sheet, PROPOSALS_TABLE_NAME);
-        System.out.println(table);
+    public ArrayList<ProposalInfo> readProposalsInfo() {
+        ArrayList<ProposalInfo> proposals = new ArrayList<>();
 
-        int startRow = table.getStartRowIndex();
-        int endRow = table.getEndRowIndex();
-        int startColumn = table.getStartColIndex();
-        int endColumn = table.getEndColIndex();
-        System.out.println("Coordenadas de la tabla " + PROPOSALS_TABLE_NAME + ": "+ startRow + "-" + endRow + "-" + startColumn + "-" + endColumn);
-
-        for (int i = startRow+1; i<=endRow; i++) {
-            ProposalInfo p = new ProposalInfo();
-            XSSFRow row = sheet.getRow(i);
-            for (int j = startColumn; j <= endColumn; j++) {
-                XSSFCell c = row.getCell(j);
-                if (c != null) {
-                    p.put(PROPOSALS_HEADERS.get(j), c.getStringCellValue());
-                }
-            }
-            proposals.add(p);
+        ArrayList<HashMap<String, String>> tableData = readTable(PROPOSALS_SHEET, PROPOSALS_TABLE_NAME);
+        for (HashMap<String, String> p : tableData) {
+            proposals.add(new ProposalInfo(p));
         }
-        System.out.println(String.format("Leídas %d propuestas", proposals.size()));
-        System.out.println(proposals);
+
         return proposals;
     }
 
@@ -150,6 +132,7 @@ public class ExcelManager {
      * @param info: un array de diccionarios con la información de las propuestas
      */
     public void saveProposalsInfo(ArrayList<ProposalInfo> info) throws IOException {
+
         XSSFWorkbook wb = getWorkbook();
         XSSFSheet sheet = getSheet(wb, PROPOSALS_SHEET);
 
@@ -269,7 +252,7 @@ public class ExcelManager {
         saveWorkbook(wb);
     }
 
-    /** función de utilidad para leer los datos en una tabla **
+    /** Función de utilidad para leer los datos en una tabla **
      *
      * @param sheetName: Nombre de la hoja que contiene la tabla
      * @param tableName: Nombre de la tabla que buscamos
@@ -321,8 +304,9 @@ public class ExcelManager {
         System.out.println(result);
         return result;
     }
+
     /**
-     * se carga de la lista maestra la información de los revisores
+     * Se carga de la lista maestra la información de los revisores
      * @return
      */
     public HashMap<String, ReviewerInfo> readReviewersInfo() {

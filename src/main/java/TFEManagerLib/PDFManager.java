@@ -49,7 +49,12 @@ public class PDFManager {
         }
     }
 
-    private void getFormInfo(HashMap<String, String> info) {
+    /** Obtiene toda la información que contiene el formulario de un pdf
+     *
+     * @return: Un HashMap con la información
+     */
+    private HashMap<String, String> getFormInfo() {
+        HashMap<String, String> info = new HashMap<>();
         String filePath = this.filePath;
 
         try {
@@ -66,20 +71,18 @@ public class PDFManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return info;
     }
 
     public ProposalInfo parseProposal() {
-        ProposalInfo proposalInfo = new ProposalInfo();
-        getFormInfo(proposalInfo);
-        return proposalInfo;
+        return new ProposalInfo(getFormInfo());
     }
 
     public ReviewInfo parseReview() {
-        ReviewInfo info = new ReviewInfo();
-        getFormInfo(info);
+        HashMap<String, String> info = getFormInfo();
         // Aquí es posible hacer comprobaciones y filtrados para el caso de revisiones.
         if (info.containsKey("resultado")) {
-            return info;
+            return new ReviewInfo(info);
         }
         return null;
     }

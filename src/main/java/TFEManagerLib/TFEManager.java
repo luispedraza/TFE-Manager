@@ -57,7 +57,7 @@ public class TFEManager {
         }
     }
 
-    public void createReviews() throws IOException {
+    public void createReviews() throws Exception {
         HashMap<String, ReviewerInfo> reviewers = new HashMap<>();
         ArrayList<ProposalInfo> proposals = excelManager.readProposalsInfo();
 

@@ -51,7 +51,7 @@
           </grid>
         </children>
       </grid>
-      <grid id="e3588" layout-manager="GridLayoutManager" row-count="11" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="e3588" layout-manager="GridLayoutManager" row-count="10" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -79,7 +79,7 @@
           </component>
           <scrollpane id="2274c">
             <constraints>
-              <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <autoscrolls value="false"/>
@@ -88,7 +88,10 @@
             <children>
               <component id="f5d9b" class="javax.swing.JTextArea" binding="logTextArea">
                 <constraints/>
-                <properties/>
+                <properties>
+                  <editable value="false"/>
+                  <lineWrap value="true"/>
+                </properties>
               </component>
             </children>
           </scrollpane>
@@ -128,18 +131,9 @@
               <toolTipText value="Lee del disco los resultados de la revisión y los almacena en memoria"/>
             </properties>
           </component>
-          <component id="12a6b" class="javax.swing.JButton" binding="saveReviewsResult">
-            <constraints>
-              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="GUARDAR RESULTADOS DE REVISIONES"/>
-              <toolTipText value="Toma los resultados de revisión almacenamos en memoria y los guarda en la lista maestra"/>
-            </properties>
-          </component>
           <component id="c94e4" class="javax.swing.JButton" binding="generateVerdict">
             <constraints>
-              <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="GENERAR EL VEREDICTO DE LA PROPUESTA"/>
@@ -148,7 +142,7 @@
           </component>
           <component id="4a468" class="javax.swing.JButton" binding="generateGradings">
             <constraints>
-              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="GENERAR CALIFICACIONES PARA SUBIR A SAKAI"/>
@@ -157,7 +151,7 @@
           </component>
           <component id="3e89a" class="javax.swing.JButton" binding="loadProgress">
             <constraints>
-              <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="CARGAR INFORMACIÓN DE PROGRESO DE REVISIÓN"/>

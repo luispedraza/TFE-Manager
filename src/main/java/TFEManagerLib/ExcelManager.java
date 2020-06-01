@@ -116,7 +116,7 @@ public class ExcelManager {
      * Lee la información que contiene la lista maestra sobre las propuestas
      * @return
      */
-    public ArrayList<ProposalInfo> readProposalsInfo() {
+    public ArrayList<ProposalInfo> readProposalsInfo() throws Exception {
         ArrayList<ProposalInfo> proposals = new ArrayList<>();
 
         ArrayList<HashMap<String, String>> tableData = readTable(PROPOSALS_SHEET, PROPOSALS_TABLE_NAME);
@@ -258,7 +258,7 @@ public class ExcelManager {
      * @param tableName: Nombre de la tabla que buscamos
      * @return
      */
-    private ArrayList<HashMap<String, String>> readTable(String sheetName, String tableName) {
+    private ArrayList<HashMap<String, String>> readTable(String sheetName, String tableName) throws Exception {
         ArrayList<HashMap<String, String>> result = new ArrayList<>();
         ArrayList<String> headers = new ArrayList<>();
         DataFormatter formatter = new DataFormatter();  // Para trabajar con celdas con diferentes tipos de datos
@@ -266,7 +266,9 @@ public class ExcelManager {
         XSSFWorkbook wb = getWorkbook();
         XSSFSheet sheet = getSheet(wb, sheetName);
         XSSFTable table = getTable(sheet, tableName);
-        System.out.println(table);
+        if (table == null) {
+            throw new Exception ("No se ha encontrado la tabla: " + tableName);
+        }
 
         int startRow = table.getStartRowIndex();
         int endRow = table.getEndRowIndex();
@@ -309,7 +311,7 @@ public class ExcelManager {
      * Se carga de la lista maestra la información de los revisores
      * @return
      */
-    public HashMap<String, ReviewerInfo> readReviewersInfo() {
+    public HashMap<String, ReviewerInfo> readReviewersInfo() throws Exception {
         HashMap<String, ReviewerInfo> result = new HashMap<>();
         ArrayList<HashMap<String, String>> tableInfo = readTable(REVIEWERS_SHEET, REVIEWERS_TABLE_NAME);
         for (HashMap<String, String> r : tableInfo) {

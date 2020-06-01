@@ -25,7 +25,6 @@ public class MainWindow extends JDialog {
     private JButton createReviews;
     private JButton sendReviews;
     private JButton loadReviewsResults;
-    private JButton saveReviewsResult;
     private JButton generateVerdict;
     private JButton generateGradings;
     private JButton loadProgress;
@@ -178,8 +177,9 @@ public class MainWindow extends JDialog {
     private void createReviews() {
         try {
             manager.createReviews();
-        } catch (IOException e) {
+        } catch (Exception e) {
             logInfo(e.toString());
+            e.printStackTrace();
         }
 
     }

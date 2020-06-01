@@ -1,9 +1,14 @@
 package TFEManagerLib;
 
+import freemarker.template.TemplateException;
+
+import javax.mail.MessagingException;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Clase principal para la gestión de TFEs
@@ -23,8 +28,9 @@ public class TFEManager {
 
     /**
      * Descromprime los contenidos de un archivo de propuestas en el destino indicado.
+     *
      * @param proposalsFile: Archivo zip que contiene las propuestas
-     * @param destDir: destino donde se descomprimirán las propuestas
+     * @param destDir:       destino donde se descomprimirán las propuestas
      */
     public void unzipProposals(String proposalsFile, String destDir) {
         // Descrompresión del archivo con las propuestas
@@ -33,6 +39,7 @@ public class TFEManager {
 
     /**
      * Esta función carga la información de las propuestas contenidas en un directorio
+     *
      * @param proposalsPath: Directorio que contiene las propuestas
      * @return: Resultado del proceso
      */
@@ -60,24 +67,60 @@ public class TFEManager {
             reviewers.put(r1Name, r1);
 
             String r2Name = p.get("revisor2");
-            ReviewerInfo r2 =  reviewers.getOrDefault(r2Name, new ReviewerInfo(r2Name));
+            ReviewerInfo r2 = reviewers.getOrDefault(r2Name, new ReviewerInfo(r2Name));
             r2.addProposal(p);
             reviewers.put(r2Name, r2);
         }
         // Hasta aquí tenemos gnerados una lista con la información de revisores
         ArrayList<ReviewerInfo> revieweres = new ArrayList<>(reviewers.values());
-        System.out.println( revieweres);
+        System.out.println(revieweres);
         // Lo pasamos al gestor de archivos para que cree la estructura de información
         filesManager.saveReviewersInfo(revieweres);
 
     }
 
-    /** Carga del disco los resultados de las revisiones y los guarda en la lista maestra
-     *
+    /**
+     * Carga del disco los resultados de las revisiones y los guarda en la lista maestra
      */
     public void loadReviewsResults() throws IOException {
         HashMap<String, ArrayList<ReviewInfo>> reviews = filesManager.loadReviewsResults();
         System.out.println(reviews);
         excelManager.saveReviewsResults(reviews);
+    }
+
+
+    /**
+     * envío de las propuestas a los revisores
+     */
+    public void sendReviews() throws IOException, TemplateException, MessagingException {
+        MailManager m = new MailManager(null, null);
+        String content = "";
+
+        Map<String, Object> input = new HashMap<String, Object>();
+        input.put("name", "Luis Pedraza");
+        input.put("titulation", "Máster Interuniversitario en Mecánica de Fluidos Computacional");
+        input.put("date", "27 de abril");
+
+        content = m.getReviewEmailContent(input);
+
+        String username = System.getenv("MAIL_USERNAME");
+        String password = System.getenv("MAIL_PASSWORD");
+        MailManager mail = new MailManager(username, password);
+        ArrayList<File> attachments = new ArrayList<File>();
+        attachments.add(new File("/Users/luispedraza/OneDrive - Universidad Internacional de La Rioja/TFE-MANAGER/Revisores/Gómez, Alonso.zip"));
+        attachments.add(new File("/Users/luispedraza/OneDrive - Universidad Internacional de La Rioja/TFE-MANAGER/Revisores/Pedraza, Luis.zip"));
+
+        mail.send("luispedraza@gmail.com",
+                "Asunto del mensaje",
+                content,
+                attachments);
+    }
+
+
+    /**
+     * envío de los trabajos a los directores
+     */
+    public void sendToDirectors() {
+
     }
 }

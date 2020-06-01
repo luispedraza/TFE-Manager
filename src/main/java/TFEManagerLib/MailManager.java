@@ -3,13 +3,26 @@ package TFEManagerLib;
 
 // Ejemplo de envío de mensajes: https://www.baeldung.com/java-email
 // Sobre el uso de resources https://www.jetbrains.com/help/idea/content-roots.html
+// Recursos en guava https://www.stubbornjava.com/posts/reading-file-resources-with-guava
+// Sobre estilos para el mail: https://www.litmus.com/blog/a-guide-to-css-inlining-in-email/?utm_campaign=newsletter_feb2016&utm_source=pardot&utm_medium=email
+// Tutorial freemarker https://www.vogella.com/tutorials/FreeMarker/article.html
+// CSS inliner https://templates.mailchimp.com/resources/inline-css/
+
+
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Properties;
+import java.io.StringWriter;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 /** Clase para gestión de correo:
  * - Envío de propuestas a los revisores.
@@ -22,9 +35,37 @@ public class MailManager {
     private String username;
     private String password;
 
+    class ReviewEmailContent {
+
+    }
+
     public MailManager(String username, String password) {
         this.username = username;
         this.password = password;
+    }
+
+    /** Genera el contenido de un correo para enviar a un revisor
+     *
+     * @return: Contenido del correo
+     */
+    public String getReviewEmailContent(Map<String, Object> data) throws IOException, TemplateException {
+        /*
+        URL url = Resources.getResource("TFEManagerLib/templates/review_template.ftl");
+        String template = Resources.toString(url, Charsets.UTF_8);
+        // getClass().getResource("review_template.html").getFile();
+        */
+
+        Configuration cfg = new Configuration(Configuration.VERSION_2_3_30);
+
+        cfg.setClassForTemplateLoading(MailManager.class, "/TFEManagerLib/templates/");
+        cfg.setDefaultEncoding("UTF-8");
+        Template template = cfg.getTemplate("review_template.ftl");
+        StringWriter strWriter = new StringWriter();
+        // Se procesa la plantilla para obtener el contenido del email
+        template.process(data, strWriter);
+        String content = strWriter.toString();
+        System.out.println(content);
+        return content;
     }
 
 
@@ -61,7 +102,7 @@ public class MailManager {
         Multipart multipart = new MimeMultipart();
         // el contenido
         MimeBodyPart mimeBodyPart = new MimeBodyPart();
-        mimeBodyPart.setContent(content, "text/html");
+        mimeBodyPart.setContent(content, "text/html; charset=UTF-8");
         multipart.addBodyPart(mimeBodyPart);
 
         // Los adjuntos, si los hay

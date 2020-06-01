@@ -8,6 +8,8 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 // Noa sobre manifest: https://stackoverflow.com/questions/20952713/wrong-manifest-mf-in-intellij-idea-created-jar
 
 public class MainWindow extends JDialog {
@@ -186,23 +188,15 @@ public class MainWindow extends JDialog {
      * Envío de paquetes a los revisores
      */
     private void sendReviews() {
-        String username = System.getenv("MAIL_USERNAME");
-        String password = System.getenv("MAIL_PASSWORD");
-        MailManager mail = new MailManager(username, password);
-        ArrayList<File> attachments = new ArrayList<File>();
-        attachments.add(new File("/Users/luispedraza/OneDrive - Universidad Internacional de La Rioja/TFE-MANAGER/Revisores/Gómez, Alonso.zip"));
-        attachments.add(new File("/Users/luispedraza/OneDrive - Universidad Internacional de La Rioja/TFE-MANAGER/Revisores/Pedraza, Luis.zip"));
+
         try {
-            mail.send("luispedraza@gmail.com",
-                    "Asunto del mensaje",
-                    "contenido del mensaje",
-                    attachments);
-        } catch (MessagingException e) {
-            logInfo(e.toString());
-        } catch (IOException e) {
+            manager.sendReviews();
+        } catch (Exception e){
             logInfo(e.toString());
         }
     }
+
+
 
     /**
      * Lectura de las revisiones recibidas desde el disco

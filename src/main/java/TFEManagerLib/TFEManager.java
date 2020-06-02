@@ -85,6 +85,7 @@ public class TFEManager {
      */
     public void loadReviewsResults() throws IOException {
         HashMap<String, ArrayList<ReviewInfo>> reviews = filesManager.loadReviewsResults();
+
         System.out.println(reviews);
         excelManager.saveReviewsResults(reviews);
     }

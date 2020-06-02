@@ -27,8 +27,8 @@ public class ExcelManager {
     private static final String REVIEWERS_SHEET = "REVISORES";
     private static final String REVIEWERS_TABLE_NAME = "REVISORES";
     private static final ArrayList<String> REVIEWERS_HEADERS = ReviewerInfo.FIELDS;
-    private static final String DIRECTOR_SHEET = "REVISORES";
-    private static final String DIRECTOR_TABLE_NAME = "REVISORES";
+    private static final String DIRECTOR_SHEET = "DIRECTORES";
+    private static final String DIRECTOR_TABLE_NAME = "DIRECTORES";
     private static final ArrayList<String> DIRECTOR_HEADERS = DirectorInfo.FIELDS;
 
     /** Carga el archivo de configuraciónd de una lista maestra
@@ -221,9 +221,9 @@ public class ExcelManager {
         XSSFWorkbook wb = getWorkbook();
         XSSFSheet sheet = getSheet(wb, PROPOSALS_SHEET);
         XSSFTable table = getTable(sheet, PROPOSALS_TABLE_NAME);
-        int review1Column = this.PROPOSALS_HEADERS.indexOf("veredicto1");
-        int review2Column = this.PROPOSALS_HEADERS.indexOf("veredicto2");
-        int resultColumn = this.PROPOSALS_HEADERS.indexOf("veredictoglobal");
+        int review1Column = PROPOSALS_HEADERS.indexOf("veredicto1");
+        int review2Column = PROPOSALS_HEADERS.indexOf("veredicto2");
+        int resultColumn = PROPOSALS_HEADERS.indexOf("veredictoglobal");
         // TODO: Habría que comprobar que la tabla es no nula para dar más robustez.
         XSSFRow row = null;
         XSSFCell cell = null;
@@ -241,11 +241,18 @@ public class ExcelManager {
                     cell = row.createCell(review1Column);
                 }
                 cell.setCellValue(proposalReviews.get(0).getStatus());
+
                 cell = row.getCell(review2Column);
                 if (cell == null) {
                     cell = row.createCell(review2Column);
                 }
                 cell.setCellValue(proposalReviews.get(1).getStatus());
+                // TODO: HAGO ESTO AQUÍ COMO PRUEBA PERO LA DECISIÓN DEBERÍA TOMARLA OTRA CLASE
+                cell = row.getCell(resultColumn);
+                if (cell == null) {
+                    cell = row.createCell(resultColumn);
+                }
+                cell.setCellValue("ACEPTADA");
             }
         }
 

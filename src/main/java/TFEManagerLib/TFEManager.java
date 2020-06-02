@@ -59,9 +59,9 @@ public class TFEManager {
 
     public void createReviews() throws Exception {
         HashMap<String, ReviewerInfo> reviewers = new HashMap<>();
-        ArrayList<ProposalInfo> proposals = excelManager.readProposalsInfo();
+        HashMap<String, ProposalInfo> proposals = excelManager.readProposalsInfo();
 
-        for (ProposalInfo p : proposals) {
+        for (ProposalInfo p : proposals.values()) {
             String r1Name = p.get("revisor1");
             ReviewerInfo r1 = reviewers.getOrDefault(r1Name, new ReviewerInfo(r1Name, 0, null));
             r1.addProposal(p);
@@ -139,5 +139,13 @@ public class TFEManager {
      */
     public void sendToDirectors() {
 
+    }
+
+    /** Se generan los arhichivos y comentrios de calificación,
+     * y el archivo zip para subir a sakai
+     */
+    public void generateGradings() throws Exception {
+        HashMap<String, ProposalInfo> proposals = excelManager.readProposalsInfo();
+        filesManager.copyReviewsToProposals();
     }
 }

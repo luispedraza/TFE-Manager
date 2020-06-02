@@ -116,12 +116,12 @@ public class ExcelManager {
      * Lee la información que contiene la lista maestra sobre las propuestas
      * @return
      */
-    public ArrayList<ProposalInfo> readProposalsInfo() throws Exception {
-        ArrayList<ProposalInfo> proposals = new ArrayList<>();
+    public HashMap<String, ProposalInfo> readProposalsInfo() throws Exception {
+        HashMap<String, ProposalInfo> proposals = new HashMap<>();
 
         ArrayList<HashMap<String, String>> tableData = readTable(PROPOSALS_SHEET, PROPOSALS_TABLE_NAME);
         for (HashMap<String, String> p : tableData) {
-            proposals.add(new ProposalInfo(p));
+            proposals.put(p.get("apellido") + ", " + p.get("nombre"), new ProposalInfo(p));
         }
 
         return proposals;

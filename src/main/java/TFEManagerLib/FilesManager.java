@@ -23,7 +23,9 @@ import java.util.Objects;
 
 public class FilesManager {
     private final String PROPOSALS_FOLDER = "Formulario";   // Directorio del WS que contiene las propuestas
-    private final String ATTACHMENTS_FOLDER = "Adjuntos del envio"; // Directorio que contiene adjuntos de una entrega
+    private final String ATTACHMENTS_FOLDER = "Adjuntos del envio";     // Directorio que contiene adjuntos de una entrega
+    private final String FEEDBACK_FOLDER = "Adjuntos al comentario";    // Directorio que contiene archivos devueltos en la corrección
+    private final String FEEDBACK_FILE = "comments.txt";        // Nombre del archivo que contiene los comentarios 
     private final String REVIEWS_FOLDER = "Revisores";      // Directorio del WS que contiene los paquetes de revisión
     private final String DOCS_FOLDER = "Docs";              // Directorio del WS que contiene la documentación
     private final String GUIDE_FILE = "Guia-TFM.pdf";
@@ -34,16 +36,23 @@ public class FilesManager {
 
     private String getDocsPath() {
         return Paths.get(this.wd, this.DOCS_FOLDER).toString();
-    };
+    }
+
+    ;
+
     private String getReviewsPath() {
         return Paths.get(this.wd, this.REVIEWS_FOLDER).toString();
-    };
+    }
+
+    ;
+
     private String getProposalsPath() {
         return Paths.get(this.wd, PROPOSALS_FOLDER).toString();
     }
 
     /**
      * Utilidad para encontrar la extensión de un archivo
+     *
      * @param filePath
      * @return
      */
@@ -66,7 +75,8 @@ public class FilesManager {
         }
     }
 
-    /** Función de utilidad para comprimir información
+    /**
+     * Función de utilidad para comprimir información
      *
      * @param origin
      * @param destination
@@ -83,6 +93,13 @@ public class FilesManager {
 
     }
 
+    /**
+     * Carga del disco la información de las propuestas, leyendo los formularios en pdf
+     *
+     * @param proposalsPath: Ruta donde se encuentran las carpetas con las propuestas
+     * @throws IOException
+     * @return: Listado de informaciones de propuestas
+     */
     public ArrayList<ProposalInfo> loadProposals(String proposalsPath) throws IOException {
         ArrayList<ProposalInfo> proposals = new ArrayList<ProposalInfo>();
         File dir = new File(proposalsPath);
@@ -129,11 +146,13 @@ public class FilesManager {
     }
 
     private void copyFile(String origin, String destiny) throws IOException {
+        // TODO: Eliminar esta función que tal vez no es necesaria
         FileUtils.copyFile(new File(origin), new File(destiny));
     }
 
     /**
      * Esta función guarda en el disco los paquetes de revisión, llegando a generar el zip
+     *
      * @param reviewers: son los revisores
      * @throws IOException
      */
@@ -171,7 +190,7 @@ public class FilesManager {
                     for (File f : Objects.requireNonNull(new File(proposalOrigin, ATTACHMENTS_FOLDER).listFiles((dir, name) -> name.endsWith(".pdf")))) {
                         System.out.println(f.toString());
                         // Copiamos y renombramos la ropuesta
-                        String proposalFormPath = Paths.get(pPath, proposalFolderName+".pdf").toString();
+                        String proposalFormPath = Paths.get(pPath, proposalFolderName + ".pdf").toString();
                         copyFile(f.toString(), proposalFormPath);
                         // Copiamos el formulario de revisión
                         String reviewFormName = String.format("Review_%d.pdf", reviewerIndex);
@@ -189,12 +208,15 @@ public class FilesManager {
             }
 
             // Finalmente comprimimos el paquete del revisor
-            zipFolder(rPath, Paths.get(reviewsPath, r.getName()+".zip").toString());
+            zipFolder(rPath, Paths.get(reviewsPath, r.getName() + ".zip").toString());
         }
     }
 
 
-    /** Obtiene todos los paquetes de revisión
+    /**
+     * Obtiene todos los paquetes de revisión
+     *
+     * @return: list de archivos zip con las revisiones de cada revisor
      */
     public ArrayList<File> loadReviewPacks() {
         ArrayList result = new ArrayList<File>();
@@ -207,13 +229,13 @@ public class FilesManager {
     }
 
 
-
     /**
      * Lee del disco los resultados de las revisiones
+     *
      * @return Un mapeado entre el nombre de cada alumno y los resultados de las dos revisiones.
      */
     public HashMap<String, ArrayList<ReviewInfo>> loadReviewsResults() {
-        HashMap<String, ArrayList<ReviewInfo>> reviews =  new HashMap<>();
+        HashMap<String, ArrayList<ReviewInfo>> reviews = new HashMap<>();
         File reviewsFolder = new File(getReviewsPath());    // la carpeta donde están las revisiones (wb/Revisores)
 
         for (File reviewer : Objects.requireNonNull(reviewsFolder.listFiles((dir, name) -> new File(dir, name).isDirectory()))) {
@@ -234,4 +256,29 @@ public class FilesManager {
         }
         return reviews;
     }
+
+    /**
+     * Copia las revisiones de las carpetas de propuestas para poder enviar a los alumnos
+     */
+    public void copyReviewsToProposals() throws IOException {
+        File reviewsFolder = new File(getReviewsPath());    // la carpeta donde están las revisiones (wb/Revisores)
+        File proposalsFolder = new File(getProposalsPath());    // la carpeta donde están las revisiones (wb/Formulario)
+
+        for (File reviewer : Objects.requireNonNull(reviewsFolder.listFiles((dir, name) -> new File(dir, name).isDirectory()))) {
+            System.out.println("Buscando revisiones en: " + reviewer);
+            for (File proposal : Objects.requireNonNull(reviewer.listFiles((dir, name) -> new File(dir, name).isDirectory()))) {
+                System.out.println(proposal);
+                String proposalName = proposal.getName();
+                // Ahora estamos en la carpeta de revisión de un alumno. Buscamos el pdf con su revisión
+                for (File pdfFile : Objects.requireNonNull(proposal.listFiles((dir, name) -> name.endsWith(".pdf") && name.startsWith("Review")))) {
+                    for (File destiny : Objects.requireNonNull(proposalsFolder.listFiles((dir, name) -> name.startsWith(proposalName)))){
+                        String feedbackFolder = Paths.get(destiny.toString(), FEEDBACK_FOLDER).toString();
+                        makeDir(feedbackFolder);
+                        FileUtils.copyFileToDirectory(new File(pdfFile.toString()), new File(feedbackFolder));
+                    }
+                }
+            }
+        }
+    }
+
 }

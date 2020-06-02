@@ -25,7 +25,6 @@ public class MainWindow extends JDialog {
     private JButton createReviews;
     private JButton sendReviews;
     private JButton loadReviewsResults;
-    private JButton generateVerdict;
     private JButton generateGradings;
     private JButton loadProgress;
 
@@ -98,12 +97,6 @@ public class MainWindow extends JDialog {
                 loadReviewsResults();
             }
         });
-        generateVerdict.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                generateVerdict();
-            }
-        });
         generateGradings.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -138,7 +131,6 @@ public class MainWindow extends JDialog {
             String filePath = fc.getSelectedFile().getAbsolutePath();
             logInfo("Descromprimiendo el archivo de propuestas: " + filePath);
             manager.unzipProposals(filePath, MainWindow.WORKING_DIRECTORY);
-
         }
     }
 
@@ -154,6 +146,7 @@ public class MainWindow extends JDialog {
             try {
                 manager.loadProposalsFromDisc(proposalsPath);
             } catch (IOException e) {
+                logInfo(e.toString());
                 e.printStackTrace();
             }
 
@@ -168,6 +161,7 @@ public class MainWindow extends JDialog {
             manager.saveProposalsToExcel(null);
         } catch (IOException e) {
             logInfo(e.toString());
+            e.printStackTrace();
         }
     }
 
@@ -192,8 +186,9 @@ public class MainWindow extends JDialog {
         try {
             manager.sendReviews();
         } catch (Exception e){
-            e.printStackTrace();
             logInfo(e.toString());
+            e.printStackTrace();
+
         }
     }
 
@@ -207,21 +202,21 @@ public class MainWindow extends JDialog {
             manager.loadReviewsResults();
         } catch (IOException e) {
             logInfo(e.toString());
+            e.printStackTrace();
         }
     }
 
     /**
-     * Generación de los veredictos y guardado en la lista maestra
-     */
-    private void generateVerdict() {
-
-    }
-
-    /**
-     * Generación de la resolución en la lista maestra
+     * Generación de la resolución a partir de la lista maestra
+     * Se genera la estructura de archivos y el zip ara subir a Sakai
      */
     private void generateGradings() {
-
+        try {
+            manager.generateGradings();
+        } catch (Exception e) {
+            logInfo(e.toString());
+            e.printStackTrace();
+        }
     }
 
     /**

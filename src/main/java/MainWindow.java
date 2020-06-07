@@ -21,7 +21,6 @@ public class MainWindow extends JDialog {
     private JButton unzipProposals;
     private JButton loadProposals;
     private JTextArea logTextArea;
-    private JButton saveProposals;
     private JButton createReviews;
     private JButton sendReviews;
     private JButton loadReviewsResults;
@@ -71,12 +70,6 @@ public class MainWindow extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 loadProposals();
-            }
-        });
-        saveProposals.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                saveProposals();
             }
         });
         createReviews.addActionListener(new ActionListener() {
@@ -145,23 +138,12 @@ public class MainWindow extends JDialog {
             logInfo("Cargando las propuestas contenidas en : " + proposalsPath);
             try {
                 manager.loadProposalsFromDisc(proposalsPath);
+                manager.saveProposalsToExcel(null);
             } catch (IOException e) {
                 logInfo(e.toString());
                 e.printStackTrace();
             }
 
-        }
-    }
-
-    /** Se guarda la información de las propuestas
-     *
-     */
-    private void saveProposals() {
-        try {
-            manager.saveProposalsToExcel(null);
-        } catch (IOException e) {
-            logInfo(e.toString());
-            e.printStackTrace();
         }
     }
 

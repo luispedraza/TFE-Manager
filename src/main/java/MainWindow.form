@@ -1,32 +1,126 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="MainWindow">
-  <grid id="cbd77" binding="contentPane" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="cbd77" binding="contentPane" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="10" left="10" bottom="10" right="10"/>
     <constraints>
-      <xy x="48" y="54" width="494" height="619"/>
+      <xy x="48" y="54" width="1326" height="695"/>
     </constraints>
     <properties>
       <background color="-14466798"/>
     </properties>
     <border type="none"/>
     <children>
-      <grid id="94766" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="94766" binding="buttonsPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <maximum-size width="500" height="-1"/>
+          </grid>
         </constraints>
         <properties/>
         <border type="none"/>
         <children>
-          <hspacer id="98af6">
+          <grid id="e3588" layout-manager="GridLayoutManager" row-count="8" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
-          </hspacer>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="90ed4" class="javax.swing.JButton" binding="unzipProposals">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-15449791"/>
+                  <text value="DESCOMPRIMIR PROPUESTAS"/>
+                  <toolTipText value="Descomprime un archivo zip con información de propuestas en el directorio de trabajo seleccionado "/>
+                </properties>
+              </component>
+              <component id="115c2" class="javax.swing.JButton" binding="loadProposals">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-15449791"/>
+                  <text value="CARGAR INFORMACIÓN DE PROPUESTAS"/>
+                  <toolTipText value="Lee la inforamción de las propuestas contenidas en la carpeta seleccionada y la guarda en memoria"/>
+                </properties>
+              </component>
+              <scrollpane id="2274c">
+                <constraints>
+                  <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                    <minimum-size width="500" height="300"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <autoscrolls value="false"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <component id="f5d9b" class="javax.swing.JTextArea" binding="logTextArea">
+                    <constraints/>
+                    <properties>
+                      <editable value="false"/>
+                      <lineWrap value="true"/>
+                    </properties>
+                  </component>
+                </children>
+              </scrollpane>
+              <component id="52733" class="javax.swing.JButton" binding="createReviews">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-15449791"/>
+                  <text value="CREAR PAQUETES DE REVISIÓN"/>
+                  <toolTipText value="Lee la lista maestra y genera paquetes de revisión según la asignación realizada"/>
+                </properties>
+              </component>
+              <component id="a8da" class="javax.swing.JButton" binding="sendReviews">
+                <constraints>
+                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-15449791"/>
+                  <text value="ENVIAR PAQUETES DE REVISIÓN"/>
+                  <toolTipText value="Toma los paquetes de revisiones y los envia a sus revisores"/>
+                </properties>
+              </component>
+              <component id="35969" class="javax.swing.JButton" binding="loadReviewsResults">
+                <constraints>
+                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="CARGAR RESULTADOS DE REVISIÓN"/>
+                  <toolTipText value="Lee del disco los resultados de la revisión y los almacena en memoria"/>
+                </properties>
+              </component>
+              <component id="4a468" class="javax.swing.JButton" binding="generateGradings">
+                <constraints>
+                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="GENERAR CALIFICACIONES PARA SUBIR A SAKAI"/>
+                  <toolTipText value="A partir de la lista maestra se generan las calificaciones que se pueden subir a Sakai"/>
+                </properties>
+              </component>
+              <component id="3e89a" class="javax.swing.JButton" binding="loadProgress">
+                <constraints>
+                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="CARGAR INFORMACIÓN DE PROGRESO DE REVISIÓN"/>
+                  <toolTipText value="Se carga información de calificaciones de una entrega para actualizar el seguimiento sobre la lista maestra"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
           <grid id="9538f" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="true" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
             <border type="none"/>
@@ -51,98 +145,63 @@
           </grid>
         </children>
       </grid>
-      <grid id="e3588" layout-manager="GridLayoutManager" row-count="8" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="2b77b" binding="studentsPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <minimum-size width="200" height="-1"/>
+          </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <background color="-12511463"/>
+        </properties>
         <border type="none"/>
         <children>
-          <component id="90ed4" class="javax.swing.JButton" binding="unzipProposals">
+          <component id="de3b9" class="javax.swing.JTree" binding="studentsTree" custom-create="true">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties>
-              <background color="-15449791"/>
-              <text value="DESCOMPRIMIR PROPUESTAS"/>
-              <toolTipText value="Descomprime un archivo zip con información de propuestas en el directorio de trabajo seleccionado "/>
-            </properties>
+            <properties/>
           </component>
-          <component id="115c2" class="javax.swing.JButton" binding="loadProposals">
+        </children>
+      </grid>
+      <grid id="e7ee2" binding="reviewersPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <minimum-size width="200" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <background color="-15056616"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <component id="981b6" class="javax.swing.JTree" binding="reviewersTree" custom-create="true">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties>
-              <background color="-15449791"/>
-              <text value="CARGAR INFORMACIÓN DE PROPUESTAS"/>
-              <toolTipText value="Lee la inforamción de las propuestas contenidas en la carpeta seleccionada y la guarda en memoria"/>
-            </properties>
+            <properties/>
           </component>
-          <scrollpane id="2274c">
+        </children>
+      </grid>
+      <grid id="2747" binding="directorsPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <minimum-size width="200" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <background color="-15003071"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <component id="abdff" class="javax.swing.JTree" binding="directorsTree" custom-create="true">
             <constraints>
-              <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties>
-              <autoscrolls value="false"/>
-            </properties>
-            <border type="none"/>
-            <children>
-              <component id="f5d9b" class="javax.swing.JTextArea" binding="logTextArea">
-                <constraints/>
-                <properties>
-                  <editable value="false"/>
-                  <lineWrap value="true"/>
-                </properties>
-              </component>
-            </children>
-          </scrollpane>
-          <component id="52733" class="javax.swing.JButton" binding="createReviews">
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <background color="-15449791"/>
-              <text value="CREAR PAQUETES DE REVISIÓN"/>
-              <toolTipText value="Lee la lista maestra y genera paquetes de revisión según la asignación realizada"/>
-            </properties>
-          </component>
-          <component id="a8da" class="javax.swing.JButton" binding="sendReviews">
-            <constraints>
-              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <background color="-15449791"/>
-              <text value="ENVIAR PAQUETES DE REVISIÓN"/>
-              <toolTipText value="Toma los paquetes de revisiones y los envia a sus revisores"/>
-            </properties>
-          </component>
-          <component id="35969" class="javax.swing.JButton" binding="loadReviewsResults">
-            <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="CARGAR RESULTADOS DE REVISIÓN"/>
-              <toolTipText value="Lee del disco los resultados de la revisión y los almacena en memoria"/>
-            </properties>
-          </component>
-          <component id="4a468" class="javax.swing.JButton" binding="generateGradings">
-            <constraints>
-              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="GENERAR CALIFICACIONES PARA SUBIR A SAKAI"/>
-              <toolTipText value="A partir de la lista maestra se generan las calificaciones que se pueden subir a Sakai"/>
-            </properties>
-          </component>
-          <component id="3e89a" class="javax.swing.JButton" binding="loadProgress">
-            <constraints>
-              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="CARGAR INFORMACIÓN DE PROGRESO DE REVISIÓN"/>
-              <toolTipText value="Se carga información de calificaciones de una entrega para actualizar el seguimiento sobre la lista maestra"/>
-            </properties>
+            <properties/>
           </component>
         </children>
       </grid>

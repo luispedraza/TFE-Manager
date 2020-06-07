@@ -1,9 +1,12 @@
 import TFEManagerLib.MailManager;
+import TFEManagerLib.ProposalInfo;
 import TFEManagerLib.TFEManager;
 
 import javax.mail.MessagingException;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +29,13 @@ public class MainWindow extends JDialog {
     private JButton loadReviewsResults;
     private JButton generateGradings;
     private JButton loadProgress;
+    private JPanel studentsPanel;
+    private JTree studentsTree;
+    private JPanel reviewersPanel;
+    private JTree reviewersTree;
+    private JPanel directorsPanel;
+    private JTree directorsTree;
+    private JPanel buttonsPanel;
 
     public MainWindow() {
         manager = new TFEManager(MainWindow.WORKING_DIRECTORY);
@@ -105,6 +115,20 @@ public class MainWindow extends JDialog {
     }
 
 
+    private void updateStudentsTree(ArrayList<ProposalInfo> proposals) {
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) studentsTree.getModel().getRoot();
+        DefaultMutableTreeNode child = null;
+        for (ProposalInfo p : proposals) {
+            child = new DefaultMutableTreeNode(p);
+            root.add(child);
+        }
+        for (int i = 0; i < studentsTree.getRowCount(); i++) {
+            studentsTree.expandRow(i);
+        }
+        ((DefaultTreeModel) studentsTree.getModel()).nodeChanged(root);
+
+
+    }
 
     private void onOK() {
         // add your code here
@@ -137,8 +161,10 @@ public class MainWindow extends JDialog {
             String proposalsPath = chooser.getSelectedFile().getAbsolutePath();
             logInfo("Cargando las propuestas contenidas en : " + proposalsPath);
             try {
-                manager.loadProposalsFromDisc(proposalsPath);
+                ArrayList<ProposalInfo> proposals = manager.loadProposalsFromDisc(proposalsPath);
                 manager.saveProposalsToExcel(null);
+                updateStudentsTree(proposals);
+
             } catch (IOException e) {
                 logInfo(e.toString());
                 e.printStackTrace();
@@ -220,5 +246,14 @@ public class MainWindow extends JDialog {
         dialog.pack();
         dialog.setVisible(true);
         System.exit(0);
+    }
+
+    /** Creación personalizada de componentes de interfaz
+     *
+     */
+    private void createUIComponents() {
+        studentsTree = new JTree(new DefaultMutableTreeNode("Alumnos"));
+        reviewersTree = new JTree(new DefaultMutableTreeNode("Revisores"));
+        directorsTree = new JTree(new DefaultMutableTreeNode("Directores"));
     }
 }

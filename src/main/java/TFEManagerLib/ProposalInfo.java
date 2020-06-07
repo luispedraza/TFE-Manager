@@ -27,7 +27,11 @@ public class ProposalInfo extends HashMap<String, String> {
         super(p);
     }
 
-    public String toString(){
+
+    public String toString() {
+        return this.getFolderName();
+    }
+    public String toStringFull(){
         String info = "PROPUESTA DEL ALUMNO: " +
                 this.get("apellido") +
                 ", " +

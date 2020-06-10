@@ -6,17 +6,21 @@ import java.util.HashMap;
 
 public class ProposalInfo extends HashMap<String, String> {
     public static final ArrayList<String> FIELDS = new ArrayList<String>(
-            Arrays.asList("ID",
-                    "apellido",
-                    "nombre",
-                    "pais",
-                    "titulo",
-                    "tipo",
-                    "revisor1",
-                    "revisor2",
-                    "veredicto1",
-                    "veredicto2",
-                    "veredictoglobal")
+            Arrays.asList(
+                    "APELLIDOS",
+                    "NOMBRE",
+                    "PAIS",
+                    "ENTREGADO",
+                    "TIPO",
+                    "LINEAS",
+                    "TITULO",
+                    "KEYWORDS",
+                    "REVISOR1",
+                    "REVISOR2",
+                    "VEREDICTO1",
+                    "VEREDICTO2",
+                    "OK"
+            )
     );
 
     /** Para inicializar el objeto a partir de un HashMap según se leen del excel
@@ -25,8 +29,49 @@ public class ProposalInfo extends HashMap<String, String> {
      */
     public ProposalInfo(HashMap<String, String> p) {
         super(p);
+        this.put("ENTREGADO", "NO");
     }
 
+    public String getValue(String key) {
+        switch (key) {
+            case "APELLIDOS":
+                return this.getSurname();
+            case "NOMBRE":
+                return this.getName();
+            case "PAIS":
+                return this.getCountry();
+            case "TIPO":
+                return this.getType();
+            case "TITULO":
+                return this.getTitle();
+        }
+        return " ";
+    }
+
+    public String getSurname() {
+        return this.get("apellido");
+    }
+
+    public String getName() {
+        return this.get("nombre");
+    }
+
+    public String getCountry() {
+        return this.get("pais");
+    }
+
+    public String getTitle() {
+        return this.get("titulo");
+    }
+
+    public String getType() {
+        return this.get("tipo");
+    }
+
+    public String getReviever(int index) {
+        String[] rev = {"revisor1", "revisor2"};
+        return this.get(rev[index-1]);
+    }
 
     public String toString() {
         return this.getFolderName();

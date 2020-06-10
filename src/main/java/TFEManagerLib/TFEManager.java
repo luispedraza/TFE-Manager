@@ -149,4 +149,10 @@ public class TFEManager {
         HashMap<String, ProposalInfo> proposals = excelManager.readProposalsInfo();
         filesManager.copyReviewsToProposals();
     }
+
+    public void assignReviewers() throws Exception {
+        excelManager.readProposalsInfo();
+        excelManager.readReviewersInfo();
+
+    }
 }

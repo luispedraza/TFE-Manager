@@ -20,8 +20,8 @@ import java.util.*;
  */
 public class ExcelManager {
     private static final String DEFAULT_EXCEL_NAME = "lista_maestra.xlsx";
-    private static final String PROPOSALS_SHEET = "PROPUESTAS";
-    private static final String PROPOSALS_TABLE_NAME = "PROPUESTAS";
+    private static final String PROPOSALS_SHEET = "ALUMNOS";
+    private static final String PROPOSALS_TABLE_NAME = "ALUMNOS";
     private Path filePath;  // La ruta de la lista maestra con la que trabajamos
     private static final ArrayList<String> PROPOSALS_HEADERS = ProposalInfo.FIELDS;
     private static final String REVIEWERS_SHEET = "REVISORES";
@@ -137,17 +137,29 @@ public class ExcelManager {
         XSSFSheet sheet = getSheet(wb, PROPOSALS_SHEET);
 
         XSSFTable table = getTable(sheet, PROPOSALS_TABLE_NAME);
+        XSSFRow row = null;
+        XSSFCell cell = null;
+
         if (table == null) {
+            row = sheet.createRow(0);
+            int j = 0;
+            for (String header : PROPOSALS_HEADERS) {
+                cell = row.createCell(j++);
+                cell.setCellValue(header);
+            }
+
+
             // Set which area the table should be placed in
             AreaReference reference = wb.getCreationHelper().createAreaReference(
                 new CellReference(0, 0), new CellReference(info.size(), PROPOSALS_HEADERS.size()-1));
             table = sheet.createTable(reference);
             table.setName(PROPOSALS_TABLE_NAME);
-            table.setDisplayName("Propuestas");
+            table.setDisplayName(PROPOSALS_TABLE_NAME);
+            /*
              // For now, create the initial style in a low-level way
             table.getCTTable().addNewTableStyleInfo();
             table.getCTTable().getTableStyleInfo().setName("TableStyleMedium2");
-
+            */
             /*
             // Style the table
             XSSFTableStyleInfo style = (XSSFTableStyleInfo) table.getStyle();
@@ -161,29 +173,23 @@ public class ExcelManager {
              */
         }
 
+        // Buscamos las cabeceras, por si hubieran cambiado las columnas de orden
+        int startRow = table.getStartRowIndex();
+        row = sheet.getRow(startRow);
+        ArrayList<String> headers = new ArrayList<>();
+        for (Cell c : row) {
+            headers.add(c.getStringCellValue());
+        }
         // Set the values for the table
-        XSSFRow row;
-        XSSFCell cell;
-        int i = 0;
         int j = 0;
-        for (i = 0; i < info.size(); i++) {
+        for (int i = startRow+1; i < info.size(); i++) {
             ProposalInfo proposal = info.get(i);
-
-            if (i==0) {
-                // Cabecera de la tabla
-                row = sheet.createRow(i);
-                j = 0;
-                for (String header : PROPOSALS_HEADERS) {
-                    cell = row.createCell(j++);
-                    cell.setCellValue(header);
-                }
-            }
-            j = 0;
-            row = sheet.createRow(i+1);
+            row = sheet.createRow(i);
             //for (Map.Entry<String, String> entry : proposal.entrySet()) {
-            for (String header : PROPOSALS_HEADERS) {
+            j = 0;
+            for (String header : headers) {
                 cell = row.createCell(j++);
-                cell.setCellValue(proposal.get(header));
+                cell.setCellValue(proposal.getValue(header));
             }
 
         }

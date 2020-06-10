@@ -36,6 +36,7 @@ public class MainWindow extends JDialog {
     private JPanel directorsPanel;
     private JTree directorsTree;
     private JPanel buttonsPanel;
+    private JButton assignReviewers;
 
     public MainWindow() {
         manager = new TFEManager(MainWindow.WORKING_DIRECTORY);
@@ -82,6 +83,12 @@ public class MainWindow extends JDialog {
                 loadProposals();
             }
         });
+        assignReviewers.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                assignReviewers();
+            }
+        });
         createReviews.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -113,6 +120,7 @@ public class MainWindow extends JDialog {
             }
         });
     }
+
 
 
     private void updateStudentsTree(ArrayList<ProposalInfo> proposals) {
@@ -172,6 +180,20 @@ public class MainWindow extends JDialog {
 
         }
     }
+
+    /** Asignación automática de revisores a las propuestas
+     *
+     */
+    private void assignReviewers() {
+        try {
+            manager.assignReviewers();
+        } catch (Exception e) {
+            logInfo(e.toString());
+            e.printStackTrace();
+        }
+
+    }
+
 
     /**
      * Generación de paquetes para los revisores

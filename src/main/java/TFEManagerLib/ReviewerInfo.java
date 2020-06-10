@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class ReviewerInfo extends HashMap<String, String> {
     private ArrayList<ProposalInfo> proposals;
     public static final ArrayList<String> FIELDS = new ArrayList<String>(
-            Arrays.asList("ID",
+            Arrays.asList(
                     "NOMBRE",
                     "E-MAIL",
                     "MAXIMO")

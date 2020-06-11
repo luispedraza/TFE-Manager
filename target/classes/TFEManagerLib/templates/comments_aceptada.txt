@@ -1,5 +1,0 @@
-VEREDICTO: Aceptada.
-
-Tras revisar la propuesta y los comentarios de los revisores, observamos que se ajusta adecuadamente y la propuesta queda aceptada en su estado actual. Aun así, se recomienda seguir las indicaciones y consejos de los revisores durante el desarrollo del trabajo.
-
-Puede ir comenzando el trabajo hasta la incorporación de su director en las próximas semanas.

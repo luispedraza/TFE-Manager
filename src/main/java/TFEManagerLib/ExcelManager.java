@@ -3,9 +3,7 @@ package TFEManagerLib;
 
 
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.*;
@@ -30,6 +28,8 @@ public class ExcelManager {
     private static final String DIRECTOR_SHEET = "DIRECTORES";
     private static final String DIRECTOR_TABLE_NAME = "DIRECTORES";
     private static final ArrayList<String> DIRECTOR_HEADERS = DirectorInfo.FIELDS;
+    private static final String PROGRESS_SHEET = "PROGRESO";
+    private static final String PROGRESS_TABLE_NAME = "PROGRESO";
 
     /** Carga el archivo de configuraciónd de una lista maestra
      * del archivo de configuración en formato json
@@ -331,5 +331,73 @@ public class ExcelManager {
             result.put(r.get("NOMBRE"), new ReviewerInfo(r));
         }
         return result;
+    }
+
+    /** lee la información de calificaciones de un borrador
+     *
+     */
+    public HashMap<String, Submission> readGradesFromPlatform(String path) throws IOException {
+        Workbook wb = WorkbookFactory.create(new File(path));
+        Sheet sheet = wb.getSheetAt(0);
+
+        HashMap<String, Submission> result = new HashMap<>();
+        ArrayList<String> headers = new ArrayList<>();
+
+        System.out.println(sheet);
+        int i = -1;
+        for (Row row : sheet) {
+            i++;
+            if (i == 0) {
+                // Leemos los encabezados
+                for (Cell cell : row) {
+                    headers.add(cell.getStringCellValue());
+                }
+                continue;
+            }
+            int j = 0;
+            HashMap<String, String> item = new HashMap<>();
+            for (Cell cell : row) {
+                item.put(headers.get(j), cell.getStringCellValue());
+                j++;
+            }
+            Submission submission = new Submission(item);
+            result.put(submission.getId(), submission);
+        }
+        return result;
+    }
+
+    /** Guarda en la lista maestra la información de progreso de revisión
+     *  @param progress : información del progreso de revisión
+     * @param type : BORRADOR1, BORRADOR2, BORRADOR3
+     */
+    public void saveGradingsProgress(HashMap<String, Submission> progress, String type) throws IOException {
+        XSSFWorkbook wb = getWorkbook();
+        XSSFSheet sheet = getSheet(wb, PROGRESS_SHEET);
+        XSSFTable table = getTable(sheet, PROGRESS_TABLE_NAME);
+
+        int ID_COLUMN = 0;
+        int SUBMISSION_COLUMN = 0;
+        switch (type) {
+            case "BORRADOR1":
+                SUBMISSION_COLUMN = 5;
+                break;
+            case "BORRADOR2":
+                SUBMISSION_COLUMN = 6;
+                break;
+            case "BORRADOR3":
+                SUBMISSION_COLUMN = 7;
+        }
+
+        int firstRow = table.getStartRowIndex();
+        int endRow = table.getEndRowIndex();
+
+        for (int i = firstRow+1; i< endRow; i++) {
+            XSSFRow row = sheet.getRow(i);
+            Submission submission = progress.get(row.getCell(ID_COLUMN).getStringCellValue());
+            if (submission != null) {
+                row.getCell(SUBMISSION_COLUMN).setCellValue(submission.getStatusCode());
+            }
+        }
+        saveWorkbook(wb);
     }
 }

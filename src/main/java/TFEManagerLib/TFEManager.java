@@ -1,9 +1,7 @@
 package TFEManagerLib;
 
-import freemarker.template.TemplateException;
 import org.apache.commons.io.FilenameUtils;
 
-import javax.mail.MessagingException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -142,7 +140,7 @@ public class TFEManager {
 
     }
 
-    /** Se generan los arhichivos y comentrios de calificación,
+    /** Se generan los arhichivos y comentrios de calificación de la propuesta
      * y el archivo zip para subir a sakai
      */
     public void generateGradings() throws Exception {
@@ -154,5 +152,16 @@ public class TFEManager {
         excelManager.readProposalsInfo();
         excelManager.readReviewersInfo();
 
+    }
+
+    /**
+     * Carga la información de progreso de revisión
+     * @param path: ruta del excel de calificaciones
+     * @param type: tipo de calificación: BORRADOR1, BORRADOR2, BORRADOR2
+     */
+    public void loadProgress(String path, String type) throws IOException {
+        HashMap<String, Submission> progress = excelManager.readGradesFromPlatform(path);
+        System.out.println(progress);
+        excelManager.saveGradingsProgress(progress, type);
     }
 }

@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
@@ -253,7 +254,32 @@ public class MainWindow extends JDialog {
      * Carga de la información de progreso de revisión para una entrega
      */
     private void loadProgress() {
+        try {
 
+
+            ProgressTypeChooser typeChooser = new ProgressTypeChooser();
+            typeChooser.setSize(new Dimension(400,300));
+            typeChooser.setAlwaysOnTop(true);
+            typeChooser.setResizable(false);
+            typeChooser.setVisible(true);
+            String type = typeChooser.getOption();
+
+            // SOLICITAMOS EL ARCHIVO
+            String pathExcelFile = null;
+            final JFileChooser fc = new JFileChooser(MainWindow.WORKING_DIRECTORY);
+            fc.setFileFilter(new FileNameExtensionFilter("Elija el archivo Excel de calificaciones", "xls"));
+            int returnVal = fc.showOpenDialog(this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                pathExcelFile = fc.getSelectedFile().getAbsolutePath();
+            }
+            if (pathExcelFile!=null) {
+                manager.loadProgress(pathExcelFile, type);
+            }
+
+        } catch (Exception e) {
+            logInfo(e.toString());
+            e.printStackTrace();
+        }
     }
 
 

@@ -64,12 +64,12 @@ public class TFEManager {
         HashMap<String, ProposalInfo> proposals = excelManager.readProposalsInfo();
 
         for (ProposalInfo p : proposals.values()) {
-            String r1Name = p.get("revisor1");
+            String r1Name = p.getReviever(0);
             ReviewerInfo r1 = reviewers.getOrDefault(r1Name, new ReviewerInfo(r1Name, 0, null));
             r1.addProposal(p);
             reviewers.put(r1Name, r1);
 
-            String r2Name = p.get("revisor2");
+            String r2Name = p.getReviever(1);
             ReviewerInfo r2 = reviewers.getOrDefault(r2Name, new ReviewerInfo(r2Name, 0, null));
             r2.addProposal(p);
             reviewers.put(r2Name, r2);

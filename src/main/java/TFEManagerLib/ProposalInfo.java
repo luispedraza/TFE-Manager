@@ -91,7 +91,7 @@ public class ProposalInfo extends HashMap<String, String> {
 
     public String getReviever(int index) {
         String[] rev = {REV1_KEY, REV2_KEY};
-        return this.get(rev[index-1]);
+        return this.get(rev[index]);
     }
 
     /**

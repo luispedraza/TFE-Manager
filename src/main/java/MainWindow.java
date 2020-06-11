@@ -1,19 +1,14 @@
-import TFEManagerLib.MailManager;
 import TFEManagerLib.ProposalInfo;
 import TFEManagerLib.TFEManager;
 
-import javax.mail.MessagingException;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 // Noa sobre manifest: https://stackoverflow.com/questions/20952713/wrong-manifest-mf-in-intellij-idea-created-jar
 
 public class MainWindow extends JDialog {
@@ -168,13 +163,13 @@ public class MainWindow extends JDialog {
         chooser.setAcceptAllFileFilterUsed(false);
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             String proposalsPath = chooser.getSelectedFile().getAbsolutePath();
-            logInfo("Cargando las propuestas contenidas en : " + proposalsPath);
+            logInfo("Cargando propuestas desde : " + proposalsPath);
             try {
                 ArrayList<ProposalInfo> proposals = manager.loadProposalsFromDisc(proposalsPath);
                 manager.saveProposalsToExcel(null);
                 updateStudentsTree(proposals);
 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 logInfo(e.toString());
                 e.printStackTrace();
             }
@@ -201,7 +196,7 @@ public class MainWindow extends JDialog {
      */
     private void createReviews() {
         try {
-            manager.createReviews();
+            manager.createReviewPacks();
         } catch (Exception e) {
             logInfo(e.toString());
             e.printStackTrace();
@@ -231,7 +226,7 @@ public class MainWindow extends JDialog {
     private void loadReviewsResults() {
         try {
             manager.loadReviewsResults();
-        } catch (IOException e) {
+        } catch (Exception e) {
             logInfo(e.toString());
             e.printStackTrace();
         }

@@ -48,14 +48,18 @@ public class TFEManager {
         return this.proposals;
     }
 
-    public void saveProposalsToExcel(Path excelFile) throws IOException {
+    public void saveProposalsToExcel(Path excelFile) throws Exception {
         // La guardamos en el archivo excel
         if (this.proposals != null) {
             excelManager.saveProposalsInfo(proposals);
         }
     }
 
-    public void createReviews() throws Exception {
+    /**
+     * Creación de los paquetes para enviar a los revisores
+     * @throws Exception
+     */
+    public void createReviewPacks() throws Exception {
         HashMap<String, ReviewerInfo> reviewers = new HashMap<>();
         HashMap<String, ProposalInfo> proposals = excelManager.readProposalsInfo();
 
@@ -81,7 +85,7 @@ public class TFEManager {
     /**
      * Carga del disco los resultados de las revisiones y los guarda en la lista maestra
      */
-    public void loadReviewsResults() throws IOException {
+    public void loadReviewsResults() throws Exception {
         HashMap<String, ArrayList<ReviewInfo>> reviews = filesManager.loadReviewsResults();
 
         System.out.println(reviews);
@@ -159,7 +163,7 @@ public class TFEManager {
      * @param path: ruta del excel de calificaciones
      * @param type: tipo de calificación: BORRADOR1, BORRADOR2, BORRADOR2
      */
-    public void loadProgress(String path, String type) throws IOException {
+    public void loadProgress(String path, String type) throws Exception {
         HashMap<String, Submission> progress = excelManager.readGradesFromPlatform(path);
         System.out.println(progress);
         excelManager.saveGradingsProgress(progress, type);

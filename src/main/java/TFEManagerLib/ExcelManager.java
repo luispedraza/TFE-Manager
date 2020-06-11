@@ -18,8 +18,8 @@ import java.util.*;
  */
 public class ExcelManager {
     private static final String DEFAULT_EXCEL_NAME = "lista_maestra.xlsx";
-    private static final String PROPOSALS_SHEET = "ALUMNOS";
-    private static final String PROPOSALS_TABLE_NAME = "ALUMNOS";
+    private static final String STUDENTS_SHEET = "ALUMNOS";
+    private static final String STUDENTS_TABLE_NAME = "ALUMNOS";
     private Path filePath;  // La ruta de la lista maestra con la que trabajamos
     private static final ArrayList<String> PROPOSALS_HEADERS = ProposalInfo.FIELDS;
     private static final String REVIEWERS_SHEET = "REVISORES";
@@ -103,13 +103,17 @@ public class ExcelManager {
      * @param tableName: Nombre de la tabla
      * @return
      */
-    private XSSFTable getTable(XSSFSheet sheet, String tableName) {
+    private XSSFTable getTable(XSSFSheet sheet, String tableName) throws Exception {
+        XSSFTable myTable = null;
         for (XSSFTable table : sheet.getTables()) {
             if (table.getName().equals(tableName)) {
-                return table;
+                return myTable;
             }
         }
-        return null;
+        if (myTable == null) {
+            throw new Exception ("No se ha encontrado la tabla: " + tableName);
+        }
+        return myTable;
     }
 
     /**
@@ -118,12 +122,11 @@ public class ExcelManager {
      */
     public HashMap<String, ProposalInfo> readProposalsInfo() throws Exception {
         HashMap<String, ProposalInfo> proposals = new HashMap<>();
-
-        ArrayList<HashMap<String, String>> tableData = readTable(PROPOSALS_SHEET, PROPOSALS_TABLE_NAME);
+        ArrayList<HashMap<String, String>> tableData = readTable(STUDENTS_SHEET, STUDENTS_TABLE_NAME);
         for (HashMap<String, String> p : tableData) {
-            proposals.put(p.get("apellido") + ", " + p.get("nombre"), new ProposalInfo(p));
+            ProposalInfo proposal = new ProposalInfo(p);
+            proposals.put(proposal.getFullName(), proposal);
         }
-
         return proposals;
     }
 
@@ -131,12 +134,12 @@ public class ExcelManager {
      * Se guarda la información de las propuestas
      * @param info: un array de diccionarios con la información de las propuestas
      */
-    public void saveProposalsInfo(ArrayList<ProposalInfo> info) throws IOException {
+    public void saveProposalsInfo(ArrayList<ProposalInfo> info) throws Exception {
 
         XSSFWorkbook wb = getWorkbook();
-        XSSFSheet sheet = getSheet(wb, PROPOSALS_SHEET);
+        XSSFSheet sheet = getSheet(wb, STUDENTS_SHEET);
 
-        XSSFTable table = getTable(sheet, PROPOSALS_TABLE_NAME);
+        XSSFTable table = getTable(sheet, STUDENTS_TABLE_NAME);
         XSSFRow row = null;
         XSSFCell cell = null;
 
@@ -153,8 +156,8 @@ public class ExcelManager {
             AreaReference reference = wb.getCreationHelper().createAreaReference(
                 new CellReference(0, 0), new CellReference(info.size(), PROPOSALS_HEADERS.size()-1));
             table = sheet.createTable(reference);
-            table.setName(PROPOSALS_TABLE_NAME);
-            table.setDisplayName(PROPOSALS_TABLE_NAME);
+            table.setName(STUDENTS_TABLE_NAME);
+            table.setDisplayName(STUDENTS_TABLE_NAME);
             /*
              // For now, create the initial style in a low-level way
             table.getCTTable().addNewTableStyleInfo();
@@ -189,7 +192,7 @@ public class ExcelManager {
             j = 0;
             for (String header : headers) {
                 cell = row.createCell(j++);
-                cell.setCellValue(proposal.getValue(header));
+                cell.setCellValue(proposal.get(header));
             }
 
         }
@@ -223,10 +226,10 @@ public class ExcelManager {
      *
      * @param reviews
      */
-    public void saveReviewsResults(HashMap<String, ArrayList<ReviewInfo>> reviews) throws IOException {
+    public void saveReviewsResults(HashMap<String, ArrayList<ReviewInfo>> reviews) throws Exception {
         XSSFWorkbook wb = getWorkbook();
-        XSSFSheet sheet = getSheet(wb, PROPOSALS_SHEET);
-        XSSFTable table = getTable(sheet, PROPOSALS_TABLE_NAME);
+        XSSFSheet sheet = getSheet(wb, STUDENTS_SHEET);
+        XSSFTable table = getTable(sheet, STUDENTS_TABLE_NAME);
         int review1Column = PROPOSALS_HEADERS.indexOf("veredicto1");
         int review2Column = PROPOSALS_HEADERS.indexOf("veredicto2");
         int resultColumn = PROPOSALS_HEADERS.indexOf("veredictoglobal");
@@ -279,9 +282,6 @@ public class ExcelManager {
         XSSFWorkbook wb = getWorkbook();
         XSSFSheet sheet = getSheet(wb, sheetName);
         XSSFTable table = getTable(sheet, tableName);
-        if (table == null) {
-            throw new Exception ("No se ha encontrado la tabla: " + tableName);
-        }
 
         int startRow = table.getStartRowIndex();
         int endRow = table.getEndRowIndex();
@@ -370,7 +370,7 @@ public class ExcelManager {
      *  @param progress : información del progreso de revisión
      * @param type : BORRADOR1, BORRADOR2, BORRADOR3
      */
-    public void saveGradingsProgress(HashMap<String, Submission> progress, String type) throws IOException {
+    public void saveGradingsProgress(HashMap<String, Submission> progress, String type) throws Exception {
         XSSFWorkbook wb = getWorkbook();
         XSSFSheet sheet = getSheet(wb, PROGRESS_SHEET);
         XSSFTable table = getTable(sheet, PROGRESS_TABLE_NAME);

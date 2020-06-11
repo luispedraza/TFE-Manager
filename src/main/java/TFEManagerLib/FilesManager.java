@@ -110,9 +110,7 @@ public class FilesManager {
                 String surname = fullName[0].trim();
                 String name = fullName[1].trim();
                 String id = info[1].split("\\)")[0].trim();
-                System.out.println("Nombre: " + name);
-                System.out.println("Apellidos: " + surname);
-                System.out.println("ID: " + id);
+
                 Path attachments = Paths.get(prop.getAbsolutePath(), ATTACHMENTS_FOLDER);
                 System.out.println("Buscando adjuntos en " + attachments);
                 Files.list(attachments).forEach(file -> {
@@ -122,7 +120,7 @@ public class FilesManager {
 
                         if (!proposalInfo.isEmpty()) {
                             // Corregimos nombre y appelidos para uniformizar según nombre de carpetas
-                            proposalInfo.put("nombre", name);
+                            proposalInfo.setName(name);
                             proposalInfo.put("apellido", surname);
                             proposalInfo.put("ID", id);
                             System.out.println(proposalInfo.toString());

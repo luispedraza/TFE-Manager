@@ -16,6 +16,22 @@ import java.util.HashMap;
  * Clase para leer los contenidos de un formulario en pdf
  */
 public class PDFManager {
+    public static final String PROPOSAL_NAME = "nombre";
+    public static final String PROPOSAL_SURNAME = "apellido";
+    public static final String PROPOSAL_COUNTRY = "pais";
+    public static final String PROPOSAL_TITLE = "titulo";
+    public static final String PROPOSAL_TYPE = "tipo";
+    public static final String PROPOSAL_FORMER_DIRECTOR = "director_anterio";
+    public static final String PROPOSAL_CONTINUE_DIRECTOR = "seguir";
+    public static final String PROPOSAL_L1 = "linea1";
+    public static final String PROPOSAL_L2 = "linea1";
+    public static final String PROPOSAL_L3 = "linea1";
+    public static final String PROPOSAL_L4 = "linea1";
+    public static final String PROPOSAL_L5 = "linea1";
+    public static final String PROPOSAL_L6 = "linea1";
+    public static final String PROPOSAL_L7 = "linea1";
+    public static final String PROPOSAL_L8 = "linea1";
+
 
     String filePath;
     public PDFManager(String filePath) {
@@ -85,7 +101,18 @@ public class PDFManager {
     }
 
     public ProposalInfo parseProposal() {
-        return new ProposalInfo(getFormInfo());
+        ProposalInfo proposal = new ProposalInfo();
+        HashMap<String, String> info = getFormInfo();
+        proposal.setName(info.get(PROPOSAL_NAME));
+        proposal.setSurname(info.get(PROPOSAL_SURNAME));
+        proposal.setFormerDirector(String.join(" - ",
+                info.get(PROPOSAL_FORMER_DIRECTOR),
+                info.get(PROPOSAL_CONTINUE_DIRECTOR)));
+        proposal.setTitle(info.get(PROPOSAL_TITLE));
+        proposal.setCountry(info.get(PROPOSAL_COUNTRY));
+        proposal.setType(info.get(PROPOSAL_TYPE));
+
+        return proposal;
     }
 
     public ReviewInfo parseReview() {

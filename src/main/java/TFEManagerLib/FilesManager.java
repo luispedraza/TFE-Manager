@@ -100,18 +100,18 @@ public class FilesManager {
     public ArrayList<ProposalInfo> loadProposals(String proposalsPath) throws IOException {
         ArrayList<ProposalInfo> proposals = new ArrayList<ProposalInfo>();
         File dir = new File(proposalsPath);
-        for (File prop : dir.listFiles()) {
-            if (prop.isDirectory()) {
-                System.out.println(prop.getName());
-                System.out.println(prop.getAbsolutePath());
-                String path = prop.getName();
+        for (File propDir : dir.listFiles()) {
+            if (propDir.isDirectory()) {
+                System.out.println(propDir.getName());
+                System.out.println(propDir.getAbsolutePath());
+                String path = propDir.getName();
                 String[] info = path.split("\\(");
                 String[] fullName = info[0].split(",");
                 String surname = fullName[0].trim();
                 String name = fullName[1].trim();
                 String id = info[1].split("\\)")[0].trim();
 
-                Path attachments = Paths.get(prop.getAbsolutePath(), ATTACHMENTS_FOLDER);
+                Path attachments = Paths.get(propDir.getAbsolutePath(), ATTACHMENTS_FOLDER);
                 System.out.println("Buscando adjuntos en " + attachments);
                 Files.list(attachments).forEach(file -> {
                     if (getExtension(file.getFileName().toString()).equals("pdf")) {
@@ -121,8 +121,10 @@ public class FilesManager {
                         if (!proposalInfo.isEmpty()) {
                             // Corregimos nombre y appelidos para uniformizar según nombre de carpetas
                             proposalInfo.setName(name);
-                            proposalInfo.put("apellido", surname);
-                            proposalInfo.put("ID", id);
+                            proposalInfo.setSurname(surname);
+                            proposalInfo.setID(id);
+                            proposalInfo.setLink(file.toString());
+
                             System.out.println(proposalInfo.toString());
                             proposals.add(proposalInfo);
                         }

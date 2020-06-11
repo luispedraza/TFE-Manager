@@ -19,6 +19,8 @@ public class ProposalInfo extends HashMap<String, String> {
     public static final String OK1_KEY = "VEREDICTO1";
     public static final String OK2_KEY = "VEREDICTO2";
     public static final String OK_KEY = "OK";
+    public static final String FORMER_DIRECTOR = "DIRECTOR ANTERIOR";
+    public static final String PROPOSAL_FILE_PATH = "LINK";
 
     public static final ArrayList<String> FIELDS = new ArrayList<String>(
             Arrays.asList(
@@ -35,34 +37,22 @@ public class ProposalInfo extends HashMap<String, String> {
                     REV2_KEY,
                     OK1_KEY,
                     OK2_KEY,
-                    OK_KEY
+                    OK_KEY,
+                    FORMER_DIRECTOR
             )
     );
 
+    public ProposalInfo() {
+        super();
+    }
     /** Para inicializar el objeto a partir de un HashMap según se leen del excel
      *
      * @param p: HashMap con la información sacada de Excel
      */
     public ProposalInfo(HashMap<String, String> p) {
         super(p);
-        // TODO: REvisar esto sobre el estado de entrega de una propuesta
+        // TODO: Revisar esto sobre el estado de entrega de una propuesta
         this.put("ENTREGADO", "NO");
-    }
-
-    public String getValue(String key) {
-        switch (key) {
-            case "APELLIDOS":
-                return this.getSurname();
-            case "NOMBRE":
-                return this.getName();
-            case "PAIS":
-                return this.getCountry();
-            case "TIPO":
-                return this.getType();
-            case "TITULO":
-                return this.getTitle();
-        }
-        return " ";
     }
 
     public String getSurname() {
@@ -133,5 +123,33 @@ public class ProposalInfo extends HashMap<String, String> {
 
     public String getFolderName() {
         return this.getFullName();
+    }
+
+    public void setFormerDirector(String director) {
+        this.put(FORMER_DIRECTOR, director);
+    }
+
+    public void setTitle(String title) {
+        this.put(TITLE_KEY, title);
+    }
+
+    public void setCountry(String country) {
+        this.put(COUNTRY_KEY, country);
+    }
+
+    public void setType(String type) {
+        this.put(TYPE_KEY, type);
+    }
+
+    public void setID(String id) {
+        this.put(ID_KEY, id);
+    }
+
+    public void setLink(String url) {
+        this.put(PROPOSAL_FILE_PATH, url);
+    }
+
+    public String getLink() {
+        return this.get(PROPOSAL_FILE_PATH);
     }
 }

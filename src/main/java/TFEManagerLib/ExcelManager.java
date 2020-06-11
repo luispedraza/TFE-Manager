@@ -3,6 +3,7 @@ package TFEManagerLib;
 
 
 
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
@@ -104,16 +105,12 @@ public class ExcelManager {
      * @return
      */
     private XSSFTable getTable(XSSFSheet sheet, String tableName) throws Exception {
-        XSSFTable myTable = null;
         for (XSSFTable table : sheet.getTables()) {
             if (table.getName().equals(tableName)) {
-                return myTable;
+                return table;
             }
         }
-        if (myTable == null) {
-            throw new Exception ("No se ha encontrado la tabla: " + tableName);
-        }
-        return myTable;
+        return null;
     }
 
     /**
@@ -144,20 +141,27 @@ public class ExcelManager {
         XSSFCell cell = null;
 
         if (table == null) {
-            row = sheet.createRow(0);
-            int j = 0;
-            for (String header : PROPOSALS_HEADERS) {
-                cell = row.createCell(j++);
-                cell.setCellValue(header);
-            }
+//            row = sheet.createRow(0);
+//            int j = 0;
+//            for (String header : PROPOSALS_HEADERS) {
+//                cell = row.createCell(j++);
+//                cell.setCellValue(header);
+//            }
+//
+//
+//            // Set which area the table should be placed in
+//            AreaReference reference = wb.getCreationHelper().createAreaReference(
+//                new CellReference(0, 0), new CellReference(info.size(), PROPOSALS_HEADERS.size()-1));
+//            table = sheet.createTable(reference);
+//            table.setName(STUDENTS_TABLE_NAME);
+//            table.setDisplayName(STUDENTS_TABLE_NAME);
 
 
-            // Set which area the table should be placed in
-            AreaReference reference = wb.getCreationHelper().createAreaReference(
-                new CellReference(0, 0), new CellReference(info.size(), PROPOSALS_HEADERS.size()-1));
-            table = sheet.createTable(reference);
-            table.setName(STUDENTS_TABLE_NAME);
-            table.setDisplayName(STUDENTS_TABLE_NAME);
+
+
+
+
+
             /*
              // For now, create the initial style in a low-level way
             table.getCTTable().addNewTableStyleInfo();
@@ -190,9 +194,23 @@ public class ExcelManager {
             row = sheet.createRow(i);
             //for (Map.Entry<String, String> entry : proposal.entrySet()) {
             j = 0;
+            CellStyle linkStyle = wb.createCellStyle();
+            Font linkFont = wb.createFont();
+            linkFont.setUnderline(Font.U_SINGLE);
+            linkFont.setColor(IndexedColors.BLUE.getIndex());
+            linkStyle.setFont(linkFont);
+
             for (String header : headers) {
                 cell = row.createCell(j++);
-                cell.setCellValue(proposal.get(header));
+                if (header.equals(ProposalInfo.PROPOSAL_FILE_PATH)) {
+                    cell.setCellValue("ABRIR");
+                    Hyperlink href = wb.getCreationHelper().createHyperlink(HyperlinkType.FILE);
+                    href.setAddress(new File(proposal.getLink()).toURI().toString());
+                    cell.setHyperlink(href);
+                    cell.setCellStyle(linkStyle);
+                } else {
+                    cell.setCellValue(proposal.get(header));
+                }
             }
 
         }

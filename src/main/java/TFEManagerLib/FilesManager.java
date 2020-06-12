@@ -207,11 +207,10 @@ public class FilesManager {
 
                         // copyFile(f.toString(), proposalFormPath);
 
-                        // Buscamos el formulario de revisión
-                        String reviewFormName = String.format("Review_%d.pdf", reviewerIndex);
+                        // COPIAMOS EL FORMULARIO DE REVISIÓN
+                        String reviewFormName = String.format("REVIEW%02d - " + proposalFolderName +  ".pdf", reviewerIndex);
                         String reviewFormPath = Paths.get(pPath, reviewFormName).toString();
-                        copyFile(Paths.get(docsPath, REVIEW_TEMPLATE_FILE).toString(),
-                                reviewFormPath);
+                        copyFile(Paths.get(docsPath, REVIEW_TEMPLATE_FILE).toString(), reviewFormPath);
                         // Rellenamos campos preliminaares en la propuesta:
                         // TODO: Esto se puede optimizar rellenando en un único paso
                         PDFManager pdfManager = new PDFManager(reviewFormPath);

@@ -60,16 +60,16 @@ public class TFEManager {
      * @throws Exception
      */
     public void createReviewPacks() throws Exception {
-        HashMap<String, ReviewerInfo> reviewers = new HashMap<>();
+        HashMap<String, ReviewerInfo> reviewers =excelManager.readReviewersInfo();
         HashMap<String, ProposalInfo> proposals = excelManager.readProposalsInfo();
 
         for (ProposalInfo p : proposals.values()) {
-            String r1Name = p.getReviever(0);
-            ReviewerInfo r1 = reviewers.getOrDefault(r1Name, new ReviewerInfo(r1Name, 0, null));
+            String r1Name = p.getRevieverName(0);
+            ReviewerInfo r1 = reviewers.get(r1Name);
             r1.addProposal(p);
             reviewers.put(r1Name, r1);
 
-            String r2Name = p.getReviever(1);
+            String r2Name = p.getRevieverName(1);
             ReviewerInfo r2 = reviewers.getOrDefault(r2Name, new ReviewerInfo(r2Name, 0, null));
             r2.addProposal(p);
             reviewers.put(r2Name, r2);

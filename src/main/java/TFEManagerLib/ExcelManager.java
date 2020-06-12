@@ -122,7 +122,9 @@ public class ExcelManager {
         ArrayList<HashMap<String, String>> tableData = readTable(STUDENTS_SHEET, STUDENTS_TABLE_NAME);
         for (HashMap<String, String> p : tableData) {
             ProposalInfo proposal = new ProposalInfo(p);
-            proposals.put(proposal.getFullName(), proposal);
+            String id = proposal.getID();
+            if (id.isEmpty()) continue;
+            proposals.put(id, proposal);
         }
         return proposals;
     }
@@ -346,7 +348,11 @@ public class ExcelManager {
         HashMap<String, ReviewerInfo> result = new HashMap<>();
         ArrayList<HashMap<String, String>> tableInfo = readTable(REVIEWERS_SHEET, REVIEWERS_TABLE_NAME);
         for (HashMap<String, String> r : tableInfo) {
-            result.put(r.get("NOMBRE"), new ReviewerInfo(r));
+            ReviewerInfo reviewer = new ReviewerInfo(r);
+            String name = reviewer.getName();
+            if (name.isEmpty()) continue;
+
+            result.put(name, reviewer);
         }
         return result;
     }

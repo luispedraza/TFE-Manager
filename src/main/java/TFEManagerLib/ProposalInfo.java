@@ -74,7 +74,7 @@ public class ProposalInfo extends HashMap<String, String> {
      * @return: nombre completo en la forma "APELLIDOS, NOMBRE".
      */
     public String getFullName() {
-        return this.getName() + ", " + this.getSurname();
+        return this.getSurname() + ", " + this.getName();
     }
 
     public String getCountry() {
@@ -89,7 +89,7 @@ public class ProposalInfo extends HashMap<String, String> {
         return this.get(TYPE_KEY);
     }
 
-    public String getReviever(int index) {
+    public String getRevieverName(int index) {
         String[] rev = {REV1_KEY, REV2_KEY};
         return this.get(rev[index]);
     }
@@ -143,6 +143,10 @@ public class ProposalInfo extends HashMap<String, String> {
 
     public void setID(String id) {
         this.put(ID_KEY, id);
+    }
+
+    public String getID() {
+        return this.get(ID_KEY);
     }
 
     public void setLink(String url) {

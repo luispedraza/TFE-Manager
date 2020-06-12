@@ -174,20 +174,19 @@ public class FilesManager {
 
             // recorremos las propuestas del revisor:
             for (ProposalInfo p : r.getProposals()) {
-                String proposalFolderName = p.getFolderName();
-                String pPath = Paths.get(rPath, proposalFolderName).toString();
+                String studentFullName = p.getFullName();
+                String pPath = Paths.get(rPath, studentFullName).toString();
                 makeDir(pPath);
                 // Buscamos la propuesta del alumno en el directorio de propuestas
-                System.out.println("Buscando la propuesta de " + proposalFolderName + " para " + r.getName());
-                for (File proposalOrigin : Objects.requireNonNull(proposalsDir.listFiles(
-                        (dir, name) -> (new File(dir, name).isDirectory() && name.startsWith(proposalFolderName))
+                for (File proposalOriginFile : Objects.requireNonNull(proposalsDir.listFiles(
+                        (dir, name) -> (new File(dir, name).isDirectory() && name.startsWith(studentFullName))
                 ))) {
-                    System.out.println("Encontrada en : ");
-                    System.out.println(proposalOrigin);
-//                    for (File f : Objects.requireNonNull(new File(proposalOrigin, ATTACHMENTS_FOLDER).listFiles((dir, name) -> name.endsWith(".pdf")))) {
+                    // Hemos entrado la carpeta original del alumno
+
+//                    for (File f : Objects.requireNonNull(new File(proposalOriginFile, ATTACHMENTS_FOLDER).listFiles((dir, name) -> name.endsWith(".pdf")))) {
 //                        System.out.println(f.toString());
 //                        // Copiamos y renombramos la ropuesta
-//                        String proposalFormPath = Paths.get(pPath, proposalFolderName + ".pdf").toString();
+//                        String proposalFormPath = Paths.get(pPath, studentFullName + ".pdf").toString();
 //                        copyFile(f.toString(), proposalFormPath);
 //
 //                        // Copiamos el formulario de revisión
@@ -202,24 +201,29 @@ public class FilesManager {
 //                        pdfManager.fillForm("apellido", p.get("apellido"));
 //                        pdfManager.fillForm("titulo", p.get("titulo"));
 //                    }
-                    for (File f : Objects.requireNonNull(new File(proposalOrigin, ATTACHMENTS_FOLDER).listFiles((dir, name) -> name.endsWith(".pdf")))) {
-                        // Buscamos la ropuesta
-
-                        // copyFile(f.toString(), proposalFormPath);
-
+                    for (File pdfProposalFile : Objects.requireNonNull(new File(proposalOriginFile, ATTACHMENTS_FOLDER).listFiles((dir, name) -> name.endsWith(".pdf")))) {
                         // COPIAMOS EL FORMULARIO DE REVISIÓN
-                        String reviewFormName = String.format("REVIEW%02d - " + proposalFolderName +  ".pdf", reviewerIndex);
-                        String reviewFormPath = Paths.get(pPath, reviewFormName).toString();
-                        copyFile(Paths.get(docsPath, REVIEW_TEMPLATE_FILE).toString(), reviewFormPath);
-                        // Rellenamos campos preliminaares en la propuesta:
-                        // TODO: Esto se puede optimizar rellenando en un único paso
-                        PDFManager pdfManager = new PDFManager(reviewFormPath);
-                        String[] keys = {"nombre", "apellido", "titulo"};
-                        pdfManager.fillForm(p, keys, false);
+                        String tempReviewFormPath = Paths.get(pPath, String.format("REVIEW%02d - " + studentFullName +  ".pdf", reviewerIndex)).toString();
+                        copyFile(Paths.get(docsPath, REVIEW_TEMPLATE_FILE).toString(), tempReviewFormPath);
+                        // Rellenamos campos iniciales en la propuesta:
+                        PDFManager pdfManagerReview = new PDFManager(tempReviewFormPath);
+                        String[] originKeys = {ProposalInfo.NAME_KEY, ProposalInfo.SURNAME_KEY, ProposalInfo.TITLE_KEY};
+                        String[] pdfFormKeys = {PDFManager.PROPOSAL_NAME, PDFManager.PROPOSAL_SURNAME, PDFManager.PROPOSAL_TITLE};
+                        pdfManagerReview.fillForm(p, originKeys, pdfFormKeys, false);
+                        // Copiamos el propuesta del alumno
+                        String tempProposalPath = Paths.get(pPath, studentFullName + ".pdf").toString();
+                        copyFile(pdfProposalFile.toString(), tempProposalPath);
+                        PDFManager pdfManagerProposal = new PDFManager((tempProposalPath));
+                        pdfManagerProposal.fillForm(null, null, null, true);
 
-                        String destinyPath = Paths.get(pPath, proposalFolderName + ".pdf").toString();
-                        ArrayList<File> input = new ArrayList<>(Arrays.asList(f, new File(reviewFormPath)));
+                        String destinyPath = Paths.get(pPath, studentFullName + String.format(" - REVIEW%02d.pdf", reviewerIndex)).toString();
+                        File tempProposalFile = new File(tempProposalPath);
+                        File tempReviewFile = new File(tempReviewFormPath);
+                        ArrayList<File> input = new ArrayList<>(Arrays.asList(tempProposalFile, tempReviewFile));
                         PDFManager.mergeFiles(input, new File(destinyPath));
+                        // Borramos los archivos temporales:
+                        tempProposalFile.delete();
+                        tempReviewFile.delete();
                     }
                 }
             }

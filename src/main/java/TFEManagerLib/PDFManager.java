@@ -16,6 +16,8 @@ import java.util.HashMap;
  * Clase para leer los contenidos de un formulario en pdf
  */
 public class PDFManager {
+
+    // Nombres de campos en la propuesta del alumnos (PDF)
     public static final String PROPOSAL_NAME = "nombre";
     public static final String PROPOSAL_SURNAME = "apellido";
     public static final String PROPOSAL_COUNTRY = "pais";
@@ -32,50 +34,58 @@ public class PDFManager {
     public static final String PROPOSAL_L7 = "linea1";
     public static final String PROPOSAL_L8 = "linea1";
 
+    // Nombres de campos en el formulario de revisión (PDF)
+    public static final String REVIEW_FORM_NAME = "nombre";
+    public static final String REVIEW_FORM_SURNAME = "apellido";
+    public static final String REVIEW_FORM_TITLE = "titulo";
+
 
     String filePath;
+
     public PDFManager(String filePath) {
         this.filePath = filePath;
     }
 
-    /** Método para rellenar el campo de un formulario
+    /**
+     * Método para rellenar el campo de un formulario
      *
-     * @param key: nombre del campo
+     * @param key:   nombre del campo
      * @param value: valor que queremos insertar
      */
-    public void fillForm(HashMap<String, String> data, String[] keys, boolean flatten) {
+    public void fillForm(HashMap<String, String> data, String[] originKeys, String[] pdfKeys, boolean flatten) throws IOException {
         String filePath = this.filePath;
-        try {
-            PDDocument doc = PDDocument.load(new File(filePath));
-            PDDocumentCatalog catalog = doc.getDocumentCatalog();
-            PDAcroForm form = catalog.getAcroForm();
+
+        PDDocument doc = PDDocument.load(new File(filePath));
+        PDDocumentCatalog catalog = doc.getDocumentCatalog();
+        PDAcroForm form = catalog.getAcroForm();
+
+        if (data!=null) {
             if (form != null) {
 //                for (PDField field : form.getFields()) {
 //                    //System.out.println(field.getPartialName() + "====>" + field.getValueAsString());
 //                    System.out.println(field.getFullyQualifiedName() + "====>" + field.getValueAsString());
 //                }
-                for (String key : keys) {
-                    String value = data.get(key);
-                    PDField field = form.getField(key);
+                for (int i = 0; i < originKeys.length; i++) {
+                    PDField field = form.getField(pdfKeys[i]);
                     if (field != null) {
-                        field.setValue(value);
-                        //field.setReadOnly(true);
+                        field.setValue(data.get(originKeys[i]));
+                        field.setReadOnly(true);
                     }
                 }
-
             }
-            // Eliminamos los campos de formulario manteniendo el contenido
-            if (flatten) {
-                form.flatten();
-            }
-            doc.save(this.filePath);
-            doc.close();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+
+        // Eliminamos los campos de formulario manteniendo el contenido
+        if (flatten) {
+            form.flatten();
+        }
+        doc.save(this.filePath);
+        doc.close();
+
     }
 
-    /** Obtiene toda la información que contiene el formulario de un pdf
+    /**
+     * Obtiene toda la información que contiene el formulario de un pdf
      *
      * @return: Un HashMap con la información
      */
@@ -124,7 +134,8 @@ public class PDFManager {
         return null;
     }
 
-    /** Clase de utilidad para juntar varios pdfs
+    /**
+     * Clase de utilidad para juntar varios pdfs
      *
      * @param input
      * @param output

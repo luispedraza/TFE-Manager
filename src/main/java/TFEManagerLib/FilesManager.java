@@ -29,19 +29,21 @@ public class FilesManager {
     private final String REVIEW_GUIDE_FILE = "IndicacionesRevisores.pdf";
     private final String REVIEW_TEMPLATE_FILE = "ReviewTemplate.pdf";
 
+    public static final String REVIEW_PACK_DIR = "PROPUESTAS"; //   Carpeta que contiene las propuestas de cada revisor
+
     private String wd;
 
     private String getDocsPath() {
         return Paths.get(this.wd, this.DOCS_FOLDER).toString();
     }
 
-    ;
-
+    /** carpeta que almacena los paquetes de revisión dentro del workspace
+     *
+     * @return: ruta de la carpeta de revisiones
+     */
     private String getReviewsPath() {
         return Paths.get(this.wd, this.REVIEWS_FOLDER).toString();
     }
-
-    ;
 
     private String getProposalsPath() {
         return Paths.get(this.wd, PROPOSALS_FOLDER).toString();
@@ -155,7 +157,7 @@ public class FilesManager {
      */
     public void saveReviewPacks(ArrayList<ReviewerInfo> reviewers) throws IOException {
         String docsPath = getDocsPath();        // Contiene la documentación que adjuntaremos
-        String reviewsPath = getReviewsPath();  // Ruta donde se almacenarán las revisiones (ws/revisores)
+        String reviewsPath = getReviewsPath();  // Ruta donde se almacenarán las revisiones (WS/Revisores)
         makeDir(reviewsPath);
         // Directorio que contiene las propuestas
         File proposalsDir = new File(getProposalsPath());
@@ -164,26 +166,28 @@ public class FilesManager {
         // recorremos la lista de revisores:
         for (ReviewerInfo r : reviewers) {
             reviewerIndex++;
-            String rPath = Paths.get(reviewsPath, r.getName()).toString();
-            makeDir(rPath);
+            String reviewerPath = Paths.get(reviewsPath, r.getName()).toString();
+            makeDir(reviewerPath);
             // Copiamos la documentación para el revisor:
             copyFile(Paths.get(docsPath, GUIDE_FILE).toString(),
-                    Paths.get(rPath, GUIDE_FILE).toString());
+                    Paths.get(reviewerPath, GUIDE_FILE).toString());
             copyFile(Paths.get(docsPath, REVIEW_GUIDE_FILE).toString(),
-                    Paths.get(rPath, REVIEW_GUIDE_FILE).toString());
+                    Paths.get(reviewerPath, REVIEW_GUIDE_FILE).toString());
 
+            String reviewPackDir = Paths.get(reviewerPath, REVIEW_PACK_DIR).toString();
+            makeDir(reviewPackDir); // El directorio donde dejaremos todos los formularios para cada revisor
             // recorremos las propuestas del revisor:
             for (ProposalInfo p : r.getProposals()) {
                 String studentFullName = p.getFullName();
-                String pPath = Paths.get(rPath, studentFullName).toString();
-                makeDir(pPath);
-                // Buscamos la propuesta del alumno en el directorio de propuestas
-                for (File proposalOriginFile : Objects.requireNonNull(proposalsDir.listFiles(
+//                String pPath = Paths.get(reviewerPath, studentFullName).toString();
+//                makeDir(pPath);
+                // Buscamos el directorio que contiene la propuesta del alumno
+                for (File proposalOriginDir : Objects.requireNonNull(proposalsDir.listFiles(
                         (dir, name) -> (new File(dir, name).isDirectory() && name.startsWith(studentFullName))
                 ))) {
                     // Hemos entrado la carpeta original del alumno
 
-//                    for (File f : Objects.requireNonNull(new File(proposalOriginFile, ATTACHMENTS_FOLDER).listFiles((dir, name) -> name.endsWith(".pdf")))) {
+//                    for (File f : Objects.requireNonNull(new File(proposalOriginDir, ATTACHMENTS_FOLDER).listFiles((dir, name) -> name.endsWith(".pdf")))) {
 //                        System.out.println(f.toString());
 //                        // Copiamos y renombramos la ropuesta
 //                        String proposalFormPath = Paths.get(pPath, studentFullName + ".pdf").toString();
@@ -201,22 +205,23 @@ public class FilesManager {
 //                        pdfManager.fillForm("apellido", p.get("apellido"));
 //                        pdfManager.fillForm("titulo", p.get("titulo"));
 //                    }
-                    for (File pdfProposalFile : Objects.requireNonNull(new File(proposalOriginFile, ATTACHMENTS_FOLDER).listFiles((dir, name) -> name.endsWith(".pdf")))) {
+                    // Busamos el pdf con la propuesta
+                    for (File pdfProposalFile : Objects.requireNonNull(new File(proposalOriginDir, ATTACHMENTS_FOLDER).listFiles((dir, name) -> name.endsWith(".pdf")))) {
                         // COPIAMOS EL FORMULARIO DE REVISIÓN
-                        String tempReviewFormPath = Paths.get(pPath, String.format("REVIEW%02d - " + studentFullName +  ".pdf", reviewerIndex)).toString();
+                        String tempReviewFormPath = Paths.get(reviewPackDir, String.format("REVIEW%02d - " + studentFullName +  ".pdf", reviewerIndex)).toString();
                         copyFile(Paths.get(docsPath, REVIEW_TEMPLATE_FILE).toString(), tempReviewFormPath);
                         // Rellenamos campos iniciales en la propuesta:
                         PDFManager pdfManagerReview = new PDFManager(tempReviewFormPath);
                         String[] originKeys = {ProposalInfo.NAME_KEY, ProposalInfo.SURNAME_KEY, ProposalInfo.TITLE_KEY};
                         String[] pdfFormKeys = {PDFManager.PROPOSAL_NAME, PDFManager.PROPOSAL_SURNAME, PDFManager.PROPOSAL_TITLE};
                         pdfManagerReview.fillForm(p, originKeys, pdfFormKeys, false);
-                        // Copiamos el propuesta del alumno
-                        String tempProposalPath = Paths.get(pPath, studentFullName + ".pdf").toString();
+                        // COPIAMOS LA PROPUESTA DEL ALUMNO
+                        String tempProposalPath = Paths.get(reviewPackDir, studentFullName + ".pdf").toString();
                         copyFile(pdfProposalFile.toString(), tempProposalPath);
                         PDFManager pdfManagerProposal = new PDFManager((tempProposalPath));
                         pdfManagerProposal.fillForm(null, null, null, true);
 
-                        String destinyPath = Paths.get(pPath, studentFullName + String.format(" - REVIEW%02d.pdf", reviewerIndex)).toString();
+                        String destinyPath = Paths.get(reviewPackDir, studentFullName + String.format(" - REVIEW%02d.pdf", reviewerIndex)).toString();
                         File tempProposalFile = new File(tempProposalPath);
                         File tempReviewFile = new File(tempReviewFormPath);
                         ArrayList<File> input = new ArrayList<>(Arrays.asList(tempProposalFile, tempReviewFile));
@@ -229,7 +234,7 @@ public class FilesManager {
             }
 
             // Finalmente comprimimos el paquete del revisor
-            zipFolder(rPath, Paths.get(reviewsPath, r.getName() + ".zip").toString());
+            zipFolder(reviewerPath, Paths.get(reviewsPath, r.getName() + ".zip").toString());
         }
     }
 

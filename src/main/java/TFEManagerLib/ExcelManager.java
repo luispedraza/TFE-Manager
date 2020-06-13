@@ -122,11 +122,11 @@ public class ExcelManager {
      * Lee la información que contiene la lista maestra sobre las propuestas
      * @return
      */
-    public HashMap<String, ProposalInfo> readProposalsInfo() throws Exception {
-        HashMap<String, ProposalInfo> proposals = new HashMap<>();
+    public HashMap<String, Student> readProposalsInfo() throws Exception {
+        HashMap<String, Student> proposals = new HashMap<>();
         ArrayList<HashMap<String, String>> tableData = readTable(STUDENTS_SHEET, STUDENTS_TABLE_NAME);
         for (HashMap<String, String> p : tableData) {
-            ProposalInfo proposal = new ProposalInfo(p);
+            Student proposal = new Student(p);
             String id = proposal.getID();
             if (id.isEmpty()) continue;
             proposals.put(id, proposal);
@@ -138,7 +138,7 @@ public class ExcelManager {
      * Se guarda la información de las propuestas
      * @param proposals: un array de diccionarios con la información de las propuestas
      */
-    public void saveProposalsInfo(ArrayList<ProposalInfo> proposals) throws Exception {
+    public void saveProposalsInfo(ArrayList<Student> proposals) throws Exception {
         XSSFWorkbook wb = getWorkbook();
         XSSFSheet sheet = getSheet(wb, STUDENTS_SHEET);
         XSSFTable table = getTable(sheet, STUDENTS_TABLE_NAME);
@@ -158,7 +158,7 @@ public class ExcelManager {
             headers.add(c.getStringCellValue());
         }
         // Almacenamos los valores en la tabla
-        for (ProposalInfo proposal : proposals) {
+        for (Student proposal : proposals) {
             rowIndex++;
             row = sheet.createRow(rowIndex);
             // Un estilo para los enlaces
@@ -171,7 +171,7 @@ public class ExcelManager {
             int j = 0;
             for (String header : headers) {
                 cell = row.createCell(j++);
-                if (header.equals(ProposalInfo.PROPOSAL_FILE_PATH)) {
+                if (header.equals(Student.PROPOSAL_FILE_PATH)) {
                     cell.setCellValue("ABRIR");
                     Hyperlink href = wb.getCreationHelper().createHyperlink(HyperlinkType.FILE);
                     href.setAddress(new File(proposal.getLink()).toURI().toString());
@@ -192,8 +192,8 @@ public class ExcelManager {
      * @return
      */
     private int findStudentRowByFullName(XSSFSheet sheet, XSSFTable table, String surname, String name) {
-        int surnameColumn = table.findColumnIndex(ProposalInfo.SURNAME_KEY);
-        int nameColumn = table.findColumnIndex(ProposalInfo.NAME_KEY);
+        int surnameColumn = table.findColumnIndex(Student.SURNAME_KEY);
+        int nameColumn = table.findColumnIndex(Student.NAME_KEY);
         int startRow = table.getStartRowIndex();
         int endRow = table.getEndRowIndex();
 
@@ -217,9 +217,9 @@ public class ExcelManager {
         XSSFWorkbook wb = getWorkbook();
         XSSFSheet sheet = getSheet(wb, STUDENTS_SHEET);
         XSSFTable table = getTable(sheet, STUDENTS_TABLE_NAME);
-        final int OK1 = table.findColumnIndex(ProposalInfo.OK1_KEY);    // Decisión del primer revisor
-        final int OK2 = table.findColumnIndex(ProposalInfo.OK2_KEY);    // Decisión del segundo revisor
-        final int OK = table.findColumnIndex(ProposalInfo.OK_KEY);      // Decisión final
+        final int OK1 = table.findColumnIndex(Student.OK1_KEY);    // Decisión del primer revisor
+        final int OK2 = table.findColumnIndex(Student.OK2_KEY);    // Decisión del segundo revisor
+        final int OK = table.findColumnIndex(Student.OK_KEY);      // Decisión final
 
         XSSFRow row = null;
         XSSFCell cell = null;
@@ -304,11 +304,11 @@ public class ExcelManager {
      * Se carga de la lista maestra la información de los revisores
      * @return
      */
-    public HashMap<String, ReviewerInfo> readReviewersInfo() throws Exception {
-        HashMap<String, ReviewerInfo> result = new HashMap<>();
+    public HashMap<String, Reviewer> readReviewersInfo() throws Exception {
+        HashMap<String, Reviewer> result = new HashMap<>();
         ArrayList<HashMap<String, String>> tableInfo = readTable(REVIEWERS_SHEET, REVIEWERS_TABLE_NAME);
         for (HashMap<String, String> r : tableInfo) {
-            ReviewerInfo reviewer = new ReviewerInfo(r);
+            Reviewer reviewer = new Reviewer(r);
             String name = reviewer.getName();
             if (name.isEmpty()) continue;
 

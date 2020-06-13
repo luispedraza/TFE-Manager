@@ -1,4 +1,4 @@
-import TFEManagerLib.ProposalInfo;
+import TFEManagerLib.Student;
 import TFEManagerLib.TFEManager;
 
 import javax.swing.*;
@@ -7,7 +7,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
 import java.util.ArrayList;
 // Noa sobre manifest: https://stackoverflow.com/questions/20952713/wrong-manifest-mf-in-intellij-idea-created-jar
 
@@ -119,10 +118,10 @@ public class MainWindow extends JDialog {
 
 
 
-    private void updateStudentsTree(ArrayList<ProposalInfo> proposals) {
+    private void updateStudentsTree(ArrayList<Student> proposals) {
         DefaultMutableTreeNode root = (DefaultMutableTreeNode) studentsTree.getModel().getRoot();
         DefaultMutableTreeNode child = null;
-        for (ProposalInfo p : proposals) {
+        for (Student p : proposals) {
             child = new DefaultMutableTreeNode(p);
             root.add(child);
         }
@@ -165,7 +164,7 @@ public class MainWindow extends JDialog {
             String proposalsPath = chooser.getSelectedFile().getAbsolutePath();
             logInfo("Cargando propuestas desde : " + proposalsPath);
             try {
-                ArrayList<ProposalInfo> proposals = manager.loadProposalsFromDisc(proposalsPath);
+                ArrayList<Student> proposals = manager.loadProposalsFromDisc(proposalsPath);
                 manager.saveProposalsToExcel(null);
                 updateStudentsTree(proposals);
 

@@ -1,14 +1,11 @@
 package TFEManagerLib;
 
 import com.google.common.base.Joiner;
-import com.google.common.primitives.Ints;
-import org.apache.commons.codec.binary.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
-public class ProposalInfo extends HashMap<String, String> {
+public class Student extends Person {
     public static final String ID_KEY = "ID";
     public static final String SURNAME_KEY = "APELLIDOS";
     public static final String NAME_KEY = "NOMBRE";
@@ -30,17 +27,18 @@ public class ProposalInfo extends HashMap<String, String> {
     private Integer[] lines = {};
     private Integer type = 0;
 
-    public ProposalInfo() {
+
+    public Student() {
         super();
     }
     /** Para inicializar el objeto a partir de un HashMap según se leen del excel
      *
      * @param p: HashMap con la información sacada de Excel
      */
-    public ProposalInfo(HashMap<String, String> p) {
+    public Student(HashMap<String, String> p) {
         super(p);
-        // TODO: Revisar esto sobre el estado de entrega de una propuesta
-        this.put("ENTREGADO", "NO");
+        // TODO: Revisar esto sobre el estado de entrega de una propuesta entregada o no
+
     }
 
     public String getSurname() {

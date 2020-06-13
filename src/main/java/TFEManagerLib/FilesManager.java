@@ -5,7 +5,6 @@ import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -100,8 +99,8 @@ public class FilesManager {
      * @throws IOException
      * @return: Listado de informaciones de propuestas
      */
-    public ArrayList<ProposalInfo> loadProposals(String proposalsPath) throws IOException {
-        ArrayList<ProposalInfo> proposals = new ArrayList<ProposalInfo>();
+    public ArrayList<Student> loadProposals(String proposalsPath) throws IOException {
+        ArrayList<Student> proposals = new ArrayList<Student>();
         File dir = new File(proposalsPath);
         for (File propDir : dir.listFiles()) {
             if (propDir.isDirectory()) {
@@ -119,17 +118,17 @@ public class FilesManager {
                 Files.list(attachments).forEach(file -> {
                     if (getExtension(file.getFileName().toString()).equals("pdf")) {
                         System.out.println("Buscando información de propuesta en : " + file.getFileName());
-                        ProposalInfo proposalInfo = new PDFManager(file.toString()).parseProposal();
+                        Student studentInfo = new PDFManager(file.toString()).parseProposal();
 
-                        if (!proposalInfo.isEmpty()) {
+                        if (!studentInfo.isEmpty()) {
                             // Corregimos nombre y appelidos para uniformizar según nombre de carpetas
-                            proposalInfo.setName(name);
-                            proposalInfo.setSurname(surname);
-                            proposalInfo.setID(id);
-                            proposalInfo.setLink(file.toString());
+                            studentInfo.setName(name);
+                            studentInfo.setSurname(surname);
+                            studentInfo.setID(id);
+                            studentInfo.setLink(file.toString());
 
-                            System.out.println(proposalInfo.toString());
-                            proposals.add(proposalInfo);
+                            System.out.println(studentInfo.toString());
+                            proposals.add(studentInfo);
                         }
                     }
                 });
@@ -156,7 +155,7 @@ public class FilesManager {
      * @param reviewers: son los revisores
      * @throws IOException
      */
-    public void saveReviewPacks(ArrayList<ReviewerInfo> reviewers) throws IOException {
+    public void saveReviewPacks(ArrayList<Reviewer> reviewers) throws IOException {
         String docsPath = getDocsPath();        // Contiene la documentación que adjuntaremos
         String reviewsPath = getReviewsPath();  // Ruta donde se almacenarán las revisiones (WS/Revisores)
         makeDir(reviewsPath);
@@ -165,7 +164,7 @@ public class FilesManager {
 
         int reviewerIndex = 0;
         // recorremos la lista de revisores:
-        for (ReviewerInfo r : reviewers) {
+        for (Reviewer r : reviewers) {
             reviewerIndex++;
             String reviewerPath = Paths.get(reviewsPath, String.format("%02d - ", reviewerIndex) + r.getName()).toString();
             makeDir(reviewerPath);
@@ -178,7 +177,7 @@ public class FilesManager {
             String reviewPackDir = Paths.get(reviewerPath, REVIEW_PACK_DIR).toString();
             makeDir(reviewPackDir); // El directorio donde dejaremos todos los formularios para cada revisor
             // recorremos las propuestas del revisor:
-            for (ProposalInfo p : r.getProposals()) {
+            for (Student p : r.getProposals()) {
                 String studentFullName = p.getFullName();
 //                String pPath = Paths.get(reviewerPath, studentFullName).toString();
 //                makeDir(pPath);
@@ -213,7 +212,7 @@ public class FilesManager {
                         copyFile(Paths.get(docsPath, REVIEW_TEMPLATE_FILE).toString(), tempReviewFormPath);
                         // Rellenamos campos iniciales en la propuesta:
                         PDFManager pdfManagerReview = new PDFManager(tempReviewFormPath);
-                        String[] originKeys = {ProposalInfo.NAME_KEY, ProposalInfo.SURNAME_KEY, ProposalInfo.TITLE_KEY};
+                        String[] originKeys = {Student.NAME_KEY, Student.SURNAME_KEY, Student.TITLE_KEY};
                         String[] pdfFormKeys = {PDFManager.PROPOSAL_NAME, PDFManager.PROPOSAL_SURNAME, PDFManager.PROPOSAL_TITLE};
                         pdfManagerReview.fillForm(p, originKeys, pdfFormKeys, false);
                         pdfManagerReview.fillForm(PDFManager.REVIEW_FORM_ID, String.format("%02d", reviewerIndex));

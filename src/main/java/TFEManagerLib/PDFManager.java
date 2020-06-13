@@ -7,7 +7,6 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -123,8 +122,8 @@ public class PDFManager {
         return info;
     }
 
-    public ProposalInfo parseProposal() {
-        ProposalInfo proposal = new ProposalInfo();
+    public Student parseProposal() {
+        Student proposal = new Student();
         HashMap<String, String> info = getFormInfo();
         proposal.setName(info.get(PROPOSAL_NAME));
         proposal.setSurname(info.get(PROPOSAL_SURNAME));

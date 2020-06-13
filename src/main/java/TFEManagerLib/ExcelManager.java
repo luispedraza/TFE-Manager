@@ -5,8 +5,6 @@ package TFEManagerLib;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.*;
 
 import java.io.*;
@@ -225,16 +223,17 @@ public class ExcelManager {
      * @param surname
      * @return
      */
-    private int findStudentRow(XSSFSheet sheet, String surname, String name) {
-        int surnameColumn = this.PROPOSALS_HEADERS.indexOf("apellido");
-        int nameColumn = this.PROPOSALS_HEADERS.indexOf("nombre");
+    private int findStudentRowByFullName(XSSFSheet sheet, XSSFTable table, String surname, String name) {
+        int surnameColumn = table.findColumnIndex(ProposalInfo.SURNAME_KEY);
+        int nameColumn = table.findColumnIndex(ProposalInfo.NAME_KEY);
+        int startRow = table.getStartRowIndex();
+        int endRow = table.getEndRowIndex();
 
         XSSFRow row = null;
-        for (int i=0; i<=sheet.getLastRowNum(); i++) {
+        for (int i=startRow; i<=endRow; i++) {
             row = sheet.getRow(i);
             if (row.getCell(surnameColumn).getStringCellValue().equals(surname)) {
                 if (row.getCell(nameColumn).getStringCellValue().equals(name)) {
-                    System.out.println("Encontrado: " + surname + name);
                     return i;
                 }
             }
@@ -250,10 +249,10 @@ public class ExcelManager {
         XSSFWorkbook wb = getWorkbook();
         XSSFSheet sheet = getSheet(wb, STUDENTS_SHEET);
         XSSFTable table = getTable(sheet, STUDENTS_TABLE_NAME);
-        int review1Column = PROPOSALS_HEADERS.indexOf("veredicto1");
-        int review2Column = PROPOSALS_HEADERS.indexOf("veredicto2");
-        int resultColumn = PROPOSALS_HEADERS.indexOf("veredictoglobal");
-        // TODO: Habría que comprobar que la tabla es no nula para dar más robustez.
+        final int OK1 = table.findColumnIndex(ProposalInfo.OK1_KEY);    // Decisión del primer revisor
+        final int OK2 = table.findColumnIndex(ProposalInfo.OK2_KEY);    // Decisión del segundo revisor
+        final int OK = table.findColumnIndex(ProposalInfo.OK_KEY);      // Decisión final
+
         XSSFRow row = null;
         XSSFCell cell = null;
         for (String proposalName : reviews.keySet()) {
@@ -262,24 +261,24 @@ public class ExcelManager {
             String[] surname_name = proposalName.split("\\s*,\\s*");
             System.out.println(surname_name[0]);
             System.out.println(surname_name[1]);
-            int studentRow = findStudentRow(sheet, surname_name[0], surname_name[1]);
+            int studentRow = findStudentRowByFullName(sheet, table, surname_name[0], surname_name[1]);
             if (studentRow != -1) {
                 row = sheet.getRow(studentRow);
-                cell = row.getCell(review1Column);
+                cell = row.getCell(OK1);
                 if (cell == null) {
-                    cell = row.createCell(review1Column);
+                    cell = row.createCell(OK1);
                 }
-                cell.setCellValue(proposalReviews.get(0).getStatus());
+                cell.setCellValue(proposalReviews.get(0).getStatusCode());
 
-                cell = row.getCell(review2Column);
+                cell = row.getCell(OK2);
                 if (cell == null) {
-                    cell = row.createCell(review2Column);
+                    cell = row.createCell(OK2);
                 }
-                cell.setCellValue(proposalReviews.get(1).getStatus());
+                cell.setCellValue(proposalReviews.get(1).getStatusCode());
                 // TODO: HAGO ESTO AQUÍ COMO PRUEBA PERO LA DECISIÓN DEBERÍA TOMARLA OTRA CLASE
-                cell = row.getCell(resultColumn);
+                cell = row.getCell(OK);
                 if (cell == null) {
-                    cell = row.createCell(resultColumn);
+                    cell = row.createCell(OK);
                 }
                 cell.setCellValue("ACEPTADA");
             }

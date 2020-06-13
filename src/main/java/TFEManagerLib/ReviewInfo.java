@@ -5,35 +5,49 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 public class ReviewInfo extends HashMap<String, String> {
-    public static final ArrayList<String> FIELDS = new ArrayList<String>(
-            Arrays.asList("nombre_alumno",
-                    "nombre_revisor",
-                    "adecuacion",
-                    "alcance",
-                    "amenazas",
-                    "sugerencias",
-                    "valoracion")
+    public static final String REVIEW_STUDENT_NAME = "nombre";
+    public static final String REVIEW_STUDENT_SURNAME = "apellido";
+    public static final String REVIEW_REVIEWER_NAME = "nombre_revisor";
+    public static final String REVIEW_ADEQUACY = "adecuacion";
+    public static final String REVIEW_SCOPE = "alcance";
+    public static final String REVIEW_THREATS = "amenazas";
+    public static final String REVIEW_COMMENTS = "sugerencias";
+    public static final String REVIEW_STATUS = "resultado";
+    public static final ArrayList<String> FIELDS = new ArrayList<>(
+            Arrays.asList(REVIEW_STUDENT_NAME,
+                    REVIEW_REVIEWER_NAME,
+                    REVIEW_ADEQUACY,
+                    REVIEW_SCOPE,
+                    REVIEW_THREATS,
+                    REVIEW_COMMENTS,
+                    REVIEW_STATUS)
     );
+    public static final String[] STATUS_CODES = {"ACEPTADA", "CONDICIONAL", "MEJORAR", "RECHAZADA"};
 
     public ReviewInfo(HashMap<String, String> info) {
         super(info);
+    }
+
+    public String getFullName() {
+        return this.get(REVIEW_STUDENT_SURNAME) + ", " + this.get(REVIEW_STUDENT_NAME);
     }
 
     /** devuelve el estado de aceptación de la propuesta
      *
      * @return
      */
-    public String getStatus() {
+    public String getStatusCode() {
+        // TODO: ARREGLAR FORMULARIOS PARA QUE ESTO NO SEA NECESARIO
         switch (this.get("resultado")) {
             case "aceptada":
-                return "ACEPTADA";
+                return STATUS_CODES[0];
             case "condicional":
-                return "ACEPTADO CONDICONAL";
+                return STATUS_CODES[1];
             case "mejorar":
-                return "DEBE MEJORAR";
+                return STATUS_CODES[2];
             case "rechazada":
-                return "RECHAZADA";
+                return STATUS_CODES[3];
         }
-        return "";
+        return "----------";
     }
 }

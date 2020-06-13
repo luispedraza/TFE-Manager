@@ -32,6 +32,7 @@ public class ProposalInfo extends HashMap<String, String> {
                     TYPE_KEY,
                     LINES_KEY,
                     TITLE_KEY,
+                    PROPOSAL_FILE_PATH,
                     KEYWORDS_KEY,
                     REV1_KEY,
                     REV2_KEY,

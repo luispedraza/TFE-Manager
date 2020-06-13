@@ -224,8 +224,9 @@ public class MainWindow extends JDialog {
      * Lectura de las revisiones recibidas desde el disco
      */
     private void loadReviewsResults() {
+        String pathToReviews = "/Users/luispedraza/OneDrive - Universidad Internacional de La Rioja/TFE-MANAGER/__Revisiones";
         try {
-            manager.loadReviewsResults();
+            manager.loadReviewsResults(pathToReviews);
         } catch (Exception e) {
             logInfo(e.toString());
             e.printStackTrace();

@@ -85,9 +85,8 @@ public class TFEManager {
     /**
      * Carga del disco los resultados de las revisiones y los guarda en la lista maestra
      */
-    public void loadReviewsResults() throws Exception {
-        HashMap<String, ArrayList<ReviewInfo>> reviews = filesManager.loadReviewsResults();
-
+    public void loadReviewsResults(String fromPath) throws Exception {
+        HashMap<String, ArrayList<ReviewInfo>> reviews = filesManager.loadReviewsResults(fromPath);
         System.out.println(reviews);
         excelManager.saveReviewsResults(reviews);
     }

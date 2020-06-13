@@ -263,24 +263,17 @@ public class ExcelManager {
             System.out.println(surname_name[1]);
             int studentRow = findStudentRowByFullName(sheet, table, surname_name[0], surname_name[1]);
             if (studentRow != -1) {
+                ReviewInfo review1 = proposalReviews.get(0);
+                ReviewInfo review2 = proposalReviews.get(1);
                 row = sheet.getRow(studentRow);
                 cell = row.getCell(OK1);
-                if (cell == null) {
-                    cell = row.createCell(OK1);
-                }
-                cell.setCellValue(proposalReviews.get(0).getStatusCode());
+                cell.setCellValue(review1.getStatusCode());
 
                 cell = row.getCell(OK2);
-                if (cell == null) {
-                    cell = row.createCell(OK2);
-                }
-                cell.setCellValue(proposalReviews.get(1).getStatusCode());
-                // TODO: HAGO ESTO AQUÍ COMO PRUEBA PERO LA DECISIÓN DEBERÍA TOMARLA OTRA CLASE
+                cell.setCellValue(review2.getStatusCode());
+                // DECISIÓN FINAL PROPUESTA
                 cell = row.getCell(OK);
-                if (cell == null) {
-                    cell = row.createCell(OK);
-                }
-                cell.setCellValue("ACEPTADA");
+                cell.setCellValue(ReviewInfo.computeDecision(review1, review2));
             }
         }
 

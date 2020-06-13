@@ -22,7 +22,14 @@ public class ReviewInfo extends HashMap<String, String> {
                     REVIEW_COMMENTS,
                     REVIEW_STATUS)
     );
-    public static final String[] STATUS_CODES = {"ACEPTADA", "CONDICIONAL", "MEJORAR", "RECHAZADA"};
+    public static final ArrayList<String> STATUS_CODES = new ArrayList<>(
+            Arrays.asList(
+                    "ACEPTADA",
+                    "CONDICIONAL",
+                    "MEJORAR",
+                    "RECHAZADA"
+            )
+    );
 
     public ReviewInfo(HashMap<String, String> info) {
         super(info);
@@ -30,6 +37,19 @@ public class ReviewInfo extends HashMap<String, String> {
 
     public String getFullName() {
         return this.get(REVIEW_STUDENT_SURNAME) + ", " + this.get(REVIEW_STUDENT_NAME);
+    }
+
+    /** Calcula un resultado global a partir de dos revisiones
+     *
+     * @param r1:
+     * @param r2:
+     * @return: Código de la resolución.
+     */
+    public static String computeDecision (ReviewInfo r1, ReviewInfo r2) {
+        int i1 = STATUS_CODES.indexOf(r1.getStatusCode());
+        int i2 = STATUS_CODES.indexOf(r2.getStatusCode());
+        // De manera simple, tomamos la decisión más restrictiva
+        return STATUS_CODES.get(Math.max(i1, i2));
     }
 
     /** devuelve el estado de aceptación de la propuesta
@@ -40,13 +60,13 @@ public class ReviewInfo extends HashMap<String, String> {
         // TODO: ARREGLAR FORMULARIOS PARA QUE ESTO NO SEA NECESARIO
         switch (this.get("resultado")) {
             case "aceptada":
-                return STATUS_CODES[0];
+                return STATUS_CODES.get(0);
             case "condicional":
-                return STATUS_CODES[1];
+                return STATUS_CODES.get(1);
             case "mejorar":
-                return STATUS_CODES[2];
+                return STATUS_CODES.get(2);
             case "rechazada":
-                return STATUS_CODES[3];
+                return STATUS_CODES.get(3);
         }
         return "----------";
     }

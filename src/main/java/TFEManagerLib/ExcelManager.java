@@ -5,6 +5,8 @@ package TFEManagerLib;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.*;
 
 import java.io.*;
@@ -20,13 +22,13 @@ public class ExcelManager {
     private static final String STUDENTS_SHEET = "ALUMNOS";
     private static final String STUDENTS_TABLE_NAME = "ALUMNOS";
     private Path filePath;  // La ruta de la lista maestra con la que trabajamos
-    private static final ArrayList<String> PROPOSALS_HEADERS = ProposalInfo.FIELDS;
+
     private static final String REVIEWERS_SHEET = "REVISORES";
     private static final String REVIEWERS_TABLE_NAME = "REVISORES";
-    private static final ArrayList<String> REVIEWERS_HEADERS = ReviewerInfo.FIELDS;
-    private static final String DIRECTOR_SHEET = "DIRECTORES";
-    private static final String DIRECTOR_TABLE_NAME = "DIRECTORES";
-    private static final ArrayList<String> DIRECTOR_HEADERS = DirectorInfo.FIELDS;
+
+    private static final String DIRECTORS_SHEET = "DIRECTORES";
+    private static final String DIRECTORS_TABLE_NAME = "DIRECTORES";
+
     private static final String PROGRESS_SHEET = "PROGRESO";
     private static final String PROGRESS_TABLE_NAME = "PROGRESO";
 
@@ -132,7 +134,6 @@ public class ExcelManager {
      * @param info: un array de diccionarios con la información de las propuestas
      */
     public void saveProposalsInfo(ArrayList<ProposalInfo> info) throws Exception {
-
         XSSFWorkbook wb = getWorkbook();
         XSSFSheet sheet = getSheet(wb, STUDENTS_SHEET);
 
@@ -141,44 +142,13 @@ public class ExcelManager {
         XSSFCell cell = null;
 
         if (table == null) {
-//            row = sheet.createRow(0);
-//            int j = 0;
-//            for (String header : PROPOSALS_HEADERS) {
-//                cell = row.createCell(j++);
-//                cell.setCellValue(header);
-//            }
-//
-//
-//            // Set which area the table should be placed in
-//            AreaReference reference = wb.getCreationHelper().createAreaReference(
-//                new CellReference(0, 0), new CellReference(info.size(), PROPOSALS_HEADERS.size()-1));
-//            table = sheet.createTable(reference);
-//            table.setName(STUDENTS_TABLE_NAME);
-//            table.setDisplayName(STUDENTS_TABLE_NAME);
-
-
-
-
-
-
-
-            /*
-             // For now, create the initial style in a low-level way
-            table.getCTTable().addNewTableStyleInfo();
-            table.getCTTable().getTableStyleInfo().setName("TableStyleMedium2");
-            */
-            /*
-            // Style the table
-            XSSFTableStyleInfo style = (XSSFTableStyleInfo) table.getStyle();
-            style.setName("TableStyleMedium9");
-            style.setShowColumnStripes(true);
-            style.setShowRowStripes(true);
-            style.setFirstColumn(false);
-            style.setLastColumn(false);
-            // TODO: para la ordenación de las columnas: https://stackoverflow.com/questions/28419961/how-to-add-table-heading-drop-down-with-apache-poi
-
-             */
+            throw new Exception ("No se ha encontrado la tabla: " + STUDENTS_TABLE_NAME);
         }
+        // Ajustamos el área que ocupa la tabla
+        AreaReference currentArea = table.getArea();
+        AreaReference newArea = wb.getCreationHelper().createAreaReference(
+                currentArea.getFirstCell(), new CellReference(info.size()-1, currentArea.getLastCell().getCol()));
+        table.setArea(newArea);
 
         // Buscamos las cabeceras, por si hubieran cambiado las columnas de orden
         int startRow = table.getStartRowIndex();
@@ -187,7 +157,7 @@ public class ExcelManager {
         for (Cell c : row) {
             headers.add(c.getStringCellValue());
         }
-        // Set the values for the table
+        // Almacenamos los valores en la tabla
         int j = 0;
         for (int i = startRow+1; i < info.size(); i++) {
             ProposalInfo proposal = info.get(i);

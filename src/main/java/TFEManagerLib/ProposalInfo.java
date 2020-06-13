@@ -1,5 +1,9 @@
 package TFEManagerLib;
 
+import com.google.common.base.Joiner;
+import com.google.common.primitives.Ints;
+import org.apache.commons.codec.binary.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,6 +25,10 @@ public class ProposalInfo extends HashMap<String, String> {
     public static final String OK_KEY = "OK";
     public static final String FORMER_DIRECTOR = "DIRECTOR ANTERIOR";
     public static final String PROPOSAL_FILE_PATH = "LINK";
+
+    // Para los métodos de optimización es mejor guardar tipo y líneas como enteros
+    private Integer[] lines = {};
+    private Integer type = 0;
 
     public ProposalInfo() {
         super();
@@ -135,5 +143,10 @@ public class ProposalInfo extends HashMap<String, String> {
 
     public String getLink() {
         return this.get(PROPOSAL_FILE_PATH);
+    }
+
+    public void setLines(ArrayList<Integer> lines) {
+        this.lines = lines.toArray(new Integer[0]);
+        this.put(LINES_KEY, Joiner.on(";").join(this.lines));
     }
 }

@@ -25,14 +25,7 @@ public class PDFManager {
     public static final String PROPOSAL_TYPE = "TIPO";
     public static final String PROPOSAL_FORMER_DIRECTOR = "DIRECTOR-ANTERIOR";
     public static final String PROPOSAL_CONTINUE_DIRECTOR = "SEGUIR";
-    public static final String PROPOSAL_L1 = "LINEA1";
-    public static final String PROPOSAL_L2 = "LINEA2";
-    public static final String PROPOSAL_L3 = "LINEA3";
-    public static final String PROPOSAL_L4 = "LINEA4";
-    public static final String PROPOSAL_L5 = "LINEA5";
-    public static final String PROPOSAL_L6 = "LINEA6";
-    public static final String PROPOSAL_L7 = "LINEA7";
-    public static final String PROPOSAL_L8 = "LINEA8";
+    public static final String PROPOSAL_LINE = "LINEA%d";   // No sabemos el número de líneas que habrá en la propuesta
 
     // Nombres de campos en el formulario de revisión (PDF)
     public static final String REVIEW_FORM_NAME = "NOMBRE";
@@ -82,6 +75,12 @@ public class PDFManager {
 
     }
 
+    /** Rellena un único campo de un formulario
+     *
+     * @param key: clave del formulario
+     * @param value: valor a insertar
+     * @throws IOException
+     */
     public void fillForm(String key, String value) throws IOException {
         String filePath = this.filePath;
         PDDocument doc = PDDocument.load(new File(filePath));
@@ -114,7 +113,6 @@ public class PDFManager {
             PDAcroForm form = catalog.getAcroForm();
             if (form != null) {
                 for (PDField field : form.getFields()) {
-                    // System.out.println(field.getPartialName() + "====>" + field.getValueAsString());
                     info.put(field.getPartialName(), field.getValueAsString());
                 }
             }
@@ -133,9 +131,21 @@ public class PDFManager {
         proposal.setFormerDirector(String.join(" - ",
                 info.get(PROPOSAL_FORMER_DIRECTOR),
                 info.get(PROPOSAL_CONTINUE_DIRECTOR)));
+
         proposal.setTitle(info.get(PROPOSAL_TITLE));
         proposal.setCountry(info.get(PROPOSAL_COUNTRY));
         proposal.setType(info.get(PROPOSAL_TYPE));
+
+        // Buscamos las líneas de trabajo:
+        ArrayList<Integer> lines = new ArrayList<>();
+        for (int i=1; i<10; i++) {
+            String line = info.get(String.format(PROPOSAL_LINE, i));
+            if (line == null) break;
+            if (line.equals("Sí")) {
+                lines.add(i);
+            }
+        }
+        proposal.setLines(lines);
 
         return proposal;
     }

@@ -135,14 +135,6 @@ public class TFEManager {
         }
     }
 
-
-    /**
-     * Envío de los trabajos a los directores
-     */
-    public void sendToDirectors() {
-
-    }
-
     /** Se generan los arhichivos y comentrios de calificación de la propuesta
      * y el archivo zip para subir a sakai
      */

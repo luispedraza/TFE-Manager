@@ -136,9 +136,9 @@ public class ExcelManager {
 
     /**
      * Se guarda la información de las propuestas
-     * @param info: un array de diccionarios con la información de las propuestas
+     * @param proposals: un array de diccionarios con la información de las propuestas
      */
-    public void saveProposalsInfo(ArrayList<ProposalInfo> info) throws Exception {
+    public void saveProposalsInfo(ArrayList<ProposalInfo> proposals) throws Exception {
         XSSFWorkbook wb = getWorkbook();
         XSSFSheet sheet = getSheet(wb, STUDENTS_SHEET);
         XSSFTable table = getTable(sheet, STUDENTS_TABLE_NAME);
@@ -147,20 +147,20 @@ public class ExcelManager {
         // Ajustamos el área que ocupa la tabla
         AreaReference currentArea = table.getArea();
         AreaReference newArea = wb.getCreationHelper().createAreaReference(
-                currentArea.getFirstCell(), new CellReference(info.size()-1, currentArea.getLastCell().getCol()));
+                currentArea.getFirstCell(), new CellReference(proposals.size(), currentArea.getLastCell().getCol()));
         table.setArea(newArea);
 
         // Buscamos las cabeceras, por si hubieran cambiado las columnas de orden
-        int startRow = table.getStartRowIndex();
-        row = sheet.getRow(startRow);
+        int rowIndex = table.getStartRowIndex();
+        row = sheet.getRow(rowIndex);
         ArrayList<String> headers = new ArrayList<>();
         for (Cell c : row) {
             headers.add(c.getStringCellValue());
         }
         // Almacenamos los valores en la tabla
-        for (int i = startRow+1; i < info.size(); i++) {
-            ProposalInfo proposal = info.get(i);
-            row = sheet.createRow(i);
+        for (ProposalInfo proposal : proposals) {
+            rowIndex++;
+            row = sheet.createRow(rowIndex);
             // Un estilo para los enlaces
             CellStyle linkStyle = wb.createCellStyle();
             Font linkFont = wb.createFont();

@@ -5,14 +5,16 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 public class ReviewInfo extends HashMap<String, String> {
-    public static final String REVIEW_STUDENT_NAME = "nombre";
-    public static final String REVIEW_STUDENT_SURNAME = "apellido";
-    public static final String REVIEW_REVIEWER_NAME = "nombre_revisor";
-    public static final String REVIEW_ADEQUACY = "adecuacion";
-    public static final String REVIEW_SCOPE = "alcance";
-    public static final String REVIEW_THREATS = "amenazas";
-    public static final String REVIEW_COMMENTS = "sugerencias";
-    public static final String REVIEW_STATUS = "resultado";
+    public static final String REVIEW_STUDENT_NAME = "NOMBRE";
+    public static final String REVIEW_STUDENT_SURNAME = "APELLIDOS";
+    public static final String REVIEW_REVIEWER_NAME = "REVIEWER-NAME";
+    public static final String REVIEW_ADEQUACY = "ADECUACION";
+    public static final String REVIEW_SCOPE = "ALCANCE";
+    public static final String REVIEW_THREATS = "AMENAZAS";
+    public static final String REVIEW_COMMENTS = "SUGERENCIAS";
+    public static final String REVIEW_STATUS = "RESULTADO";
+    public static final String REVIEW_PREFERENCE = "PREFERENCIA";
+
     public static final ArrayList<String> FIELDS = new ArrayList<>(
             Arrays.asList(REVIEW_STUDENT_NAME,
                     REVIEW_REVIEWER_NAME,
@@ -57,17 +59,10 @@ public class ReviewInfo extends HashMap<String, String> {
      * @return
      */
     public String getStatusCode() {
-        // TODO: ARREGLAR FORMULARIOS PARA QUE ESTO NO SEA NECESARIO
-        switch (this.get("resultado")) {
-            case "aceptada":
-                return STATUS_CODES.get(0);
-            case "condicional":
-                return STATUS_CODES.get(1);
-            case "mejorar":
-                return STATUS_CODES.get(2);
-            case "rechazada":
-                return STATUS_CODES.get(3);
-        }
-        return "----------";
+        return this.get(REVIEW_STATUS);
+    }
+
+    public boolean getPreference() {
+        return this.get(REVIEW_PREFERENCE).equals("SI");
     }
 }

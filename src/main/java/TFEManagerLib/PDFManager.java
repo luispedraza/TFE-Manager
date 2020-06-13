@@ -18,26 +18,28 @@ import java.util.HashMap;
 public class PDFManager {
 
     // Nombres de campos en la propuesta del alumnos (PDF)
-    public static final String PROPOSAL_NAME = "nombre";
-    public static final String PROPOSAL_SURNAME = "apellido";
-    public static final String PROPOSAL_COUNTRY = "pais";
-    public static final String PROPOSAL_TITLE = "titulo";
-    public static final String PROPOSAL_TYPE = "tipo";
-    public static final String PROPOSAL_FORMER_DIRECTOR = "director_anterio";
-    public static final String PROPOSAL_CONTINUE_DIRECTOR = "seguir";
-    public static final String PROPOSAL_L1 = "linea1";
-    public static final String PROPOSAL_L2 = "linea1";
-    public static final String PROPOSAL_L3 = "linea1";
-    public static final String PROPOSAL_L4 = "linea1";
-    public static final String PROPOSAL_L5 = "linea1";
-    public static final String PROPOSAL_L6 = "linea1";
-    public static final String PROPOSAL_L7 = "linea1";
-    public static final String PROPOSAL_L8 = "linea1";
+    public static final String PROPOSAL_NAME = "NOMBRE";
+    public static final String PROPOSAL_SURNAME = "APELLIDOS";
+    public static final String PROPOSAL_COUNTRY = "PAIS";
+    public static final String PROPOSAL_TITLE = "TITULO";
+    public static final String PROPOSAL_TYPE = "TIPO";
+    public static final String PROPOSAL_FORMER_DIRECTOR = "DIRECTOR-ANTERIOR";
+    public static final String PROPOSAL_CONTINUE_DIRECTOR = "SEGUIR";
+    public static final String PROPOSAL_L1 = "LINEA1";
+    public static final String PROPOSAL_L2 = "LINEA2";
+    public static final String PROPOSAL_L3 = "LINEA3";
+    public static final String PROPOSAL_L4 = "LINEA4";
+    public static final String PROPOSAL_L5 = "LINEA5";
+    public static final String PROPOSAL_L6 = "LINEA6";
+    public static final String PROPOSAL_L7 = "LINEA7";
+    public static final String PROPOSAL_L8 = "LINEA8";
 
     // Nombres de campos en el formulario de revisión (PDF)
-    public static final String REVIEW_FORM_NAME = "nombre";
-    public static final String REVIEW_FORM_SURNAME = "apellido";
-    public static final String REVIEW_FORM_TITLE = "titulo";
+    public static final String REVIEW_FORM_NAME = "NOMBRE";
+    public static final String REVIEW_FORM_SURNAME = "APELLIDOS";
+    public static final String REVIEW_FORM_TITLE = "TITULO";
+    public static final String REVIEW_FORM_STATUS = "RESULTADO";
+    public static final String REVIEW_FORM_ID = "ID";
 
 
     String filePath;
@@ -59,12 +61,8 @@ public class PDFManager {
         PDDocumentCatalog catalog = doc.getDocumentCatalog();
         PDAcroForm form = catalog.getAcroForm();
 
-        if (data!=null) {
+        if (data != null) {
             if (form != null) {
-//                for (PDField field : form.getFields()) {
-//                    //System.out.println(field.getPartialName() + "====>" + field.getValueAsString());
-//                    System.out.println(field.getFullyQualifiedName() + "====>" + field.getValueAsString());
-//                }
                 for (int i = 0; i < originKeys.length; i++) {
                     PDField field = form.getField(pdfKeys[i]);
                     if (field != null) {
@@ -82,6 +80,23 @@ public class PDFManager {
         doc.save(this.filePath);
         doc.close();
 
+    }
+
+    public void fillForm(String key, String value) throws IOException {
+        String filePath = this.filePath;
+        PDDocument doc = PDDocument.load(new File(filePath));
+        PDDocumentCatalog catalog = doc.getDocumentCatalog();
+        PDAcroForm form = catalog.getAcroForm();
+        if (form != null) {
+            PDField field = form.getField(key);
+            if (field != null) {
+                field.setValue(value);
+                field.setReadOnly(true);
+                field.setReadOnly(true);
+            }
+        }
+        doc.save(this.filePath);
+        doc.close();
     }
 
     /**
@@ -128,7 +143,7 @@ public class PDFManager {
     public ReviewInfo parseReview() {
         HashMap<String, String> info = getFormInfo();
         // Aquí es posible hacer comprobaciones y filtrados para el caso de revisiones.
-        if (info.containsKey("resultado")) {
+        if (info.containsKey(REVIEW_FORM_STATUS)) {
             return new ReviewInfo(info);
         }
         return null;

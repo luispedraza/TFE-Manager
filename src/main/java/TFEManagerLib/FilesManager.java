@@ -27,7 +27,7 @@ public class FilesManager {
     private final String DOCS_FOLDER = "Docs";              // Directorio del WS que contiene la documentación
     private final String GUIDE_FILE = "Guia-TFM.pdf";
     private final String REVIEW_GUIDE_FILE = "IndicacionesRevisores.pdf";
-    private final String REVIEW_TEMPLATE_FILE = "ReviewTemplate.pdf";
+    private final String REVIEW_TEMPLATE_FILE = "02 Review Template.pdf";
 
     public static final String REVIEW_PACK_DIR = "PROPUESTAS"; //   Carpeta que contiene las propuestas de cada revisor
 
@@ -167,7 +167,7 @@ public class FilesManager {
         // recorremos la lista de revisores:
         for (ReviewerInfo r : reviewers) {
             reviewerIndex++;
-            String reviewerPath = Paths.get(reviewsPath, r.getName()).toString();
+            String reviewerPath = Paths.get(reviewsPath, String.format("%02d - ", reviewerIndex) + r.getName()).toString();
             makeDir(reviewerPath);
             // Copiamos la documentación para el revisor:
             copyFile(Paths.get(docsPath, GUIDE_FILE).toString(),
@@ -216,6 +216,7 @@ public class FilesManager {
                         String[] originKeys = {ProposalInfo.NAME_KEY, ProposalInfo.SURNAME_KEY, ProposalInfo.TITLE_KEY};
                         String[] pdfFormKeys = {PDFManager.PROPOSAL_NAME, PDFManager.PROPOSAL_SURNAME, PDFManager.PROPOSAL_TITLE};
                         pdfManagerReview.fillForm(p, originKeys, pdfFormKeys, false);
+                        pdfManagerReview.fillForm(PDFManager.REVIEW_FORM_ID, String.format("%02d", reviewerIndex));
                         // COPIAMOS LA PROPUESTA DEL ALUMNO
                         String tempProposalPath = Paths.get(reviewPackDir, studentFullName + ".pdf").toString();
                         copyFile(pdfProposalFile.toString(), tempProposalPath);

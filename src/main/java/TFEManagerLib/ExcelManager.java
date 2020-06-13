@@ -93,9 +93,12 @@ public class ExcelManager {
      * @param sheetName: nombre de la hoja de trabajo
      * @return: la hoja de trabajo, o crea una si no existía
      */
-    private XSSFSheet getSheet(XSSFWorkbook wb, String sheetName) {
+    private XSSFSheet getSheet(XSSFWorkbook wb, String sheetName) throws Exception {
         XSSFSheet sheet = wb.getSheet(sheetName);
-        return (sheet != null) ? sheet : wb.createSheet(sheetName);
+        if (sheet == null) {
+            throw new Exception(String.format("No se ha encontrado la hoja: %s. Revise la lista maestra", sheetName));
+        }
+        return sheet;
     }
 
     /**
@@ -110,7 +113,9 @@ public class ExcelManager {
                 return table;
             }
         }
-        return null;
+        throw new Exception(String.format("No se ha encontrado la tabla %s en la hoja %s. Revise la lista maestra",
+                tableName,
+                sheet.getSheetName()));
     }
 
     /**
@@ -136,14 +141,9 @@ public class ExcelManager {
     public void saveProposalsInfo(ArrayList<ProposalInfo> info) throws Exception {
         XSSFWorkbook wb = getWorkbook();
         XSSFSheet sheet = getSheet(wb, STUDENTS_SHEET);
-
         XSSFTable table = getTable(sheet, STUDENTS_TABLE_NAME);
         XSSFRow row = null;
         XSSFCell cell = null;
-
-        if (table == null) {
-            throw new Exception ("No se ha encontrado la tabla: " + STUDENTS_TABLE_NAME);
-        }
         // Ajustamos el área que ocupa la tabla
         AreaReference currentArea = table.getArea();
         AreaReference newArea = wb.getCreationHelper().createAreaReference(
@@ -158,18 +158,17 @@ public class ExcelManager {
             headers.add(c.getStringCellValue());
         }
         // Almacenamos los valores en la tabla
-        int j = 0;
         for (int i = startRow+1; i < info.size(); i++) {
             ProposalInfo proposal = info.get(i);
             row = sheet.createRow(i);
-            //for (Map.Entry<String, String> entry : proposal.entrySet()) {
-            j = 0;
+            // Un estilo para los enlaces
             CellStyle linkStyle = wb.createCellStyle();
             Font linkFont = wb.createFont();
             linkFont.setUnderline(Font.U_SINGLE);
-            linkFont.setColor(IndexedColors.BLUE.getIndex());
+            linkFont.setColor(IndexedColors.CORAL.getIndex());
             linkStyle.setFont(linkFont);
 
+            int j = 0;
             for (String header : headers) {
                 cell = row.createCell(j++);
                 if (header.equals(ProposalInfo.PROPOSAL_FILE_PATH)) {
@@ -182,7 +181,6 @@ public class ExcelManager {
                     cell.setCellValue(proposal.get(header));
                 }
             }
-
         }
         saveWorkbook(wb);
     }

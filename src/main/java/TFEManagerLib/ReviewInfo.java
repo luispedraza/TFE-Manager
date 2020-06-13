@@ -15,15 +15,6 @@ public class ReviewInfo extends HashMap<String, String> {
     public static final String REVIEW_STATUS = "RESULTADO";
     public static final String REVIEW_PREFERENCE = "PREFERENCIA";
 
-    public static final ArrayList<String> FIELDS = new ArrayList<>(
-            Arrays.asList(REVIEW_STUDENT_NAME,
-                    REVIEW_REVIEWER_NAME,
-                    REVIEW_ADEQUACY,
-                    REVIEW_SCOPE,
-                    REVIEW_THREATS,
-                    REVIEW_COMMENTS,
-                    REVIEW_STATUS)
-    );
     public static final ArrayList<String> STATUS_CODES = new ArrayList<>(
             Arrays.asList(
                     "ACEPTADA",

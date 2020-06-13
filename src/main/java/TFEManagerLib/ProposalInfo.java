@@ -22,27 +22,6 @@ public class ProposalInfo extends HashMap<String, String> {
     public static final String FORMER_DIRECTOR = "DIRECTOR ANTERIOR";
     public static final String PROPOSAL_FILE_PATH = "LINK";
 
-    public static final ArrayList<String> FIELDS = new ArrayList<String>(
-            Arrays.asList(
-                    ID_KEY,
-                    SURNAME_KEY,
-                    NAME_KEY,
-                    COUNTRY_KEY,
-                    SUBMITTED_KEY,
-                    TYPE_KEY,
-                    LINES_KEY,
-                    TITLE_KEY,
-                    PROPOSAL_FILE_PATH,
-                    KEYWORDS_KEY,
-                    REV1_KEY,
-                    REV2_KEY,
-                    OK1_KEY,
-                    OK2_KEY,
-                    OK_KEY,
-                    FORMER_DIRECTOR
-            )
-    );
-
     public ProposalInfo() {
         super();
     }

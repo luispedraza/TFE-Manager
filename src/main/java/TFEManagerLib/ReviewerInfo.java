@@ -20,17 +20,6 @@ public class ReviewerInfo extends HashMap<String, String> {
     public static final String MAX_NUMBER_KEY = "MAXIMO";
     public static final String ASSIGNED_NUMBER_KEY = "ASIGNADOS";
 
-    public static final ArrayList<String> FIELDS = new ArrayList<>(
-            Arrays.asList(
-                    NAME_KEY,
-                    EMAIL_KEY,
-                    TYPE_KEY,
-                    LINE_KEY,
-                    KEYWORDS_KEY,
-                    MAX_NUMBER_KEY,
-                    ASSIGNED_NUMBER_KEY)
-    );
-
     public ReviewerInfo(String name, int max, String email) {
         this.put(NAME_KEY, name);   // Nombre del revisor
         this.put(MAX_NUMBER_KEY, Integer.toString(max));       // Máximo de propuestas

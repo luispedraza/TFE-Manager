@@ -1,6 +1,5 @@
-package TFEManagerLib;
+package TFEManagerLib.Models;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Academic extends Person {
@@ -14,5 +13,19 @@ public class Academic extends Person {
     }
     public Academic(HashMap<String, String> info) {
         super(info);
+    }
+
+    public String getName() {
+        return this.get(NAME_KEY);
+    }
+    public void setName(String name) {
+        this.put(NAME_KEY, name);
+    }
+
+    public String getEmail() {
+        return this.get(EMAIL_KEY);
+    }
+    public void setEmail(String email) {
+        this.put(EMAIL_KEY, email);
     }
 }

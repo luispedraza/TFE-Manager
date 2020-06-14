@@ -1,4 +1,4 @@
-package TFEManagerLib;
+package TFEManagerLib.Models;
 
 import com.google.common.base.Joiner;
 

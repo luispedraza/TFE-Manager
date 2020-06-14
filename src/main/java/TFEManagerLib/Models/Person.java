@@ -1,4 +1,4 @@
-package TFEManagerLib;
+package TFEManagerLib.Models;
 
 
 import java.util.HashMap;

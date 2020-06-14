@@ -1,4 +1,4 @@
-import TFEManagerLib.Student;
+import TFEManagerLib.Models.Student;
 import TFEManagerLib.TFEManager;
 
 import javax.swing.*;
@@ -32,6 +32,7 @@ public class MainWindow extends JDialog {
     private JTree directorsTree;
     private JPanel buttonsPanel;
     private JButton assignReviewers;
+    private JButton assignDirectors;
 
     public MainWindow() {
         manager = new TFEManager(MainWindow.WORKING_DIRECTORY);
@@ -106,6 +107,12 @@ public class MainWindow extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 generateGradings();
+            }
+        });
+        assignDirectors.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                assignDirectors();
             }
         });
         loadProgress.addActionListener(new ActionListener() {
@@ -239,6 +246,18 @@ public class MainWindow extends JDialog {
     private void generateGradings() {
         try {
             manager.generateGradings();
+        } catch (Exception e) {
+            logInfo(e.toString());
+            e.printStackTrace();
+        }
+    }
+
+    /** Asignación de directores
+     *
+     */
+    private void assignDirectors() {
+        try {
+            manager.assignDirectors();
         } catch (Exception e) {
             logInfo(e.toString());
             e.printStackTrace();

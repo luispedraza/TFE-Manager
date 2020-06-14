@@ -3,6 +3,9 @@ package TFEManagerLib;
 
 
 
+import TFEManagerLib.Models.Director;
+import TFEManagerLib.Models.Reviewer;
+import TFEManagerLib.Models.Student;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.AreaReference;
@@ -383,5 +386,17 @@ public class ExcelManager {
             }
         }
         saveWorkbook(wb);
+    }
+
+    public HashMap<String, Director> readDirectorsInfo() throws Exception {
+        HashMap<String, Director> result = new HashMap<>();
+        ArrayList<HashMap<String, String>> tableInfo = readTable(DIRECTORS_SHEET, DIRECTORS_TABLE_NAME);
+        for (HashMap<String, String> r : tableInfo) {
+            Director director = new Director(r);
+            String name = director.getName();
+            if (name.isEmpty()) continue;
+            result.put(name, director);
+        }
+        return result;
     }
 }

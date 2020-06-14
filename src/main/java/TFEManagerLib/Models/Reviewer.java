@@ -1,4 +1,4 @@
-package TFEManagerLib;
+package TFEManagerLib.Models;
 
 
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import java.util.HashMap;
  * Clase para almacenar la información de un revisor
  *
  */
-public class Reviewer extends Person {
+public class Reviewer extends Academic {
     // Un revisor tiene propuestas
     private ArrayList<Student> proposals = new ArrayList<Student>();
 
@@ -40,17 +40,5 @@ public class Reviewer extends Person {
         return this.proposals;
     }
 
-    public String getName() {
-        return this.get(NAME_KEY);
-    }
-    public void setName(String name) {
-        this.put(NAME_KEY, name);
-    }
 
-    public String getEmail() {
-        return this.get(EMAIL_KEY);
-    }
-    public void setEmail(String email) {
-        this.put(EMAIL_KEY, email);
-    }
 }

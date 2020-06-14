@@ -1,5 +1,8 @@
 package TFEManagerLib;
 
+import TFEManagerLib.Models.Director;
+import TFEManagerLib.Models.Reviewer;
+import TFEManagerLib.Models.Student;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -143,6 +146,10 @@ public class TFEManager {
         filesManager.copyReviewsToProposals();
     }
 
+    /** Asignación automática de revisores **
+     *
+     * @throws Exception
+     */
     public void assignReviewers() throws Exception {
         HashMap<String, Student> proposals = excelManager.readProposalsInfo();
         HashMap<String, Reviewer> reviewers = excelManager.readReviewersInfo();
@@ -162,5 +169,13 @@ public class TFEManager {
         HashMap<String, Submission> progress = excelManager.readGradesFromPlatform(path);
         System.out.println(progress);
         excelManager.saveGradingsProgress(progress, type);
+    }
+
+    /** Asignación autoática de directores
+     *
+     */
+    public void assignDirectors() throws Exception {
+        HashMap<String, Student> proposals = excelManager.readProposalsInfo();
+        HashMap<String, Director> reviewers = excelManager.readDirectorsInfo();
     }
 }

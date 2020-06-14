@@ -1,5 +1,7 @@
 package TFEManagerLib;
 
+import TFEManagerLib.Models.Reviewer;
+import TFEManagerLib.Models.Student;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;

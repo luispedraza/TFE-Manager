@@ -4,6 +4,7 @@ package TFEManagerLib;
 
 
 import TFEManagerLib.Models.Director;
+import TFEManagerLib.Models.Person;
 import TFEManagerLib.Models.Reviewer;
 import TFEManagerLib.Models.Student;
 import org.apache.poi.common.usermodel.HyperlinkType;
@@ -13,6 +14,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.*;
 
 import java.io.*;
+import java.lang.reflect.Constructor;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -242,8 +244,8 @@ public class ExcelManager {
      * @param tableName: Nombre de la tabla que buscamos
      * @return
      */
-    private ArrayList<HashMap<String, String>> readTable(String sheetName, String tableName) throws Exception {
-        ArrayList<HashMap<String, String>> result = new ArrayList<>();
+    private ArrayList<? extends Person> readTable(String sheetName, String tableName, String className) throws Exception {
+        ArrayList<Person> result = new ArrayList<>();
         ArrayList<String> headers = new ArrayList<>();
         DataFormatter formatter = new DataFormatter();  // Para trabajar con celdas con diferentes tipos de datos
 
@@ -271,12 +273,22 @@ public class ExcelManager {
                 continue;
             }
             // El objeto que almacenará la información de la fila
-            HashMap<String, String> infoRow = new HashMap<>(table.getColumnCount());
-
-            for (j = startColumn; j <= endColumn; j++) {
-                cell = row.getCell(j);
-                infoRow.put(headers.get(j), formatter.formatCellValue(cell));
+            // HashMap<String, String> infoRow = new HashMap<>(table.getColumnCount());
+            Person infoRow = null;
+            if (className.equals(Student.class.getName())) {
+                infoRow = new Student();
+            } else if (className.equals(Reviewer.class.getName())) {
+                infoRow = new Reviewer();
+            } else if (className.equals(Director.class.getName())) {
+                infoRow = new Director();
             }
+            if (infoRow != null) {
+                for (j = startColumn; j <= endColumn; j++) {
+                    cell = row.getCell(j);
+                    infoRow.put(headers.get(j), formatter.formatCellValue(cell));
+                }
+            }
+
             result.add(infoRow);
         }
         return result;
@@ -352,17 +364,55 @@ public class ExcelManager {
         saveWorkbook(wb);
     }
 
+//    /**
+//
+//     * Lee la información que contiene la lista maestra sobre las propuestas
+//     * @return
+//     */
+//    public ArrayList<Student> readProposalsInfo() throws Exception {
+//        ArrayList<Student> proposals = new ArrayList<>();
+//        ArrayList<HashMap<String, String>> tableData = readTable(STUDENTS_SHEET, STUDENTS_TABLE_NAME);
+//        for (HashMap<String, String> p : tableData) {
+//            Student proposal = new Student(p);
+//            proposals.add(proposal);
+//        }
+//        return proposals;
+//    }
+//    /**
+//     * Se carga de la lista maestra la información de los revisores
+//     * @return
+//     */
+//    public ArrayList<Reviewer> readReviewersInfo() throws Exception {
+//        ArrayList<Reviewer> result = new ArrayList<>();
+//        ArrayList<HashMap<String, String>> tableInfo = readTable(REVIEWERS_SHEET, REVIEWERS_TABLE_NAME);
+//        for (HashMap<String, String> r : tableInfo) {
+//            Reviewer reviewer = new Reviewer(r);
+//            result.add(reviewer);
+//        }
+//        return result;
+//    }
+//
+//    /** Se carga de la lista maestra la información de los directores
+//     *
+//     * @return
+//     * @throws Exception
+//     */
+//    public ArrayList<Director> readDirectorsInfo() throws Exception {
+//        ArrayList<Director> result = new ArrayList<>();
+//        ArrayList<HashMap<String, String>> tableInfo = readTable(DIRECTORS_SHEET, DIRECTORS_TABLE_NAME);
+//        for (HashMap<String, String> d : tableInfo) {
+//            Director director = new Director(d);
+//            result.add(director);
+//        }
+//        return result;
+//    }
+
     /**
      * Lee la información que contiene la lista maestra sobre las propuestas
      * @return
      */
     public ArrayList<Student> readProposalsInfo() throws Exception {
-        ArrayList<Student> proposals = new ArrayList<>();
-        ArrayList<HashMap<String, String>> tableData = readTable(STUDENTS_SHEET, STUDENTS_TABLE_NAME);
-        for (HashMap<String, String> p : tableData) {
-            Student proposal = new Student(p);
-            proposals.add(proposal);
-        }
+        ArrayList<Student> proposals = (ArrayList<Student>) readTable(STUDENTS_SHEET, STUDENTS_TABLE_NAME, Student.class.getName());
         return proposals;
     }
     /**
@@ -370,12 +420,7 @@ public class ExcelManager {
      * @return
      */
     public ArrayList<Reviewer> readReviewersInfo() throws Exception {
-        ArrayList<Reviewer> result = new ArrayList<>();
-        ArrayList<HashMap<String, String>> tableInfo = readTable(REVIEWERS_SHEET, REVIEWERS_TABLE_NAME);
-        for (HashMap<String, String> r : tableInfo) {
-            Reviewer reviewer = new Reviewer(r);
-            result.add(reviewer);
-        }
+        ArrayList<Reviewer> result = (ArrayList<Reviewer>) readTable(REVIEWERS_SHEET, REVIEWERS_TABLE_NAME, Reviewer.class.getName());
         return result;
     }
 
@@ -385,12 +430,7 @@ public class ExcelManager {
      * @throws Exception
      */
     public ArrayList<Director> readDirectorsInfo() throws Exception {
-        ArrayList<Director> result = new ArrayList<>();
-        ArrayList<HashMap<String, String>> tableInfo = readTable(DIRECTORS_SHEET, DIRECTORS_TABLE_NAME);
-        for (HashMap<String, String> d : tableInfo) {
-            Director director = new Director(d);
-            result.add(director);
-        }
+        ArrayList<Director> result = (ArrayList<Director>) readTable(DIRECTORS_SHEET, DIRECTORS_TABLE_NAME, Director.class.getName());
         return result;
     }
 }

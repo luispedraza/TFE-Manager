@@ -12,6 +12,9 @@ public class Reviewer extends Academic {
     // Un revisor tiene propuestas
     private ArrayList<Student> proposals = new ArrayList<Student>();
 
+    public Reviewer() {
+        super();
+    }
     /**
      * Para crear copias a partir de un HashMap
      * @param r

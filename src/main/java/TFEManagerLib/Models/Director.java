@@ -7,6 +7,10 @@ import java.util.HashMap;
  */
 public class Director extends Academic {
 
+    public Director() {
+        super();
+    }
+
     public Director(HashMap<String, String> info) {
         super(info);
     }

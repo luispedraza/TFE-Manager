@@ -7,12 +7,10 @@ import java.util.HashMap;
 
 public class Student extends Person {
     public static final String ID_KEY = "ID";
-    public static final String SURNAME_KEY = "APELLIDOS";
-    public static final String NAME_KEY = "NOMBRE";
-    public static final String COUNTRY_KEY = "PAIS";
+
     public static final String SUBMITTED_KEY = "ENTREGADO";
     public static final String TYPE_KEY = "TIPO";
-    public static final String LINES_KEY = "LINEAS";
+
     public static final String TITLE_KEY = "TITULO";
     public static final String KEYWORDS_KEY = "KEYWORDS";
     public static final String REV1_KEY = "REVISOR1";
@@ -20,13 +18,10 @@ public class Student extends Person {
     public static final String OK1_KEY = "VEREDICTO1";
     public static final String OK2_KEY = "VEREDICTO2";
     public static final String OK_KEY = "OK";
+    public static final String DIRECTOR_KEY = "DIRECTOR";
+
     public static final String FORMER_DIRECTOR = "DIRECTOR ANTERIOR";
     public static final String PROPOSAL_FILE_PATH = "LINK";
-
-    // Para los métodos de optimización es mejor guardar tipo y líneas como enteros
-    private Integer[] lines = {};
-    private Integer type = 0;
-
 
     public Student() {
         super();
@@ -63,17 +58,12 @@ public class Student extends Person {
         return this.getSurname() + ", " + this.getName();
     }
 
-    public String getCountry() {
-        return this.get(COUNTRY_KEY);
-    }
 
     public String getTitle() {
         return this.get(TITLE_KEY);
     }
 
-    public String getType() {
-        return this.get(TYPE_KEY);
-    }
+
 
     public String getRevieverName(int index) {
         String[] rev = {REV1_KEY, REV2_KEY};
@@ -96,7 +86,7 @@ public class Student extends Person {
                 this.getTitle() +
                 System.lineSeparator();
         info += "=> Tipo de trabajo: " +
-                this.getType() +
+                this.get(TYPE_KEY) +
                 System.lineSeparator();
         info += "=> Primer revisor: " +
                 this.get(REV1_KEY) +
@@ -143,8 +133,12 @@ public class Student extends Person {
         return this.get(PROPOSAL_FILE_PATH);
     }
 
-    public void setLines(ArrayList<Integer> lines) {
-        this.lines = lines.toArray(new Integer[0]);
-        this.put(LINES_KEY, Joiner.on(";").join(this.lines));
+    public void setDirector(String name) {
+        this.put(DIRECTOR_KEY, name);
     }
+    public String getDirector() {
+        return this.get(DIRECTOR_KEY);
+    }
+
+
 }

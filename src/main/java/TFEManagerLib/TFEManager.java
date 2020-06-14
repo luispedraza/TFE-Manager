@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -174,6 +175,14 @@ public class TFEManager {
     public void assignDirectors() throws Exception {
         ArrayList<Student> proposals = excelManager.readProposalsInfo();
         ArrayList<Director> directors = excelManager.readDirectorsInfo();
+
+        // eliminamos los alumnos que pudieran tener un director ya asignado
+        proposals = (ArrayList<Student>) proposals.stream().filter(s -> s.getDirector().isEmpty()).collect(Collectors.toList());
+
+        Optimizer optim = new Optimizer(proposals, directors);
+        proposals = Optimizer.optimDirectorsForStudents(proposals, directors);
+
+        excelManager.saveDirectorsAssignation(proposals);
 
     }
 }

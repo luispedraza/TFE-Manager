@@ -1,8 +1,6 @@
 package TFEManagerLib;
 
 
-
-
 import TFEManagerLib.Models.Director;
 import TFEManagerLib.Models.Person;
 import TFEManagerLib.Models.Reviewer;
@@ -18,7 +16,10 @@ import java.lang.reflect.Constructor;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 // http://poi.apache.org/components/spreadsheet/examples.html#xssf-only
+
 /**
  * Esta clase sirve para gestionar un archivo Excel
  */
@@ -37,8 +38,10 @@ public class ExcelManager {
     private static final String PROGRESS_SHEET = "PROGRESO";
     private static final String PROGRESS_TABLE_NAME = "PROGRESO";
 
-    /** Carga el archivo de configuraciónd de una lista maestra
+    /**
+     * Carga el archivo de configuraciónd de una lista maestra
      * del archivo de configuración en formato json
+     *
      * @return:
      */
     private String loadExcelConfigurationFile() {
@@ -48,8 +51,9 @@ public class ExcelManager {
 
     /**
      * Constructor del gestor de listas maestras
+     *
      * @param workingDirectory: Directorio de trabajo
-     * @param fileName: Nombre de la lista maestra
+     * @param fileName:         Nombre de la lista maestra
      */
     public ExcelManager(String workingDirectory, String fileName) {
         if (fileName == null) {
@@ -60,13 +64,15 @@ public class ExcelManager {
 
     private void saveWorkbook(XSSFWorkbook wb) throws IOException {
         // Guaradamos el libro:
-            FileOutputStream outputStream = new FileOutputStream(filePath.toString());
-            wb.write(outputStream);
-            outputStream.close();
-            wb.close();
+        FileOutputStream outputStream = new FileOutputStream(filePath.toString());
+        wb.write(outputStream);
+        outputStream.close();
+        wb.close();
     }
 
-    /** Limpia los contenidos de una hoja
+    /**
+     * Limpia los contenidos de una hoja
+     *
      * @param sheet
      */
     private void clearSheet(XSSFSheet sheet) {
@@ -77,6 +83,7 @@ public class ExcelManager {
 
     /**
      * Función de ayuda para obtener el libro de trabajo según el path almacenado
+     *
      * @return: un libro de trabajo, o null si no puede abrirse
      */
     private XSSFWorkbook getWorkbook() {
@@ -93,7 +100,8 @@ public class ExcelManager {
         return null;
     }
 
-    /** Función de ayuda para obtener una hoja por su nombre
+    /**
+     * Función de ayuda para obtener una hoja por su nombre
      *
      * @param sheetName: nombre de la hoja de trabajo
      * @return: la hoja de trabajo, o crea una si no existía
@@ -108,7 +116,8 @@ public class ExcelManager {
 
     /**
      * Obtiene la tabla contenida en una hoja a partir de su nombre
-     * @param sheet: Hoja en la que buscamos la propuesta
+     *
+     * @param sheet:     Hoja en la que buscamos la propuesta
      * @param tableName: Nombre de la tabla
      * @return
      */
@@ -126,6 +135,7 @@ public class ExcelManager {
 
     /**
      * Se guarda la información de las propuestas
+     *
      * @param proposals: un array de diccionarios con la información de las propuestas
      */
     public void saveProposalsInfo(ArrayList<Student> proposals) throws Exception {
@@ -175,7 +185,8 @@ public class ExcelManager {
         saveWorkbook(wb);
     }
 
-    /** Función de ayuda para encontrar la fila en que se encuentra un alumno
+    /**
+     * Función de ayuda para encontrar la fila en que se encuentra un alumno
      *
      * @param name
      * @param surname
@@ -188,7 +199,7 @@ public class ExcelManager {
         int endRow = table.getEndRowIndex();
 
         XSSFRow row = null;
-        for (int i=startRow; i<=endRow; i++) {
+        for (int i = startRow; i <= endRow; i++) {
             row = sheet.getRow(i);
             if (row.getCell(surnameColumn).getStringCellValue().equals(surname)) {
                 if (row.getCell(nameColumn).getStringCellValue().equals(name)) {
@@ -199,7 +210,8 @@ public class ExcelManager {
         return -1;
     }
 
-    /** Guarda en la lista maestra los resultados de las propuestas junto con la decisión global
+    /**
+     * Guarda en la lista maestra los resultados de las propuestas junto con la decisión global
      *
      * @param reviews
      */
@@ -238,7 +250,8 @@ public class ExcelManager {
         saveWorkbook(wb);
     }
 
-    /** Función de utilidad para leer los datos en una tabla **
+    /**
+     * Función de utilidad para leer los datos en una tabla **
      *
      * @param sheetName: Nombre de la hoja que contiene la tabla
      * @param tableName: Nombre de la tabla que buscamos
@@ -264,9 +277,9 @@ public class ExcelManager {
         int j;
         for (i = startRow; i <= endRow; i++) {
             row = sheet.getRow(i);
-            if (i==startRow) {
+            if (i == startRow) {
                 // Leemos la información de la cabecera
-                for (j = startColumn; j<= endColumn; j++) {
+                for (j = startColumn; j <= endColumn; j++) {
                     cell = row.getCell(j);
                     headers.add(formatter.formatCellValue(cell));
                 }
@@ -295,9 +308,8 @@ public class ExcelManager {
     }
 
 
-
-    /** lee la información de calificaciones de un borrador
-     *
+    /**
+     * lee la información de calificaciones de un borrador
      */
     public HashMap<String, Submission> readGradesFromPlatform(String path) throws IOException {
         Workbook wb = WorkbookFactory.create(new File(path));
@@ -329,9 +341,11 @@ public class ExcelManager {
         return result;
     }
 
-    /** Guarda en la lista maestra la información de progreso de revisión
-     *  @param progress : información del progreso de revisión
-     * @param type : BORRADOR1, BORRADOR2, BORRADOR3
+    /**
+     * Guarda en la lista maestra la información de progreso de revisión
+     *
+     * @param progress : información del progreso de revisión
+     * @param type     : BORRADOR1, BORRADOR2, BORRADOR3
      */
     public void saveGradingsProgress(HashMap<String, Submission> progress, String type) throws Exception {
         XSSFWorkbook wb = getWorkbook();
@@ -354,7 +368,7 @@ public class ExcelManager {
         int firstRow = table.getStartRowIndex();
         int endRow = table.getEndRowIndex();
 
-        for (int i = firstRow+1; i< endRow; i++) {
+        for (int i = firstRow + 1; i < endRow; i++) {
             XSSFRow row = sheet.getRow(i);
             Submission submission = progress.get(row.getCell(ID_COLUMN).getStringCellValue());
             if (submission != null) {
@@ -409,14 +423,17 @@ public class ExcelManager {
 
     /**
      * Lee la información que contiene la lista maestra sobre las propuestas
+     *
      * @return
      */
     public ArrayList<Student> readProposalsInfo() throws Exception {
         ArrayList<Student> proposals = (ArrayList<Student>) readTable(STUDENTS_SHEET, STUDENTS_TABLE_NAME, Student.class.getName());
         return proposals;
     }
+
     /**
      * Se carga de la lista maestra la información de los revisores
+     *
      * @return
      */
     public ArrayList<Reviewer> readReviewersInfo() throws Exception {
@@ -424,7 +441,8 @@ public class ExcelManager {
         return result;
     }
 
-    /** Se carga de la lista maestra la información de los directores
+    /**
+     * Se carga de la lista maestra la información de los directores
      *
      * @return
      * @throws Exception
@@ -432,5 +450,57 @@ public class ExcelManager {
     public ArrayList<Director> readDirectorsInfo() throws Exception {
         ArrayList<Director> result = (ArrayList<Director>) readTable(DIRECTORS_SHEET, DIRECTORS_TABLE_NAME, Director.class.getName());
         return result;
+    }
+
+    /**
+     * Guarda la asignación de directores para los alumnos dados
+     *
+     * @param proposals: Propuestas con un director ya asignados
+     */
+    public void saveDirectorsAssignation(ArrayList<Student> proposals) throws Exception {
+        // Un map para que sea fácil de buscar a los alumnos
+        Map<String, Student> proposalsMap = proposals.stream()
+                .collect(Collectors.toMap(Student::getID, s -> s));
+
+        XSSFWorkbook wb = getWorkbook();
+        XSSFSheet sheet = getSheet(wb, STUDENTS_SHEET);
+        XSSFTable table = getTable(sheet, STUDENTS_TABLE_NAME);
+        XSSFRow row = null;
+        XSSFCell cell = null;
+        int startRow = table.getStartRowIndex();
+        int endRow = table.getEndRowIndex();
+        int startColumn = table.getStartColIndex();
+        int endColumn = table.getEndColIndex();
+
+        // Buscamos la columna del director
+        row = sheet.getRow(startRow);
+        int directorColumn = -1;
+        int idColumn = -1;
+        for (Cell c : row) {
+            if (c.getStringCellValue().equals(Student.DIRECTOR_KEY)) {
+                directorColumn = c.getColumnIndex();
+            } else if (c.getStringCellValue().equals(Student.ID_KEY)) {
+                idColumn = c.getColumnIndex();
+            }
+        }
+        if (directorColumn == -1) {
+            throw new Exception("No se ha encontrado la columna: " + Student.DIRECTOR_KEY);
+        }
+        if (idColumn == -1) {
+            throw new Exception("No se ha encontrado la columna: " + Student.ID_KEY);
+        }
+
+        // Almacenamos los valores en la tabla
+        for (int i = startRow + 1; i <= endRow; i++) {
+            row = sheet.getRow(i);
+            String id = row.getCell(idColumn).getStringCellValue();
+            if (proposalsMap.containsKey(id)) {
+                row.getCell(directorColumn).setCellValue(
+                        proposalsMap.get(id).getDirector()
+                );
+            }
+        }
+        wb.setForceFormulaRecalculation(true);
+        saveWorkbook(wb);
     }
 }

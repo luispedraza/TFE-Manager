@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Clase principal para la gestión de TFEs
@@ -63,26 +64,24 @@ public class TFEManager {
      * @throws Exception
      */
     public void createReviewPacks() throws Exception {
-        HashMap<String, Reviewer> reviewers =excelManager.readReviewersInfo();
-        HashMap<String, Student> proposals = excelManager.readProposalsInfo();
+        ArrayList<Reviewer> reviewers =excelManager.readReviewersInfo();
+        ArrayList<Student> proposals = excelManager.readProposalsInfo();
+        // Mapeado de los revisores a un hashmap para buscarlos mejor:
+        Map<String, Reviewer> reviewerMap = reviewers.stream().collect(
+                Collectors.toMap(Reviewer::getName, r -> r)
+        );
 
-        for (Student p : proposals.values()) {
+        for (Student p : proposals) {
             String r1Name = p.getRevieverName(0);
-            Reviewer r1 = reviewers.get(r1Name);
+            Reviewer r1 = reviewerMap.get(r1Name);
             r1.addProposal(p);
-            reviewers.put(r1Name, r1);
 
             String r2Name = p.getRevieverName(1);
-            Reviewer r2 = reviewers.get(r2Name);
+            Reviewer r2 = reviewerMap.get(r2Name);
             r2.addProposal(p);
-            reviewers.put(r2Name, r2);
         }
-        // Hasta aquí tenemos gnerados una lista con la información de revisores
-        ArrayList<Reviewer> revieweres = new ArrayList<>(reviewers.values());
-        System.out.println(revieweres);
         // Lo pasamos al gestor de archivos para que cree la estructura de información
-        filesManager.saveReviewPacks(revieweres);
-
+        filesManager.saveReviewPacks(reviewers);
     }
 
     /**
@@ -105,19 +104,19 @@ public class TFEManager {
         // Obtenemos los zips con las revisiones
         ArrayList<File> zipFiles = filesManager.loadReviewPacks();
 
-        for (File zf : zipFiles) {
-            String reviewerName = FilenameUtils.removeExtension(zf.getName());
-        }
         // Obtenemos las información de los revisores, con los correos
-        HashMap<String, Reviewer> reviewers =  excelManager.readReviewersInfo();
+        ArrayList<Reviewer> reviewers =  excelManager.readReviewersInfo();
+        Map<String, Reviewer> reviewerMap = reviewers.stream().collect(Collectors.toMap(
+                Reviewer::getName, r -> r
+        ));
 
         // Comenzamos los envíos
         // Recorremos todos los zips para enviar su revisor:
         for (File zf : zipFiles) {
             String reviewerName = FilenameUtils.removeExtension(zf.getName());
-            Reviewer r = reviewers.get(reviewerName);
+            Reviewer r = reviewerMap.get(reviewerName);
             if (r == null) {
-                throw new Exception("No se ha encontrado del revisor del archivo " + zf.getAbsolutePath());
+                throw new Exception("No se ha encontrado del revisor del paquete " + zf.getAbsolutePath());
             } else {
                 MailManager mail = new MailManager(username, password);
                 // El cuerpo del mensaje
@@ -138,11 +137,11 @@ public class TFEManager {
         }
     }
 
-    /** Se generan los arhichivos y comentrios de calificación de la propuesta
+    /** Se generan los arhichivos y comentarios de calificación de la propuesta
      * y el archivo zip para subir a sakai
      */
     public void generateGradings() throws Exception {
-        HashMap<String, Student> proposals = excelManager.readProposalsInfo();
+        ArrayList<Student> proposals = excelManager.readProposalsInfo();
         filesManager.copyReviewsToProposals();
     }
 
@@ -151,10 +150,8 @@ public class TFEManager {
      * @throws Exception
      */
     public void assignReviewers() throws Exception {
-        HashMap<String, Student> proposals = excelManager.readProposalsInfo();
-        HashMap<String, Reviewer> reviewers = excelManager.readReviewersInfo();
-
-
+        ArrayList<Student> proposals = excelManager.readProposalsInfo();
+        ArrayList<Reviewer> reviewers = excelManager.readReviewersInfo();
 
         System.out.println(("hola"));
 
@@ -175,7 +172,8 @@ public class TFEManager {
      *
      */
     public void assignDirectors() throws Exception {
-        HashMap<String, Student> proposals = excelManager.readProposalsInfo();
-        HashMap<String, Director> reviewers = excelManager.readDirectorsInfo();
+        ArrayList<Student> proposals = excelManager.readProposalsInfo();
+        ArrayList<Director> directors = excelManager.readDirectorsInfo();
+
     }
 }

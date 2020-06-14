@@ -5,6 +5,6 @@ package TFEManagerLib;
 public class Optimizer {
 
     public Optimizer() {
-        
+
     }
 }

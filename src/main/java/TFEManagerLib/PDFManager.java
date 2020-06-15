@@ -24,7 +24,7 @@ public class PDFManager {
     public static final String PROPOSAL_TITLE = "TITULO";
     public static final String PROPOSAL_TYPE = "TIPO";
     public static final String PROPOSAL_FORMER_DIRECTOR = "DIRECTOR-ANTERIOR";
-    public static final String PROPOSAL_CONTINUE_DIRECTOR = "SEGUIR";
+    public static final String PROPOSAL_CONTINUE_DIRECTOR = "CAMBIAR";
     public static final String PROPOSAL_LINE = "LINEA%d";   // No sabemos el número de líneas que habrá en la propuesta
 
     // Nombres de campos en el formulario de revisión (PDF)
@@ -75,9 +75,10 @@ public class PDFManager {
 
     }
 
-    /** Rellena un único campo de un formulario
+    /**
+     * Rellena un único campo de un formulario
      *
-     * @param key: clave del formulario
+     * @param key:   clave del formulario
      * @param value: valor a insertar
      * @throws IOException
      */
@@ -123,7 +124,7 @@ public class PDFManager {
         return info;
     }
 
-    public Student parseProposal (Student student) {
+    public Student parseProposal(Student student) {
         HashMap<String, String> info = getFormInfo();
         if (student == null) {
             student = new Student();
@@ -139,7 +140,7 @@ public class PDFManager {
 
         // Buscamos las líneas de trabajo (ASUMIENDO QUE A LO SUMO HAY 10)
         ArrayList<Integer> lines = new ArrayList<>();
-        for (int i=1; i<10; i++) {
+        for (int i = 1; i < 10; i++) {
             String line = info.get(String.format(PROPOSAL_LINE, i));
             if (line == null) break;
             if (line.equals("Sí")) {
@@ -147,10 +148,9 @@ public class PDFManager {
             }
         }
         student.setLines(lines);
-
-        student.setFormerDirector(String.join(" - ",
+        student.setFormerInfo (
                 info.get(PROPOSAL_FORMER_DIRECTOR),
-                info.get(PROPOSAL_CONTINUE_DIRECTOR)));
+                info.get(PROPOSAL_CONTINUE_DIRECTOR));
         return student;
     }
 

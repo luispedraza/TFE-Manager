@@ -48,6 +48,52 @@ public class Person extends HashMap<String, String> {
         return super.put(key, value);
     }
 
+    public String getSurname() {
+        return this.get(SURNAME_KEY);
+    }
+    public void setSurname(String surname) {
+        this.put(SURNAME_KEY, surname);
+    }
+
+    public String getName() {
+        return this.get(NAME_KEY);
+    }
+    public void setName(String name) {
+        this.put(NAME_KEY, name);
+    }
+
+    /**
+     * Nombre completo del alumno
+     * @return: nombre completo en la forma "APELLIDOS, NOMBRE".
+     */
+    public String getFullName() {
+        return this.get(SURNAME_NAME_KEY);
+    }
+
+    /** Genera el nombre completo a partir de apellidos y nombre
+     *
+     */
+    public void setFullName() {
+        this.put(SURNAME_NAME_KEY, ", ".join(this.getSurname(), this.getName()));
+    }
+
+    public void setFullName(String surname, String name) {
+        setName(name);
+        setSurname(surname);
+        this.put(SURNAME_NAME_KEY, String.join(", ", surname, name));
+    }
+
+    public void setFullName(String fullName) {
+        this.put(SURNAME_NAME_KEY, fullName);
+        String[] info = fullName.split(", ");
+        setName(info[1].trim());
+        setSurname(info[0].trim());
+    }
+
+    public void setCountry(String country) {
+        this.put(COUNTRY_KEY, country.toUpperCase());
+    }
+
     public void setLines(ArrayList<Integer> lines) {
         this.lines = lines.toArray(new Integer[0]);
         this.put(LINES_KEY, Joiner.on(";").join(this.lines));

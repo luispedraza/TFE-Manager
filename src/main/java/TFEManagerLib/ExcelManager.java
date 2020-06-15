@@ -377,7 +377,7 @@ public class ExcelManager {
         }
         saveWorkbook(wb);
     }
-    
+
 
     /**
      * Lee la información que contiene la lista maestra sobre las propuestas

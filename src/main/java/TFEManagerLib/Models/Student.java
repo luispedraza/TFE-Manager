@@ -9,7 +9,6 @@ public class Student extends Person {
     public static final String FOLDER_NAME_KEY = "CARPETA ENTREGA";
     public static final String ID_KEY = "ID";
 
-    public static final String SUBMITTED_KEY = "ENTREGADO";
     public static final String TYPE_KEY = "TIPO";
 
     public static final String TITLE_KEY = "TITULO";
@@ -21,7 +20,7 @@ public class Student extends Person {
     public static final String OK_KEY = "OK";
     public static final String DIRECTOR_KEY = "DIRECTOR";
 
-    public static final String FORMER_DIRECTOR = "DIRECTOR ANTERIOR";
+    public static final String FORMER_DIRECTOR = "D. ANTERIOR - CAMBIAR";
     public static final String PROPOSAL_FILE_PATH = "LINK";
 
     public Student() {
@@ -36,29 +35,6 @@ public class Student extends Person {
         // TODO: Revisar esto sobre el estado de entrega de una propuesta entregada o no
 
     }
-
-    public String getSurname() {
-        return this.get(SURNAME_KEY);
-    }
-    public void setSurname(String surname) {
-        this.put(SURNAME_KEY, surname);
-    }
-
-    public String getName() {
-        return this.get(NAME_KEY);
-    }
-    public void setName(String name) {
-        this.put(NAME_KEY, name);
-    }
-
-    /**
-     * Nombre completo del alumno
-     * @return: nombre completo en la forma "APELLIDOS, NOMBRE".
-     */
-    public String getFullName() {
-        return this.getSurname() + ", " + this.getName();
-    }
-
 
     public String getTitle() {
         return this.get(TITLE_KEY);
@@ -98,16 +74,8 @@ public class Student extends Person {
         return info;
     }
 
-    public void setFormerDirector(String director) {
-        this.put(FORMER_DIRECTOR, director);
-    }
-
     public void setTitle(String title) {
         this.put(TITLE_KEY, title);
-    }
-
-    public void setCountry(String country) {
-        this.put(COUNTRY_KEY, country);
     }
 
     public void setType(String type) {
@@ -144,8 +112,7 @@ public class Student extends Person {
         this.put(FOLDER_NAME_KEY, folderName);
         String[] info = folderName.split("\\(");
         String[] fullName = info[0].split(",");
-        this.setName(fullName[0].trim());
-        this.setSurname(fullName[1].trim());
+        this.setFullName(fullName[0].trim(), fullName[1].trim());
         this.setID(info[1].split("\\)")[0].trim());
     }
 
@@ -157,10 +124,7 @@ public class Student extends Person {
         return this.get(FOLDER_NAME_KEY);
     }
 
-    /** Genera el nombre completo a partir de apellidos y nombre
-     *
-     */
-    public void setFullName() {
-        this.put(SURNAME_NAME_KEY, ", ".join(this.getSurname(), this.getName()));
+    public void setFormerInfo(String directorName, String change) {
+        this.put(FORMER_DIRECTOR, String.join(" - ", directorName, change));
     }
 }

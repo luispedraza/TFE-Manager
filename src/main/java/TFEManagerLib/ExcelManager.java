@@ -63,6 +63,7 @@ public class ExcelManager {
     }
 
     private void saveWorkbook(XSSFWorkbook wb) throws IOException {
+        wb.setForceFormulaRecalculation(true);
         // Guaradamos el libro:
         FileOutputStream outputStream = new FileOutputStream(filePath.toString());
         wb.write(outputStream);
@@ -458,7 +459,6 @@ public class ExcelManager {
                 );
             }
         }
-        wb.setForceFormulaRecalculation(true);
         saveWorkbook(wb);
     }
 }

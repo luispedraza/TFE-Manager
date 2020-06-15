@@ -123,20 +123,21 @@ public class PDFManager {
         return info;
     }
 
-    public Student parseProposal() {
-        Student proposal = new Student();
+    public Student parseProposal (Student student) {
         HashMap<String, String> info = getFormInfo();
-        proposal.setName(info.get(PROPOSAL_NAME));
-        proposal.setSurname(info.get(PROPOSAL_SURNAME));
-        proposal.setFormerDirector(String.join(" - ",
-                info.get(PROPOSAL_FORMER_DIRECTOR),
-                info.get(PROPOSAL_CONTINUE_DIRECTOR)));
+        if (student == null) {
+            student = new Student();
+            // Si nos pasan por la propuesta, ya tiene identificación
+            student.setName(info.get(PROPOSAL_NAME));
+            student.setSurname(info.get(PROPOSAL_SURNAME));
+            student.setFullName();
+        }
 
-        proposal.setTitle(info.get(PROPOSAL_TITLE));
-        proposal.setCountry(info.get(PROPOSAL_COUNTRY));
-        proposal.setType(info.get(PROPOSAL_TYPE));
+        student.setTitle(info.get(PROPOSAL_TITLE));
+        student.setCountry(info.get(PROPOSAL_COUNTRY));
+        student.setType(info.get(PROPOSAL_TYPE));
 
-        // Buscamos las líneas de trabajo:
+        // Buscamos las líneas de trabajo (ASUMIENDO QUE A LO SUMO HAY 10)
         ArrayList<Integer> lines = new ArrayList<>();
         for (int i=1; i<10; i++) {
             String line = info.get(String.format(PROPOSAL_LINE, i));
@@ -145,9 +146,12 @@ public class PDFManager {
                 lines.add(i);
             }
         }
-        proposal.setLines(lines);
+        student.setLines(lines);
 
-        return proposal;
+        student.setFormerDirector(String.join(" - ",
+                info.get(PROPOSAL_FORMER_DIRECTOR),
+                info.get(PROPOSAL_CONTINUE_DIRECTOR)));
+        return student;
     }
 
     public ReviewInfo parseReview() {

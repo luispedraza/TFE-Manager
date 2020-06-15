@@ -17,11 +17,13 @@ import java.util.HashMap;
  */
 public class Person extends HashMap<String, String> {
     public static final String NAME_KEY = "NOMBRE";
+    public static final String SURNAME_KEY = "APELLIDOS";
+    public static final String SURNAME_NAME_KEY = "APELLIDOS, NOMBRE";
     public static final String EMAIL_KEY = "E-MAIL";
     public static final String TYPE_KEY = "TIPO";
     public static final String LINES_KEY = "LINEAS";
     public static final String KEYWORDS_KEY = "KEYWORDS";
-    public static final String SURNAME_KEY = "APELLIDOS";
+
     public static final String COUNTRY_KEY = "PAIS";
 
     // Para los métodos de optimización es mejor guardar tipo y líneas como enteros

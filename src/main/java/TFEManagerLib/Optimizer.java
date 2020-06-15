@@ -19,9 +19,9 @@ public class Optimizer {
     private static ArrayList<Director> DIRECTORS;
     private static ArrayList<Student> STUDENTS;
     private static ArrayList<Reviewer> REVIEWERS;
-    static int WEIGHT_COUNTRY = 0;
+    static int WEIGHT_COUNTRY = 1;
     static int WEIGHT_TYPE = 1;
-    static int WEIGHT_MAX = 0;
+    static int WEIGHT_MAX = 1;
     static int WEIGHT_LINES = 0;
 
     // Inicialización de un optimizador de directores para alumnos
@@ -117,8 +117,8 @@ public class Optimizer {
 
         // Miramos el número de trabajos asignados a cada director
         for (Integer i : directorsCount.keySet()) {
-            // Penalizamos según cuánto nos alejamos del número de trabajos
-            fitness -= Math.abs(directorsCount.get(i) - Optimizer.DIRECTORS.get(i).getMaxNumberOfStudents());
+            // Penalizamos según cuánto nos pasamos del número de trabajos
+            fitness -= WEIGHT_MAX * Math.max(directorsCount.get(i) - Optimizer.DIRECTORS.get(i).getMaxNumberOfStudents(), 0);
         }
         return fitness;
     }

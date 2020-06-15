@@ -106,34 +106,18 @@ public class FilesManager {
         File dir = new File(proposalsPath);
         for (File propDir : dir.listFiles()) {
             if (propDir.isDirectory()) {
-                System.out.println(propDir.getName());
-                System.out.println(propDir.getAbsolutePath());
-                String path = propDir.getName();
-                String[] info = path.split("\\(");
-                String[] fullName = info[0].split(",");
-                String surname = fullName[0].trim();
-                String name = fullName[1].trim();
-                String id = info[1].split("\\)")[0].trim();
-
+                Student proposalInfo = new Student();
+                proposalInfo.setFolderName(propDir.getName());
                 Path attachments = Paths.get(propDir.getAbsolutePath(), ATTACHMENTS_FOLDER);
                 System.out.println("Buscando adjuntos en " + attachments);
                 Files.list(attachments).forEach(file -> {
                     if (getExtension(file.getFileName().toString()).equals("pdf")) {
                         System.out.println("Buscando información de propuesta en : " + file.getFileName());
-                        Student studentInfo = new PDFManager(file.toString()).parseProposal();
-
-                        if (!studentInfo.isEmpty()) {
-                            // Corregimos nombre y appelidos para uniformizar según nombre de carpetas
-                            studentInfo.setName(name);
-                            studentInfo.setSurname(surname);
-                            studentInfo.setID(id);
-                            studentInfo.setLink(file.toString());
-
-                            System.out.println(studentInfo.toString());
-                            proposals.add(studentInfo);
-                        }
+                        new PDFManager(file.toString()).parseProposal(proposalInfo);
+                        proposalInfo.setLink(file.toString());
                     }
                 });
+                proposals.add(proposalInfo);
             }
         }
         return proposals;

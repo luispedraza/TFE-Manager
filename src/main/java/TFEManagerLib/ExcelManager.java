@@ -377,49 +377,7 @@ public class ExcelManager {
         }
         saveWorkbook(wb);
     }
-
-//    /**
-//
-//     * Lee la información que contiene la lista maestra sobre las propuestas
-//     * @return
-//     */
-//    public ArrayList<Student> readProposalsInfo() throws Exception {
-//        ArrayList<Student> proposals = new ArrayList<>();
-//        ArrayList<HashMap<String, String>> tableData = readTable(STUDENTS_SHEET, STUDENTS_TABLE_NAME);
-//        for (HashMap<String, String> p : tableData) {
-//            Student proposal = new Student(p);
-//            proposals.add(proposal);
-//        }
-//        return proposals;
-//    }
-//    /**
-//     * Se carga de la lista maestra la información de los revisores
-//     * @return
-//     */
-//    public ArrayList<Reviewer> readReviewersInfo() throws Exception {
-//        ArrayList<Reviewer> result = new ArrayList<>();
-//        ArrayList<HashMap<String, String>> tableInfo = readTable(REVIEWERS_SHEET, REVIEWERS_TABLE_NAME);
-//        for (HashMap<String, String> r : tableInfo) {
-//            Reviewer reviewer = new Reviewer(r);
-//            result.add(reviewer);
-//        }
-//        return result;
-//    }
-//
-//    /** Se carga de la lista maestra la información de los directores
-//     *
-//     * @return
-//     * @throws Exception
-//     */
-//    public ArrayList<Director> readDirectorsInfo() throws Exception {
-//        ArrayList<Director> result = new ArrayList<>();
-//        ArrayList<HashMap<String, String>> tableInfo = readTable(DIRECTORS_SHEET, DIRECTORS_TABLE_NAME);
-//        for (HashMap<String, String> d : tableInfo) {
-//            Director director = new Director(d);
-//            result.add(director);
-//        }
-//        return result;
-//    }
+    
 
     /**
      * Lee la información que contiene la lista maestra sobre las propuestas

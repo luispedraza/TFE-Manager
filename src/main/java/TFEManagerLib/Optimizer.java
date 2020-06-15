@@ -20,8 +20,8 @@ public class Optimizer {
     private static ArrayList<Student> STUDENTS;
     private static ArrayList<Reviewer> REVIEWERS;
     static int WEIGHT_COUNTRY = 1;
-    static int WEIGHT_TYPE = 0;
-    static int WEIGHT_MAX = 0;
+    static int WEIGHT_TYPE = 1;
+    static int WEIGHT_MAX = 2;
     static int WEIGHT_LINES = 0;
 
     // Inicialización de un optimizador de directores para alumnos
@@ -86,10 +86,11 @@ public class Optimizer {
         // CREACIÓN DEL ENTORNO DE EJECUCIÓN
         Engine<IntegerGene, Integer> engine = Engine
                 .builder(Optimizer::evalDirectorsForStudents, gtf)
+                .populationSize(students.size()*2)
                 .build();
         // ARRANQUE:
         Genotype<IntegerGene> result = engine.stream()
-                .limit(1200)
+                .limit(5000)
                 .peek( r -> {
                     System.out.println(r.totalGenerations());
                     System.out.println("Mejor individuo: " + r.bestFitness());

@@ -299,7 +299,17 @@ public class ExcelManager {
             if (infoRow != null) {
                 for (j = startColumn; j <= endColumn; j++) {
                     cell = row.getCell(j);
-                    infoRow.put(headers.get(j), formatter.formatCellValue(cell));
+                    String cellHeader = headers.get(j);
+                    // Puede ser una celda con fórmulas y hay que tenerlo en cuenta. Leemos el valor cacheado:
+                    // https://www.baeldung.com/apache-poi-read-cell-value-formula
+                    if (cell.getCellType() == CellType.FORMULA) {
+                        switch (cell.getCachedFormulaResultType()) {
+                            case STRING:
+                                infoRow.put(cellHeader, cell.getRichStringCellValue().toString());
+                        }
+                        continue;
+                    }
+                    infoRow.put(cellHeader, formatter.formatCellValue(cell));
                 }
             }
 

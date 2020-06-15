@@ -25,6 +25,7 @@ public class Person extends HashMap<String, String> {
     public static final String KEYWORDS_KEY = "KEYWORDS";
 
     public static final String COUNTRY_KEY = "PAIS";
+    public static final String ZONE_KEY = "ZONA";
 
     // Para los métodos de optimización es mejor guardar tipo y líneas como enteros
     private Integer[] lines = {};
@@ -93,6 +94,17 @@ public class Person extends HashMap<String, String> {
     public void setCountry(String country) {
         this.put(COUNTRY_KEY, country.toUpperCase());
     }
+    public String getCountry() {
+        return this.get(COUNTRY_KEY);
+    }
+
+    /** La zona geográfica donde está la persona
+     *
+     * @return
+     */
+    public String getZone() {
+        return this.get(ZONE_KEY);
+    }
 
     public void setLines(ArrayList<Integer> lines) {
         this.lines = lines.toArray(new Integer[0]);
@@ -104,7 +116,5 @@ public class Person extends HashMap<String, String> {
     }
 
 
-    public String getCountry() {
-        return this.get(COUNTRY_KEY);
-    }
+
 }

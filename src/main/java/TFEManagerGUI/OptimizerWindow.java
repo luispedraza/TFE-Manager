@@ -48,24 +48,20 @@ public class OptimizerWindow extends JDialog {
             @Override
             public void stateChanged(ChangeEvent e) {
                 typeWeight.setEnabled(typeCheck.isSelected());
-                if (!typeCheck.isSelected()) typeWeight.setValue(0);
             }
         });
         zoneCheck.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 zoneWeight.setEnabled(zoneCheck.isSelected());
-                if (!zoneCheck.isSelected()) zoneWeight.setValue(0);
             }
         });
         maxDirectorCheck.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 maxDirectorWeight.setEnabled(maxDirectorCheck.isSelected());
-                if (!maxDirectorCheck.isSelected()) maxDirectorWeight.setValue(0);
             }
         });
-
 
         buttonGO.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -139,8 +135,6 @@ public class OptimizerWindow extends JDialog {
         dispose();
     }
 
-
-
     private void createUIComponents() {
         // TODO: place custom component creation code here
         chartPanelContainer = new JPanel();
@@ -172,8 +166,12 @@ public class OptimizerWindow extends JDialog {
         chartPanel.setPreferredSize(new Dimension(500, 300));
         chartPanelContainer.add(chartPanel);
 
-        // Ajustamos las características del spinner de selección de iteraciones
+        // Ajustamos las características de los spinners:
         maxIter = new JSpinner(new SpinnerNumberModel(1000, 0, 10000, 200));
+        zoneWeight = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
+        typeWeight = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
+        maxDirectorWeight = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
+
 
         chartPanelContainer.updateUI();
 

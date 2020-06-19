@@ -1,8 +1,11 @@
 package TFEManagerLib;
 
+import TFEManagerGUI.OptimizerWindow;
 import TFEManagerLib.Models.Director;
 import TFEManagerLib.Models.Reviewer;
 import TFEManagerLib.Models.Student;
+import io.jenetics.IntegerGene;
+import io.jenetics.engine.EvolutionResult;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -12,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -29,6 +33,7 @@ public class TFEManager {
         filesManager = new FilesManager(WORKING_DIRECTORY);
         excelManager = new ExcelManager(WORKING_DIRECTORY, null);
     }
+
 
     /**
      * Descromprime los contenidos de un archivo de propuestas en el destino indicado.
@@ -62,10 +67,11 @@ public class TFEManager {
 
     /**
      * Creación de los paquetes para enviar a los revisores
+     *
      * @throws Exception
      */
     public void createReviewPacks() throws Exception {
-        ArrayList<Reviewer> reviewers =excelManager.readReviewersInfo();
+        ArrayList<Reviewer> reviewers = excelManager.readReviewersInfo();
         ArrayList<Student> proposals = excelManager.readProposalsInfo();
         // Mapeado de los revisores a un hashmap para buscarlos mejor:
         Map<String, Reviewer> reviewerMap = reviewers.stream().collect(
@@ -106,7 +112,7 @@ public class TFEManager {
         ArrayList<File> zipFiles = filesManager.loadReviewPacks();
 
         // Obtenemos las información de los revisores, con los correos
-        ArrayList<Reviewer> reviewers =  excelManager.readReviewersInfo();
+        ArrayList<Reviewer> reviewers = excelManager.readReviewersInfo();
         Map<String, Reviewer> reviewerMap = reviewers.stream().collect(Collectors.toMap(
                 Reviewer::getName, r -> r
         ));
@@ -138,7 +144,8 @@ public class TFEManager {
         }
     }
 
-    /** Se generan los arhichivos y comentarios de calificación de la propuesta
+    /**
+     * Se generan los arhichivos y comentarios de calificación de la propuesta
      * y el archivo zip para subir a sakai
      */
     public void generateGradings() throws Exception {
@@ -146,7 +153,8 @@ public class TFEManager {
         filesManager.copyReviewsToProposals();
     }
 
-    /** Asignación automática de revisores **
+    /**
+     * Asignación automática de revisores **
      *
      * @throws Exception
      */
@@ -160,6 +168,7 @@ public class TFEManager {
 
     /**
      * Carga la información de progreso de revisión
+     *
      * @param path: ruta del excel de calificaciones
      * @param type: tipo de calificación: BORRADOR1, BORRADOR2, BORRADOR2
      */
@@ -169,20 +178,74 @@ public class TFEManager {
         excelManager.saveGradingsProgress(progress, type);
     }
 
-    /** Asignación autoática de directores
+
+    /** Actualización de información durante el proceso de optimización
      *
+     * @param result
      */
-    public void assignDirectors() throws Exception {
+//    public void update(EvolutionResult<IntegerGene, Integer> result) {
+//        int bestFitness = result.bestFitness();
+//        // OptimizerWindow.update(bestFitness);
+//    }
+
+    /**
+     * Asignación autoática de directores
+     */
+    public void assignDirectors(Optimizer.OptimizerConfiguration config,
+                                boolean skipAssigned,
+                                final Consumer<Integer> callbackUpdate) throws Exception {
+//                              final Consumer<EvolutionResult<IntegerGene, Integer>> callbackUpdate) throws Exception {
+
+        /** Una clase interor para manejar más fácill los callbacks de actualziación y finalización
+         *
+         */
+        class Updater {
+            private final Consumer<Integer> callbackIterationUpdate;
+            private final Consumer<Integer> callbackFinalUpdate;
+
+            public Updater(Consumer<Integer> callbackIterationUpdate, Consumer<Integer> callbackFinalUpdate) {
+                this.callbackIterationUpdate = callbackIterationUpdate;
+                this.callbackFinalUpdate = callbackFinalUpdate;
+            }
+
+            public void iterationUpdate(Integer fitness) {
+                if (this.callbackIterationUpdate != null) {
+                    this.callbackIterationUpdate.accept(fitness);
+                }
+            }
+
+            /** Esto es por si hace falta más adelante */
+            public void finalUpdate(ArrayList<Student> proposals) {
+                if (this.callbackFinalUpdate != null) {
+                    this.callbackFinalUpdate.accept(0);
+                }
+                System.out.println("Se ha llegado al final de la optimización");
+                try {
+                    excelManager.saveDirectorsAssignation(proposals);
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+        }
+
+        Updater update = new Updater(callbackUpdate, null);
+
         ArrayList<Student> proposals = excelManager.readProposalsInfo();
         ArrayList<Director> directors = excelManager.readDirectorsInfo();
 
-        // eliminamos los alumnos que pudieran tener un director ya asignado
-        proposals = (ArrayList<Student>) proposals.stream().filter(s -> s.getDirector().isEmpty()).collect(Collectors.toList());
+        // Hacemos un primer filtrado si es necesaio eliminando alumnos ya asignados:
+        if (skipAssigned) {
+            proposals = (ArrayList<Student>) proposals.stream().filter(s -> s.getDirector().isEmpty()).collect(Collectors.toList());
+        }
+        Optimizer optim = new Optimizer(proposals, directors, config);
+        // Se comienza la optimización
 
-        Optimizer optim = new Optimizer(proposals, directors);
-        proposals = Optimizer.optimDirectorsForStudents(proposals, directors);
-
-        excelManager.saveDirectorsAssignation(proposals);
+        try {
+            optim.optimDirectorsForStudents(proposals, directors, update::iterationUpdate, update::finalUpdate);
+        } catch (Exception e) {
+            throw e;
+        }
 
     }
 }

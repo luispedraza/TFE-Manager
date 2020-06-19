@@ -1,3 +1,5 @@
+package TFEManagerGUI;
+
 import TFEManagerLib.Models.Student;
 import TFEManagerLib.TFEManager;
 
@@ -124,7 +126,6 @@ public class MainWindow extends JDialog {
     }
 
 
-
     private void updateStudentsTree(ArrayList<Student> proposals) {
         DefaultMutableTreeNode root = (DefaultMutableTreeNode) studentsTree.getModel().getRoot();
         DefaultMutableTreeNode child = null;
@@ -183,8 +184,8 @@ public class MainWindow extends JDialog {
         }
     }
 
-    /** Asignación automática de revisores a las propuestas
-     *
+    /**
+     * Asignación automática de revisores a las propuestas
      */
     private void assignReviewers() {
         try {
@@ -217,13 +218,12 @@ public class MainWindow extends JDialog {
 
         try {
             manager.sendReviews();
-        } catch (Exception e){
+        } catch (Exception e) {
             logInfo(e.toString());
             e.printStackTrace();
 
         }
     }
-
 
 
     /**
@@ -252,12 +252,16 @@ public class MainWindow extends JDialog {
         }
     }
 
-    /** Asignación de directores
-     *
+    /**
+     * Asignación de directores
      */
     private void assignDirectors() {
         try {
-            manager.assignDirectors();
+            OptimizerWindow optimWindow = new OptimizerWindow(manager);
+            optimWindow.setSize(new Dimension(600, 500));
+            optimWindow.setAlwaysOnTop(true);
+            optimWindow.setResizable(false);
+            optimWindow.setVisible(true);
         } catch (Exception e) {
             logInfo(e.toString());
             e.printStackTrace();
@@ -269,10 +273,8 @@ public class MainWindow extends JDialog {
      */
     private void loadProgress() {
         try {
-
-
             ProgressTypeChooser typeChooser = new ProgressTypeChooser();
-            typeChooser.setSize(new Dimension(400,300));
+            typeChooser.setSize(new Dimension(400, 300));
             typeChooser.setAlwaysOnTop(true);
             typeChooser.setResizable(false);
             typeChooser.setVisible(true);
@@ -286,7 +288,7 @@ public class MainWindow extends JDialog {
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 pathExcelFile = fc.getSelectedFile().getAbsolutePath();
             }
-            if (pathExcelFile!=null) {
+            if (pathExcelFile != null) {
                 manager.loadProgress(pathExcelFile, type);
             }
 
@@ -310,8 +312,8 @@ public class MainWindow extends JDialog {
         System.exit(0);
     }
 
-    /** Creación personalizada de componentes de interfaz
-     *
+    /**
+     * Creación personalizada de componentes de interfaz
      */
     private void createUIComponents() {
         studentsTree = new JTree(new DefaultMutableTreeNode("Alumnos"));

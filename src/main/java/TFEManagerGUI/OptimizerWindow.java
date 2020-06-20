@@ -45,12 +45,13 @@ public class OptimizerWindow extends JDialog {
     private JCheckBox maxDirectorCheck;
     private JSpinner maxDirectorWeight;
     private JPanel chartPanelContainer;
-    private JCheckBox skipAssigned;
+    private JCheckBox checkSkipAssigned;
     private JSpinner maxIter;
     private JLabel fitnessValue;
     private JTabbedPane optimizationTabs;
     private JTable tableResult;
     private JButton buttonSaveResults;
+    private JCheckBox checkAssignAll;
 
     private TFEManager manager;
     private static XYSeries series;
@@ -184,13 +185,15 @@ public class OptimizerWindow extends JDialog {
             int wMaxDirector = maxDirectorCheck.isSelected() ? (Integer) maxDirectorWeight.getValue() : 0;
             int maxIterations = (Integer) maxIter.getValue();
 
-            boolean skipAssigned = this.skipAssigned.isSelected();
+            boolean skipAssigned = this.checkSkipAssigned.isSelected();
+            int wUnassigned = this.checkAssignAll.isSelected() ? 100 : 0;   // penalización para alumnos no asignados
 
             manager.assignDirectors(new OptimizerDirectorForStudent.OptimizerConfiguration("GA",
                     wType,
                     wZone,
                     wMaxDirector,
                     0,
+                    wUnassigned,
                     maxIterations
                     ),
                     skipAssigned,

@@ -26,49 +26,34 @@ import java.util.function.Consumer;
 public class OptimizerDirectorForStudent {
     private ArrayList<Director> DIRECTORS;
     private ArrayList<Student> STUDENTS;
-    private ArrayList<Reviewer> REVIEWERS;
-    int WEIGHT_ZONE = 0;
-    int WEIGHT_TYPE = 0;
-    int WEIGHT_MAX = 0;
-    int WEIGHT_LINES = 0;
-
-    int MAX_ITERATIONS = 100;
+    private final OptimizerConfiguration _CONFIG;
 
     public static class OptimizerConfiguration {
         String algorithm;
-        int typeWeight;
-        int zoneWeight;
-        int maxDirector;
-        int linesWeight;
-        int maxIterations;
+        public int WEIGHT_TYPE;
+        public int WEIGHT_ZONE;
+        public int WEIGHT_MAX;
+        public int WEIGHT_LINES;
+        public int WEIGHT_UNASSIGNED;
 
-        public OptimizerConfiguration(String algorithm, int typeWeight, int zoneWeight, int maxWeight, int linesWeight, int maxIterations) {
+        public int MAX_ITERATIONS;
+
+        public OptimizerConfiguration(String algorithm,
+                                      int typeWeight,
+                                      int zoneWeight,
+                                      int maxWeight,
+                                      int linesWeight,
+                                      int unassignedWeight,
+                                      int maxIterations
+                                      ) {
             this.algorithm = algorithm;
-            this.typeWeight = typeWeight;
-            this.zoneWeight = zoneWeight;
-            this.maxDirector = maxWeight;
-            this.linesWeight = linesWeight;
-            this.maxIterations = maxIterations;
-        }
+            this.WEIGHT_TYPE = typeWeight;
+            this.WEIGHT_ZONE = zoneWeight;
+            this.WEIGHT_MAX = maxWeight;
+            this.WEIGHT_LINES = linesWeight;
+            this.WEIGHT_UNASSIGNED = unassignedWeight;
+            this.MAX_ITERATIONS = maxIterations;
 
-        public String getAlgorithm() {
-            return algorithm;
-        }
-
-        public int getTypeWeight() {
-            return typeWeight;
-        }
-
-        public int getZoneWeight() {
-            return zoneWeight;
-        }
-
-        public int getLinesWeight() {
-            return linesWeight;
-        }
-
-        public int getMaxDirector() {
-            return maxDirector;
         }
     }
 
@@ -81,13 +66,7 @@ public class OptimizerDirectorForStudent {
     public OptimizerDirectorForStudent(ArrayList<Student> students, ArrayList<Director> directors, OptimizerConfiguration config) {
         STUDENTS = students;
         DIRECTORS = directors;
-
-        WEIGHT_ZONE = config.getZoneWeight();
-        WEIGHT_TYPE = config.getTypeWeight();
-        WEIGHT_MAX = config.getMaxDirector();
-        WEIGHT_LINES = config.getLinesWeight();
-
-        MAX_ITERATIONS = config.maxIterations;
+        this._CONFIG = config;
     }
 
     private int evalDirectorsForStudents(Genotype<IntegerGene> gt) {
@@ -97,15 +76,17 @@ public class OptimizerDirectorForStudent {
         for (Chromosome chromosome : gt) {
             IntegerChromosome studentChromosome = (IntegerChromosome) chromosome;
             Integer directorIndex = studentChromosome.intValue();
-            if (directorIndex == -1) continue; // NO ASIGNADO
+            if (directorIndex == -1) {
+                fitness -= _CONFIG.WEIGHT_UNASSIGNED;
+                continue; // NO ASIGNADO
+            }
 
             Student student = STUDENTS.get(studentIndex);
             Director director = DIRECTORS.get(directorIndex);
-            // COINCIDENCIA DE zona geográfica (país, zona)
-//            if (student.getCountry().equals(director.getCountry())) fitness += WEIGHT_COUNTRY;
-            if (!student.getZone().equals(director.getZone())) fitness -= WEIGHT_ZONE;
-            // Mismo tipo
-            if (!student.getType().equals(director.getType())) fitness -= WEIGHT_TYPE;
+            // Coincidencia geográfica
+            if (!student.getZone().equals(director.getZone())) fitness -= _CONFIG.WEIGHT_ZONE;
+            // Concordancia de tipo
+            if (!student.getType().equals(director.getType())) fitness -= _CONFIG.WEIGHT_TYPE;
             Integer count = directorsCount.get(directorIndex);
             if (count == null) {
                 directorsCount.put(directorIndex, 1);
@@ -118,7 +99,7 @@ public class OptimizerDirectorForStudent {
         // Miramos el número de trabajos asignados a cada director
         for (Integer i : directorsCount.keySet()) {
             // Penalizamos según cuánto nos pasamos del número de trabajos
-            fitness -= WEIGHT_MAX * Math.max(directorsCount.get(i) - DIRECTORS.get(i).getMaxNumberOfStudents(), 0);
+            fitness -= _CONFIG.WEIGHT_MAX * Math.max(directorsCount.get(i) - DIRECTORS.get(i).getMaxNumberOfStudents(), 0);
         }
         return fitness;
     }
@@ -130,14 +111,11 @@ public class OptimizerDirectorForStudent {
      * @param directors: lista de directores disponibles
      * @return: lista de estudiantes con directores asginados
      */
-    public ArrayList<Student> optimDirectorsForStudents(
+    public void optimDirectorsForStudents(
             ArrayList<Student> students,
             ArrayList<Director> directors,
             final Consumer<Integer> callbackUpdate,
             final Consumer<ArrayList<Student>> finalUpdate) {
-//            final Consumer<EvolutionResult<IntegerGene, Integer>> callbackUpdate) {
-//        final Consumer<EvolutionResult<IntegerGene, Integer>> myCallback = (callbackUpdate == null) ? this::update : callbackUpdate;
-
         // FACTORÍA DE UN GENOTIPO APROPIADO PARA EL PROBLEMA
         // Tantos comosomas como estudiantes
         // Tantos genes como directores. Solo uno puede valer uno.
@@ -146,10 +124,8 @@ public class OptimizerDirectorForStudent {
         System.out.println(String.format("Número de alumnos: %d", nStudents));
         System.out.println(String.format("Número de directores: %d", nDirectors));
         ArrayList<IntegerChromosome> chromos = new ArrayList<>();
-//        double probability = (float) 1 / nDirectors;
         for (Student s : students) {
-            // -1 indica un director no asignado
-            chromos.add(IntegerChromosome.of(-1, directors.size() - 1));
+            chromos.add(IntegerChromosome.of(-1, directors.size() - 1)); // -1 indica un director no asignado
         }
         Factory<Genotype<IntegerGene>> gtf = Genotype.of(chromos);
         // CREACIÓN DEL ENTORNO DE EJECUCIÓN
@@ -162,11 +138,7 @@ public class OptimizerDirectorForStudent {
         final Thread thread = new Thread(() -> {
             Genotype<IntegerGene> result = engine.stream()
 //                    .limit(r -> r.bestFitness()!=0)
-                    .limit(MAX_ITERATIONS)
-//                .peek( r -> {
-//                    System.out.println(r.totalGenerations());
-//                    System.out.println("Mejor individuo: " + r.bestFitness());
-//                })
+                    .limit(_CONFIG.MAX_ITERATIONS)
                     .peek(r -> {
                         this.update(r);
                         if (callbackUpdate != null) {
@@ -187,12 +159,9 @@ public class OptimizerDirectorForStudent {
                 director.addStudent(student);
                 student.setDirector(director);
             }
-            // enviamos de vuelta el resultado para que se guarde
+            // Enviamos de vuelta el resultado para que se guarde
             finalUpdate.accept(STUDENTS);
         });
         thread.start();
-//        this._thread = thread;
-        // TODO: Arreglar esto después de usar threads
-        return STUDENTS;
     }
 }

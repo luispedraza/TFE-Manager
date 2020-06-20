@@ -26,7 +26,8 @@ public class OptimizerDirectorForStudentA extends OptimizerDirectorForStudent {
         super(students, directors, config);
     }
 
-    Factory<Genotype<IntegerGene>> getFactory() {
+    @Override
+    Factory<Genotype<IntegerGene>> getGenotypeFactory() {
         // Tantos comosomas como estudiantes
         // Tantos genes como directores. Solo uno puede valer uno.
         ArrayList<IntegerChromosome> chromosomes = new ArrayList<>();
@@ -36,7 +37,8 @@ public class OptimizerDirectorForStudentA extends OptimizerDirectorForStudent {
         return Genotype.of(chromosomes);
     }
 
-    private int evalDirectorsForStudents(Genotype<IntegerGene> gt) {
+    @Override
+    int evalDirectorsForStudents(Genotype<IntegerGene> gt) {
         int fitness = 0;
         HashMap<Integer, Integer> directorsCount = new HashMap<>();
         int studentIndex = -1;
@@ -68,55 +70,18 @@ public class OptimizerDirectorForStudentA extends OptimizerDirectorForStudent {
         return fitness;
     }
 
-
-
-    /**
-     * Algoritmo genético para asignación de directores a estudiantes
-     * @param callbackUpdate : es llamado en cada iteración
-     * @param finalUpdate : es llamado al final de la optimización
-     * @return: lista de estudiantes con directores asginados
-     */
-    public void optimDirectorsForStudents(
-            int POPULATION_SIZE,
-            final Consumer<Integer> callbackUpdate,
-            final Consumer<ArrayList<Student>> finalUpdate) {
-        // FACTORÍA DE UN GENOTIPO APROPIADO PARA EL PROBLEMA
-
-        Factory<Genotype<IntegerGene>> gtf = (Genotype<IntegerGene>) getFactory();
-        // CREACIÓN DEL ENTORNO DE EJECUCIÓN
-        Engine<IntegerGene, Integer> engine = Engine
-                .builder(this::evalDirectorsForStudents, gtf)
-                .populationSize(POPULATION_SIZE)
-                .build();
-        // ARRANQUE:
-        final Thread thread = new Thread(() -> {
-            Genotype<IntegerGene> result = engine.stream()
-//                    .limit(r -> r.bestFitness()!=0)
-                    .limit(_CONFIG.MAX_ITERATIONS)
-                    .peek(r -> {
-                        System.out.println(r.totalGenerations());
-                        System.out.println("Mejor individuo: " + r.bestFitness());
-                        if (callbackUpdate != null) {
-                            callbackUpdate.accept(r.bestFitness());
-                        }
-                    })
-                    .collect(EvolutionResult.toBestGenotype());
-            // MOSTRAMOS EL RESULTADO:
-            System.out.println("RESULTADO DE LA OPTIMIZACIÓN: " + result);
-            int i = -1;
-            for (Chromosome chromosome : result) {
-                IntegerChromosome studentChromosome = (IntegerChromosome) chromosome;
-                Integer directorIndex = studentChromosome.intValue(); // El director asignados
-                if (directorIndex == -1) continue;
-                i++;
-                Student student = STUDENTS.get(i);
-                Director director = DIRECTORS.get(directorIndex);
-                director.addStudent(student);
-                student.setDirector(director);
-            }
-            // Enviamos de vuelta el resultado para que se guarde
-            finalUpdate.accept(STUDENTS);
-        });
-        thread.start();
+    @Override
+    void generateSolution(Genotype<IntegerGene> result) {
+        int i = -1;
+        for (Chromosome chromosome : result) {
+            IntegerChromosome studentChromosome = (IntegerChromosome) chromosome;
+            Integer directorIndex = studentChromosome.intValue(); // El director asignados
+            if (directorIndex == -1) continue;
+            i++;
+            Student student = STUDENTS.get(i);
+            Director director = DIRECTORS.get(directorIndex);
+            director.addStudent(student);
+            student.setDirector(director);
+        }
     }
 }

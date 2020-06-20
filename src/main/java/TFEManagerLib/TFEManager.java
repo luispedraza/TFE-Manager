@@ -5,6 +5,7 @@ import TFEManagerLib.Models.Reviewer;
 import TFEManagerLib.Models.Student;
 import TFEManagerLib.Optimizers.OptimizerConfiguration;
 import TFEManagerLib.Optimizers.OptimizerDirectorForStudentA;
+import TFEManagerLib.Optimizers.OptimizerDirectorForStudentB;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -205,7 +206,8 @@ public class TFEManager {
         if (skipAssigned) {
             proposals = (ArrayList<Student>) proposals.stream().filter(s -> s.getDirectorName().isEmpty()).collect(Collectors.toList());
         }
-        OptimizerDirectorForStudentA optim = new OptimizerDirectorForStudentA(proposals, directors, config);
+//        OptimizerDirectorForStudentA optim = new OptimizerDirectorForStudentA(proposals, directors, config);
+        OptimizerDirectorForStudentB optim = new OptimizerDirectorForStudentB(proposals, directors, config);
 
         // Lanzamos la optimización:
         optim.optimDirectorsForStudents(proposals.size(), callbackUpdate, callbackEnd);

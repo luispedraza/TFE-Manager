@@ -1,5 +1,6 @@
 package TFEManagerLib.Models;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Academic extends Person {
@@ -7,9 +8,23 @@ public class Academic extends Person {
     public static final String ASSIGNED_NUMBER_KEY = "ASIGNADOS";   // Número de trabajos asignados
 
     int max = 0;
+    /**
+     * Alumnos que tiene asignado un académico:
+     * - Revisiones en el caso de revisores
+     * - Direcciones en el caso de directores
+     */
+    ArrayList<Student> students = new ArrayList<>();
 
     public Academic() {
         super();
+    }
+
+    public void addStudent(Student student) {
+        this.students.add(student);
+    }
+
+    public int getNumberOfStudents() {
+        return this.students.size();
     }
 
     @Override

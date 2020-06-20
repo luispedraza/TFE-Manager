@@ -31,6 +31,10 @@ public class TFEManager {
         excelManager = new ExcelManager(WORKING_DIRECTORY, null);
     }
 
+    public ExcelManager getExcelManager() {
+        return this.excelManager;
+    }
+
 
     /**
      * Descromprime los contenidos de un archivo de propuestas en el destino indicado.
@@ -191,59 +195,20 @@ public class TFEManager {
     public void assignDirectors(OptimizerDirectorForStudent.OptimizerConfiguration config,
                                 boolean skipAssigned,
                                 final Consumer<Integer> callbackUpdate,
-                                final Consumer<Integer> callbackEnd) throws Exception {
-//                              final Consumer<EvolutionResult<IntegerGene, Integer>> callbackUpdate) throws Exception {
-
-        /** Una clase interor para manejar más fácill los callbacks de actualziación y finalización
-         *
-         */
-        class Updater {
-            private final Consumer<Integer> callbackIterationUpdate;
-            private final Consumer<Integer> callbackFinalUpdate;
-
-            public Updater(Consumer<Integer> callbackIterationUpdate, Consumer<Integer> callbackFinalUpdate) {
-                this.callbackIterationUpdate = callbackIterationUpdate;
-                this.callbackFinalUpdate = callbackFinalUpdate;
-            }
-
-            public void iterationUpdate(Integer fitness) {
-                if (this.callbackIterationUpdate != null) {
-                    this.callbackIterationUpdate.accept(fitness);
-                }
-            }
-
-            /** Esto es por si hace falta más adelante */
-            public void finalUpdate(ArrayList<Student> proposals) {
-                if (this.callbackFinalUpdate != null) {
-                    this.callbackFinalUpdate.accept(0);
-                }
-                System.out.println("Se ha llegado al final de la optimización");
-                try {
-                    excelManager.saveDirectorsAssignation(proposals);
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
-
-            }
-        }
-
-        Updater update = new Updater(callbackUpdate, callbackEnd);
+                                final Consumer<ArrayList<Student>> callbackEnd) throws Exception {
 
         ArrayList<Student> proposals = excelManager.readProposalsInfo();
         ArrayList<Director> directors = excelManager.readDirectorsInfo();
 
         // Hacemos un primer filtrado si es necesaio eliminando alumnos ya asignados:
         if (skipAssigned) {
-            proposals = (ArrayList<Student>) proposals.stream().filter(s -> s.getDirector().isEmpty()).collect(Collectors.toList());
+            proposals = (ArrayList<Student>) proposals.stream().filter(s -> s.getDirectorName().isEmpty()).collect(Collectors.toList());
         }
         OptimizerDirectorForStudent optim = new OptimizerDirectorForStudent(proposals, directors, config);
-        // Se comienza la optimización
 
-        try {
-            optim.optimDirectorsForStudents(proposals, directors, update::iterationUpdate, update::finalUpdate);
-        } catch (Exception e) {
-            throw e;
-        }
+        // Lanzamos la optimización:
+        optim.optimDirectorsForStudents(proposals, directors, callbackUpdate, callbackEnd);
+
 
     }
 }

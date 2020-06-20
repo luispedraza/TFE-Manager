@@ -1,5 +1,7 @@
 package TFEManagerGUI;
 
+import TFEManagerLib.Models.Director;
+import TFEManagerLib.Models.Student;
 import TFEManagerLib.Optimizers.OptimizerDirectorForStudent;
 import TFEManagerLib.TFEManager;
 import org.jfree.chart.ChartFactory;
@@ -17,6 +19,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 public class OptimizerWindow extends JDialog {
 
@@ -25,9 +28,12 @@ public class OptimizerWindow extends JDialog {
             "Info. Alumno",
             "Info. Director",
             "DIRECTOR",
-            "Asignación"
+            "Asignación",
+            "OK"
     };
     private DefaultTableModel tableModel = new DefaultTableModel(null, RESULT_TABLE_HEADERS);
+
+    private ArrayList<Student> assignation;
 
     private JPanel contentPane;
     private JButton buttonGO;
@@ -42,8 +48,9 @@ public class OptimizerWindow extends JDialog {
     private JCheckBox skipAssigned;
     private JSpinner maxIter;
     private JLabel fitnessValue;
-    private JTabbedPane tabbedPane1;
+    private JTabbedPane optimizationTabs;
     private JTable tableResult;
+    private JButton buttonSaveResults;
 
     private TFEManager manager;
     private static XYSeries series;
@@ -87,6 +94,13 @@ public class OptimizerWindow extends JDialog {
             }
         });
 
+        buttonSaveResults.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveAssignation();
+            }
+        });
+
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -103,11 +117,19 @@ public class OptimizerWindow extends JDialog {
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
+    private void saveAssignation() {
+        try {
+            manager.getExcelManager().saveDirectorsAssignation(this.assignation);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /** Se actualiza la información en la pantlla (gráfica y mejor fitness) con cada iteración
      *
      * @param value: el mejor fitness obtenidos
      */
-    public void updateGUI(Integer value) {
+    public void onUpdateGUI(Integer value) {
         if (OptimizerWindow.series.getItemCount() == 0) {
             OptimizerWindow.series.add(1, value);
         } else {
@@ -117,21 +139,37 @@ public class OptimizerWindow extends JDialog {
         this.fitnessValue.setText(String.valueOf(value));
     }
 
-    public void onEndOptimization(Integer value) {
-        buttonCancel.setEnabled(true);
+    public void onEndOptimization(ArrayList<Student> proposals) {
+        System.out.println("Se ha finalizado el proceso de optimización: ");
+        System.out.println(proposals);
 
-        for (int i=0; i<100; i++) {
+        // Guardamos la asignación que devuelve el optimizador
+        this.assignation = proposals;
+        buttonCancel.setEnabled(true);
+        tableModel.setRowCount(0);  // Limpiamos los datos
+
+        for (Student s : proposals) {
+            Director d = s.getDirector();
+            if (d==null) {
+                d = new Director();
+                d.setName("**NO ASIGNADO**");
+                d.setType("");
+                d.setZone("");
+            }
             // Vector fila de prueba
             String[] row = {
-                    "ESTEBA GONZALEZ, JUAN CARLOS",
-                    "EUROPA\nTipo 1\n",
-                    "EUROPA\nTipo 2\n",
-                    "PEDRAZA, LUIS",
-                    "13(+3)"
+                    s.getFullName(),
+                    String.format("%s\nTipo %s\n", s.getZone(), s.getType()),
+                    String.format("%s\nTipo %s\n", d.getZone(), d.getType()),
+                    d.getName(),
+                    String.format("%2d(%2d)", d.getMaxNumberOfStudents(), d.getNumberOfStudents()-d.getMaxNumberOfStudents())
             };
             tableModel.addRow(row);
         }
         tableResult.setModel(tableModel);
+        tableResult.setAutoCreateRowSorter(true);
+        optimizationTabs.setSelectedIndex(1);
+
 
     }
 
@@ -156,7 +194,7 @@ public class OptimizerWindow extends JDialog {
                     maxIterations
                     ),
                     skipAssigned,
-                    this::updateGUI,
+                    this::onUpdateGUI,
                     this::onEndOptimization);
         } catch (Exception e) {
             e.printStackTrace();
@@ -169,7 +207,6 @@ public class OptimizerWindow extends JDialog {
     }
 
     private void createUIComponents() {
-        // TODO: place custom component creation code here
         chartPanelContainer = new JPanel();
         chartPanelContainer.setLayout(new BoxLayout(chartPanelContainer, BoxLayout.PAGE_AXIS));
         chartPanelContainer.setSize(500, 300);

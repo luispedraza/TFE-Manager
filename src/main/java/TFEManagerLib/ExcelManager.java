@@ -438,8 +438,6 @@ public class ExcelManager {
         XSSFCell cell = null;
         int startRow = table.getStartRowIndex();
         int endRow = table.getEndRowIndex();
-        int startColumn = table.getStartColIndex();
-        int endColumn = table.getEndColIndex();
 
         // Buscamos la columna del director
         row = sheet.getRow(startRow);
@@ -465,7 +463,7 @@ public class ExcelManager {
             String id = row.getCell(idColumn).getStringCellValue();
             if (proposalsMap.containsKey(id)) {
                 row.getCell(directorColumn).setCellValue(
-                        proposalsMap.get(id).getDirector()
+                        proposalsMap.get(id).getDirectorName()
                 );
             }
         }

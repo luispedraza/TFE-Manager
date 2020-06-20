@@ -105,7 +105,7 @@ public class OptimizerDirectorForStudent {
 //            if (student.getCountry().equals(director.getCountry())) fitness += WEIGHT_COUNTRY;
             if (!student.getZone().equals(director.getZone())) fitness -= WEIGHT_ZONE;
             // Mismo tipo
-            if (student.getType() != director.getType()) fitness -= WEIGHT_TYPE;
+            if (!student.getType().equals(director.getType())) fitness -= WEIGHT_TYPE;
             Integer count = directorsCount.get(directorIndex);
             if (count == null) {
                 directorsCount.put(directorIndex, 1);
@@ -161,7 +161,7 @@ public class OptimizerDirectorForStudent {
 
         final Thread thread = new Thread(() -> {
             Genotype<IntegerGene> result = engine.stream()
-                    .limit(r -> r.bestFitness()!=0)
+//                    .limit(r -> r.bestFitness()!=0)
                     .limit(MAX_ITERATIONS)
 //                .peek( r -> {
 //                    System.out.println(r.totalGenerations());
@@ -178,14 +178,16 @@ public class OptimizerDirectorForStudent {
             System.out.println("RESULTADO DE LA OPTIMIZACIÓN: " + result);
             int i = -1;
             for (Chromosome chromosome : result) {
-                IntegerChromosome student = (IntegerChromosome) chromosome;
-                Integer directorIndex = student.intValue();
+                IntegerChromosome studentChromosome = (IntegerChromosome) chromosome;
+                Integer directorIndex = studentChromosome.intValue(); // El director asignados
                 if (directorIndex == -1) continue;
                 i++;
-                STUDENTS.get(i).setDirector(DIRECTORS.get(directorIndex).getName());
-                // enviamos de vuelta el resultado para que se guarde
-
+                Student student = STUDENTS.get(i);
+                Director director = DIRECTORS.get(directorIndex);
+                director.addStudent(student);
+                student.setDirector(director);
             }
+            // enviamos de vuelta el resultado para que se guarde
             finalUpdate.accept(STUDENTS);
         });
         thread.start();

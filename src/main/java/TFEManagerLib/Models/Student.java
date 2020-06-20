@@ -23,6 +23,8 @@ public class Student extends Person {
     public static final String FORMER_DIRECTOR = "D. ANTERIOR - CAMBIAR";
     public static final String PROPOSAL_FILE_PATH = "LINK";
 
+    private Director director;  // El director que tiene asignado el alumno
+
     public Student() {
         super();
     }
@@ -78,10 +80,6 @@ public class Student extends Person {
         this.put(TITLE_KEY, title);
     }
 
-    public void setType(String type) {
-        this.put(TYPE_KEY, type);
-    }
-
     public void setID(String id) {
         this.put(ID_KEY, id);
     }
@@ -98,12 +96,17 @@ public class Student extends Person {
         return this.get(PROPOSAL_FILE_PATH);
     }
 
-    public void setDirector(String name) {
-        this.put(DIRECTOR_KEY, name);
+    public void setDirector(Director director) {
+        this.director = director;
+        this.put(DIRECTOR_KEY, director.getName());
     }
-    public String getDirector() {
+    public String getDirectorName() {
         return this.get(DIRECTOR_KEY);
     }
+    public Director getDirector() {
+        return this.director;
+    }
+
 
 
     /** Guarda información del nombre de carpeta y también extrae ID, Apellidos y Nombre

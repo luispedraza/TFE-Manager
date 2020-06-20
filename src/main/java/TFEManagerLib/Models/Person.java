@@ -41,12 +41,15 @@ public class Person extends HashMap<String, String> {
 
     @Override
     public String put(String key, String value) {
-        if (key.equals(TYPE_KEY)) {
-            type = Integer.valueOf(value);
-        } else if (key.equals(LINES_KEY)) {
 
-        }
         return super.put(key, value);
+    }
+
+    public void setType(String type) {
+        this.put(TYPE_KEY, type);
+    }
+    public String getType() {
+        return this.get(TYPE_KEY);
     }
 
     public String getSurname() {
@@ -105,15 +108,16 @@ public class Person extends HashMap<String, String> {
     public String getZone() {
         return this.get(ZONE_KEY);
     }
+    public String setZone(String zone) {
+        return this.get(ZONE_KEY);
+    }
 
     public void setLines(ArrayList<Integer> lines) {
         this.lines = lines.toArray(new Integer[0]);
         this.put(LINES_KEY, Joiner.on(";").join(this.lines));
     }
 
-    public int getType() {
-        return this.type;
-    }
+
 
 
 

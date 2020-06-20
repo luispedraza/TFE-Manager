@@ -2,7 +2,7 @@ package TFEManagerGUI;
 
 import TFEManagerLib.Models.Director;
 import TFEManagerLib.Models.Student;
-import TFEManagerLib.Optimizers.OptimizerDirectorForStudent;
+import TFEManagerLib.Optimizers.OptimizerConfiguration;
 import TFEManagerLib.TFEManager;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -189,7 +189,7 @@ public class OptimizerWindow extends JDialog {
             boolean skipAssigned = this.checkSkipAssigned.isSelected();
             int wUnassigned = this.checkAssignAll.isSelected() ? 100 : 0;   // penalización para alumnos no asignados
 
-            manager.assignDirectors(new OptimizerDirectorForStudent.OptimizerConfiguration("GA",
+            manager.assignDirectors(new OptimizerConfiguration("GA",
                     wType,
                     wZone,
                     wMaxDirector,

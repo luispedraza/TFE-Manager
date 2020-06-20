@@ -3,7 +3,8 @@ package TFEManagerLib;
 import TFEManagerLib.Models.Director;
 import TFEManagerLib.Models.Reviewer;
 import TFEManagerLib.Models.Student;
-import TFEManagerLib.Optimizers.OptimizerDirectorForStudent;
+import TFEManagerLib.Optimizers.OptimizerConfiguration;
+import TFEManagerLib.Optimizers.OptimizerDirectorForStudentA;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -192,7 +193,7 @@ public class TFEManager {
     /**
      * Asignación autoática de directores
      */
-    public void assignDirectors(OptimizerDirectorForStudent.OptimizerConfiguration config,
+    public void assignDirectors(OptimizerConfiguration config,
                                 boolean skipAssigned,
                                 final Consumer<Integer> callbackUpdate,
                                 final Consumer<ArrayList<Student>> callbackEnd) throws Exception {
@@ -200,14 +201,14 @@ public class TFEManager {
         ArrayList<Student> proposals = excelManager.readProposalsInfo();
         ArrayList<Director> directors = excelManager.readDirectorsInfo();
 
-        // Hacemos un primer filtrado si es necesaio eliminando alumnos ya asignados:
+        // Hacemos un primer filtrado si es necesario eliminando alumnos ya asignados:
         if (skipAssigned) {
             proposals = (ArrayList<Student>) proposals.stream().filter(s -> s.getDirectorName().isEmpty()).collect(Collectors.toList());
         }
-        OptimizerDirectorForStudent optim = new OptimizerDirectorForStudent(proposals, directors, config);
+        OptimizerDirectorForStudentA optim = new OptimizerDirectorForStudentA(proposals, directors, config);
 
         // Lanzamos la optimización:
-        optim.optimDirectorsForStudents(proposals, directors, callbackUpdate, callbackEnd);
+        optim.optimDirectorsForStudents(proposals.size(), callbackUpdate, callbackEnd);
 
 
     }

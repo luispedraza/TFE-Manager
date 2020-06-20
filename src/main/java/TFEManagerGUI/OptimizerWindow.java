@@ -1,6 +1,6 @@
 package TFEManagerGUI;
 
-import TFEManagerLib.Optimizer;
+import TFEManagerLib.Optimizers.OptimizerDirectorForStudent;
 import TFEManagerLib.TFEManager;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -116,7 +116,7 @@ public class OptimizerWindow extends JDialog {
 
             boolean skipAssigned = this.skipAssigned.isSelected();
 
-            manager.assignDirectors(new Optimizer.OptimizerConfiguration("GA",
+            manager.assignDirectors(new OptimizerDirectorForStudent.OptimizerConfiguration("GA",
                     wType,
                     wZone,
                     wMaxDirector,

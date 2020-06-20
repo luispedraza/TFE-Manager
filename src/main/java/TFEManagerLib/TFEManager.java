@@ -1,11 +1,9 @@
 package TFEManagerLib;
 
-import TFEManagerGUI.OptimizerWindow;
 import TFEManagerLib.Models.Director;
 import TFEManagerLib.Models.Reviewer;
 import TFEManagerLib.Models.Student;
-import io.jenetics.IntegerGene;
-import io.jenetics.engine.EvolutionResult;
+import TFEManagerLib.Optimizers.OptimizerDirectorForStudent;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -13,7 +11,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -191,7 +188,7 @@ public class TFEManager {
     /**
      * Asignación autoática de directores
      */
-    public void assignDirectors(Optimizer.OptimizerConfiguration config,
+    public void assignDirectors(OptimizerDirectorForStudent.OptimizerConfiguration config,
                                 boolean skipAssigned,
                                 final Consumer<Integer> callbackUpdate) throws Exception {
 //                              final Consumer<EvolutionResult<IntegerGene, Integer>> callbackUpdate) throws Exception {
@@ -238,7 +235,7 @@ public class TFEManager {
         if (skipAssigned) {
             proposals = (ArrayList<Student>) proposals.stream().filter(s -> s.getDirector().isEmpty()).collect(Collectors.toList());
         }
-        Optimizer optim = new Optimizer(proposals, directors, config);
+        OptimizerDirectorForStudent optim = new OptimizerDirectorForStudent(proposals, directors, config);
         // Se comienza la optimización
 
         try {

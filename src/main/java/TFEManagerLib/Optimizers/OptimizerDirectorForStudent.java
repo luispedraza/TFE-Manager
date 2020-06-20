@@ -4,7 +4,7 @@
 // http://www.java2s.com/Code/Java/Chart/JFreeChartDynamicDataDemo.htm
 
 
-package TFEManagerLib;
+package TFEManagerLib.Optimizers;
 
 import TFEManagerLib.Models.Director;
 import TFEManagerLib.Models.Reviewer;
@@ -23,7 +23,7 @@ import java.util.function.Consumer;
  * Optimizador de asignaciones con algoritmo genético
  **/
 
-public class Optimizer {
+public class OptimizerDirectorForStudent {
     private ArrayList<Director> DIRECTORS;
     private ArrayList<Student> STUDENTS;
     private ArrayList<Reviewer> REVIEWERS;
@@ -78,7 +78,7 @@ public class Optimizer {
     }
 
     // Inicialización de un optimizador de directores para alumnos
-    public Optimizer(ArrayList<Student> students, ArrayList<Director> directors, OptimizerConfiguration config) {
+    public OptimizerDirectorForStudent(ArrayList<Student> students, ArrayList<Director> directors, OptimizerConfiguration config) {
         STUDENTS = students;
         DIRECTORS = directors;
 

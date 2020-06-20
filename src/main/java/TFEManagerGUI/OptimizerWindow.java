@@ -104,7 +104,13 @@ public class OptimizerWindow extends JDialog {
         this.fitnessValue.setText(String.valueOf(value));
     }
 
+    public void onEndOptimization(Integer value) {
+        buttonCancel.setEnabled(true);
+
+    }
+
     private void beginOptimization() {
+        OptimizerWindow.series.clear(); // Limpiamos la gráfica. Puede haber varias optimizaciones.
         buttonCancel.setEnabled(false);
         try {
             // Obtengo los parámetros de interfaz
@@ -124,7 +130,8 @@ public class OptimizerWindow extends JDialog {
                     maxIterations
                     ),
                     skipAssigned,
-                    this::updateGUI);
+                    this::updateGUI,
+                    this::onEndOptimization);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -171,8 +178,6 @@ public class OptimizerWindow extends JDialog {
         zoneWeight = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
         typeWeight = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
         maxDirectorWeight = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
-
-
         chartPanelContainer.updateUI();
 
     }

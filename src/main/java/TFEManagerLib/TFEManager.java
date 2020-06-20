@@ -190,7 +190,8 @@ public class TFEManager {
      */
     public void assignDirectors(OptimizerDirectorForStudent.OptimizerConfiguration config,
                                 boolean skipAssigned,
-                                final Consumer<Integer> callbackUpdate) throws Exception {
+                                final Consumer<Integer> callbackUpdate,
+                                final Consumer<Integer> callbackEnd) throws Exception {
 //                              final Consumer<EvolutionResult<IntegerGene, Integer>> callbackUpdate) throws Exception {
 
         /** Una clase interor para manejar más fácill los callbacks de actualziación y finalización
@@ -226,7 +227,7 @@ public class TFEManager {
             }
         }
 
-        Updater update = new Updater(callbackUpdate, null);
+        Updater update = new Updater(callbackUpdate, callbackEnd);
 
         ArrayList<Student> proposals = excelManager.readProposalsInfo();
         ArrayList<Director> directors = excelManager.readDirectorsInfo();

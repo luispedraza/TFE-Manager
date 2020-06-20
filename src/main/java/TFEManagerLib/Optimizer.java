@@ -12,6 +12,7 @@ import TFEManagerLib.Models.Student;
 import io.jenetics.*;
 import io.jenetics.engine.Engine;
 import io.jenetics.engine.EvolutionResult;
+import io.jenetics.engine.Limits;
 import io.jenetics.util.Factory;
 
 import java.util.ArrayList;
@@ -160,6 +161,7 @@ public class Optimizer {
 
         final Thread thread = new Thread(() -> {
             Genotype<IntegerGene> result = engine.stream()
+                    .limit(r -> r.bestFitness()!=0)
                     .limit(MAX_ITERATIONS)
 //                .peek( r -> {
 //                    System.out.println(r.totalGenerations());

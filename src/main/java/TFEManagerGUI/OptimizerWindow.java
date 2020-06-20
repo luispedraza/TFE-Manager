@@ -29,7 +29,6 @@ public class OptimizerWindow extends JDialog {
     private JSpinner maxDirectorWeight;
     private JPanel chartPanelContainer;
     private JCheckBox skipAssigned;
-    private JButton buttonSTOP;
     private JSpinner maxIter;
     private JLabel fitnessValue;
 
@@ -106,6 +105,7 @@ public class OptimizerWindow extends JDialog {
     }
 
     private void beginOptimization() {
+        buttonCancel.setEnabled(false);
         try {
             // Obtengo los parámetros de interfaz
             typeWeight.commitEdit();

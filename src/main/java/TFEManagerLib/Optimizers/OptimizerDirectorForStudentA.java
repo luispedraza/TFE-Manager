@@ -44,14 +44,13 @@ public class OptimizerDirectorForStudentA extends OptimizerDirectorForStudent {
         int studentIndex = -1;
         for (Chromosome chromosome : gt) {
             studentIndex++;
-            Student student = STUDENTS.get(studentIndex);
             IntegerChromosome studentChromosome = (IntegerChromosome) chromosome;
             Integer directorIndex = studentChromosome.intValue();
             if (directorIndex == -1) {
                 fitness -= _CONFIG.WEIGHT_UNASSIGNED;
                 continue; // NO ASIGNADO
             }
-
+            Student student = STUDENTS.get(studentIndex);
             Director director = DIRECTORS.get(directorIndex);
             fitness += student.match(director, _CONFIG.WEIGHT_ZONE, _CONFIG.WEIGHT_TYPE);
             Integer count = directorsCount.get(directorIndex);

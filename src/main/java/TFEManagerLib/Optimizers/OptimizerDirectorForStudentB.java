@@ -28,6 +28,7 @@ public class OptimizerDirectorForStudentB extends OptimizerDirectorForStudent {
 
     @Override
     Factory<Genotype<IntegerGene>> getGenotypeFactory() {
+        // El genotipo es un único cromosoma fila de longitud igual al número de alumnos
         // -1 indica un director no asignado
         return Genotype.of(IntegerChromosome.of(-1, DIRECTORS.size()-1, STUDENTS.size()));
     }
@@ -36,24 +37,26 @@ public class OptimizerDirectorForStudentB extends OptimizerDirectorForStudent {
     int evalDirectorsForStudents(Genotype<IntegerGene> gt) {
         int fitness = 0;
         HashMap<Integer, Integer> directorsCount = new HashMap<>();
-        int studentIndex = 0;
+        int studentIndex = -1;
 
         for (Gene gene : gt.chromosome()) {
+            studentIndex++;
             IntegerGene studentGene = (IntegerGene) gene;
             Integer directorIndex = studentGene.intValue();
-            if (directorIndex == -1) continue; // NO ASIGNADO
 
+            if (directorIndex == -1){
+                fitness -= _CONFIG.WEIGHT_UNASSIGNED;
+                continue; // NO ASIGNADO
+            }
             Student student = STUDENTS.get(studentIndex);
             Director director = DIRECTORS.get(directorIndex);
             fitness += student.match(director, _CONFIG.WEIGHT_ZONE, _CONFIG.WEIGHT_TYPE);
-
             Integer count = directorsCount.get(directorIndex);
             if (count == null) {
                 directorsCount.put(directorIndex, 1);
             } else {
                 directorsCount.put(directorIndex, count + 1);
             }
-            studentIndex++;
         }
 
         // Miramos el número de trabajos asignados a cada director
@@ -67,9 +70,9 @@ public class OptimizerDirectorForStudentB extends OptimizerDirectorForStudent {
     @Override
     void generateSolution(Genotype<IntegerGene> result) {
         int i = -1;
-        for (Chromosome chromosome : result) {
-            IntegerChromosome studentChromosome = (IntegerChromosome) chromosome;
-            Integer directorIndex = studentChromosome.intValue(); // El director asignados
+        for (Gene gene : result.chromosome()) {
+            IntegerGene studentGene = (IntegerGene) gene;
+            Integer directorIndex = studentGene.intValue(); // El director asignados
             if (directorIndex == -1) continue;
             i++;
             Student student = STUDENTS.get(i);

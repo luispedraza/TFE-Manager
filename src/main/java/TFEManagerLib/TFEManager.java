@@ -211,7 +211,5 @@ public class TFEManager {
 
         // Lanzamos la optimización:
         optim.optimDirectorsForStudents(proposals.size(), callbackUpdate, callbackEnd);
-
-
     }
 }

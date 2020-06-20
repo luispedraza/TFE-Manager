@@ -57,11 +57,6 @@ public class OptimizerDirectorForStudent {
         }
     }
 
-    private void update(EvolutionResult<IntegerGene, Integer> r) {
-        System.out.println(r.totalGenerations());
-        System.out.println("Mejor individuo: " + r.bestFitness());
-    }
-
     // Inicialización de un optimizador de directores para alumnos
     public OptimizerDirectorForStudent(ArrayList<Student> students, ArrayList<Director> directors, OptimizerConfiguration config) {
         STUDENTS = students;
@@ -84,10 +79,7 @@ public class OptimizerDirectorForStudent {
             }
 
             Director director = DIRECTORS.get(directorIndex);
-
-            // Coincidencia geográfica
             fitness += student.match(director, _CONFIG.WEIGHT_ZONE, _CONFIG.WEIGHT_TYPE);
-
             Integer count = directorsCount.get(directorIndex);
             if (count == null) {
                 directorsCount.put(directorIndex, 1);
@@ -134,13 +126,13 @@ public class OptimizerDirectorForStudent {
                 .populationSize(students.size() * 3)
                 .build();
         // ARRANQUE:
-
         final Thread thread = new Thread(() -> {
             Genotype<IntegerGene> result = engine.stream()
 //                    .limit(r -> r.bestFitness()!=0)
                     .limit(_CONFIG.MAX_ITERATIONS)
                     .peek(r -> {
-                        this.update(r);
+                        System.out.println(r.totalGenerations());
+                        System.out.println("Mejor individuo: " + r.bestFitness());
                         if (callbackUpdate != null) {
                             callbackUpdate.accept(r.bestFitness());
                         }

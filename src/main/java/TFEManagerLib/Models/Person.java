@@ -45,6 +45,19 @@ public class Person extends HashMap<String, String> {
         return super.put(key, value);
     }
 
+    /** Función que implementa una métrica para comparar la comaptibilidad entre dos individuos
+     *
+     * @param otherPerson
+     * @return 0 si el match es perfecto.
+     */
+    public int match(Person otherPerson, int weitghZone, int weightType) {
+        int matchValue = 0;
+        if (!getZone().equals(otherPerson.getZone())) matchValue -= weitghZone;
+        // Concordancia de tipo
+        if (!getType().equals(otherPerson.getType())) matchValue -= weightType;
+        return matchValue;
+    }
+
     public void setType(String type) {
         this.put(TYPE_KEY, type);
     }

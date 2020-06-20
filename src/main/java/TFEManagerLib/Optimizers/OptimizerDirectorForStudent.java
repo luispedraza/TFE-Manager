@@ -72,8 +72,10 @@ public class OptimizerDirectorForStudent {
     private int evalDirectorsForStudents(Genotype<IntegerGene> gt) {
         int fitness = 0;
         HashMap<Integer, Integer> directorsCount = new HashMap<>();
-        int studentIndex = 0;
+        int studentIndex = -1;
         for (Chromosome chromosome : gt) {
+            studentIndex++;
+            Student student = STUDENTS.get(studentIndex);
             IntegerChromosome studentChromosome = (IntegerChromosome) chromosome;
             Integer directorIndex = studentChromosome.intValue();
             if (directorIndex == -1) {
@@ -81,19 +83,17 @@ public class OptimizerDirectorForStudent {
                 continue; // NO ASIGNADO
             }
 
-            Student student = STUDENTS.get(studentIndex);
             Director director = DIRECTORS.get(directorIndex);
+
             // Coincidencia geográfica
-            if (!student.getZone().equals(director.getZone())) fitness -= _CONFIG.WEIGHT_ZONE;
-            // Concordancia de tipo
-            if (!student.getType().equals(director.getType())) fitness -= _CONFIG.WEIGHT_TYPE;
+            fitness += student.match(director, _CONFIG.WEIGHT_ZONE, _CONFIG.WEIGHT_TYPE);
+
             Integer count = directorsCount.get(directorIndex);
             if (count == null) {
                 directorsCount.put(directorIndex, 1);
             } else {
                 directorsCount.put(directorIndex, count + 1);
             }
-            studentIndex++;
         }
 
         // Miramos el número de trabajos asignados a cada director

@@ -29,7 +29,7 @@ public class OptimizerWindow extends JDialog {
             "Info. Director",
             "DIRECTOR",
             "Asignación",
-            "OK"
+            "MATCH"
     };
     private DefaultTableModel tableModel = new DefaultTableModel(null, RESULT_TABLE_HEADERS);
 
@@ -163,7 +163,8 @@ public class OptimizerWindow extends JDialog {
                     String.format("%s\nTipo %s\n", s.getZone(), s.getType()),
                     String.format("%s\nTipo %s\n", d.getZone(), d.getType()),
                     d.getName(),
-                    String.format("%2d(%2d)", d.getMaxNumberOfStudents(), d.getNumberOfStudents()-d.getMaxNumberOfStudents())
+                    String.format("%2d(%2d)", d.getMaxNumberOfStudents(), d.getNumberOfStudents()-d.getMaxNumberOfStudents()),
+                    String.format("%2d", s.match(d, 1, 1))
             };
             tableModel.addRow(row);
         }

@@ -4,6 +4,8 @@ package TFEManagerLib.Models;
 import com.google.common.base.Joiner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.BitSet;
 import java.util.HashMap;
 
 /** Clase básica para StudentInfo, reviewerInfo y Director Info
@@ -28,8 +30,10 @@ public class Person extends HashMap<String, String> {
     public static final String ZONE_KEY = "ZONA";
 
     // Para los métodos de optimización es mejor guardar tipo y líneas como enteros
+    public BitSet typeEncoded = new BitSet(8);
     private Integer[] lines = {};
     private Integer type = 0;
+
 
     public Person() {
         super();
@@ -41,6 +45,9 @@ public class Person extends HashMap<String, String> {
 
     @Override
     public String put(String key, String value) {
+        if (key.equals(TYPE_KEY)) {
+            setTypeEncoded(value);
+        }
 
         return super.put(key, value);
     }
@@ -54,13 +61,23 @@ public class Person extends HashMap<String, String> {
         int matchValue = 0;
         if (!getZone().equals(otherPerson.getZone())) matchValue -= weitghZone;
         // Concordancia de tipo
-        if (!getType().equals(otherPerson.getType())) matchValue -= weightType;
+        BitSet temp = (BitSet) typeEncoded.clone();
+        temp.and(otherPerson.typeEncoded);
+        if (temp.cardinality() == 0) matchValue -= weightType;
         return matchValue;
+    }
+
+    public void setTypeEncoded(String type) {
+        // Guardamos codificado el tipo o tipos de trabajo
+        Arrays.stream(type.split(";")).forEach(t -> {
+            this.typeEncoded.set(Integer.valueOf(t));
+        });
     }
 
     public void setType(String type) {
         this.put(TYPE_KEY, type);
     }
+
     public String getType() {
         return this.get(TYPE_KEY);
     }

@@ -154,8 +154,8 @@ public class OptimizerWindow extends JDialog {
             if (d==null) {
                 d = new Director();
                 d.setName("**NO ASIGNADO**");
-                d.setType("");
-                d.setZone("");
+                d.setType("0");
+                d.setZone(" ");
             }
             // Vector fila de prueba
             String[] row = {

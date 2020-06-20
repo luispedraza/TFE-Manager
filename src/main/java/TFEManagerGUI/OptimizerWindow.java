@@ -14,10 +14,21 @@ import org.jfree.data.xy.XYSeriesCollection;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 
 public class OptimizerWindow extends JDialog {
+
+    private static final String[] RESULT_TABLE_HEADERS = {
+            "ALUMNO",
+            "Info. Alumno",
+            "Info. Director",
+            "DIRECTOR",
+            "Asignación"
+    };
+    private DefaultTableModel tableModel = new DefaultTableModel(null, RESULT_TABLE_HEADERS);
+
     private JPanel contentPane;
     private JButton buttonGO;
     private JButton buttonCancel;
@@ -31,6 +42,8 @@ public class OptimizerWindow extends JDialog {
     private JCheckBox skipAssigned;
     private JSpinner maxIter;
     private JLabel fitnessValue;
+    private JTabbedPane tabbedPane1;
+    private JTable tableResult;
 
     private TFEManager manager;
     private static XYSeries series;
@@ -107,6 +120,19 @@ public class OptimizerWindow extends JDialog {
     public void onEndOptimization(Integer value) {
         buttonCancel.setEnabled(true);
 
+        for (int i=0; i<100; i++) {
+            // Vector fila de prueba
+            String[] row = {
+                    "ESTEBA GONZALEZ, JUAN CARLOS",
+                    "EUROPA\nTipo 1\n",
+                    "EUROPA\nTipo 2\n",
+                    "PEDRAZA, LUIS",
+                    "13(+3)"
+            };
+            tableModel.addRow(row);
+        }
+        tableResult.setModel(tableModel);
+
     }
 
     private void beginOptimization() {
@@ -179,7 +205,6 @@ public class OptimizerWindow extends JDialog {
         typeWeight = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
         maxDirectorWeight = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
         chartPanelContainer.updateUI();
-
     }
 
 

@@ -258,7 +258,7 @@ public class MainWindow extends JDialog {
     private void assignDirectors() {
         try {
             OptimizerWindow optimWindow = new OptimizerWindow(manager);
-            optimWindow.setSize(new Dimension(600, 500));
+            optimWindow.setSize(new Dimension(700, 500));
             optimWindow.setAlwaysOnTop(true);
             optimWindow.setResizable(false);
             optimWindow.setVisible(true);

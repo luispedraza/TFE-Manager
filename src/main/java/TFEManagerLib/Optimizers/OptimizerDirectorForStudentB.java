@@ -16,6 +16,8 @@ import io.jenetics.util.Factory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Optimizador de asignaciones con algoritmo genético
@@ -30,7 +32,7 @@ public class OptimizerDirectorForStudentB extends OptimizerDirectorForStudent {
     Factory<Genotype<IntegerGene>> getGenotypeFactory() {
         // El genotipo es un único cromosoma fila de longitud igual al número de alumnos
         // -1 indica un director no asignado
-        return Genotype.of(IntegerChromosome.of(-1, DIRECTORS.size()-1, STUDENTS.size()));
+        return Genotype.of(IntegerChromosome.of(-1, DIRECTORS.size() - 1, STUDENTS.size()));
     }
 
     @Override
@@ -38,33 +40,24 @@ public class OptimizerDirectorForStudentB extends OptimizerDirectorForStudent {
         int fitness = 0;
         HashMap<Integer, Integer> directorsCount = new HashMap<>();
         int studentIndex = -1;
-
-        for (Gene gene : gt.chromosome()) {
+        for (IntegerGene studentGene : (IntegerChromosome) gt.chromosome()) {
             studentIndex++;
-            IntegerGene studentGene = (IntegerGene) gene;
             Integer directorIndex = studentGene.intValue();
-
-            if (directorIndex == -1){
-                fitness -= _CONFIG.WEIGHT_UNASSIGNED;
-                continue; // NO ASIGNADO
-            }
-            Student student = STUDENTS.get(studentIndex);
-            Director director = DIRECTORS.get(directorIndex);
-            fitness += student.match(director, _CONFIG.WEIGHT_ZONE, _CONFIG.WEIGHT_TYPE);
-            Integer count = directorsCount.get(directorIndex);
-            if (count == null) {
-                directorsCount.put(directorIndex, 1);
-            } else {
-                directorsCount.put(directorIndex, count + 1);
+            if (directorIndex >= 0) {
+                Student student = STUDENTS.get(studentIndex);
+                Director director = DIRECTORS.get(directorIndex);
+                fitness += student.match(director, _CONFIG.WEIGHT_ZONE, _CONFIG.WEIGHT_TYPE);
             }
         }
+        // Restricción del número de trabajos */
+        int loadPenalty = gt.chromosome().stream()
+                .collect(Collectors.groupingBy(IntegerGene::intValue, Collectors.summingInt(x->1)))
+                .entrySet()
+                .stream()
+                .map((item) -> (item.getKey() == -1) ? (item.getValue()*_CONFIG.WEIGHT_UNASSIGNED) : _CONFIG.WEIGHT_MAX * Math.max(item.getValue() - DIRECTORS.get(item.getKey()).getMaxNumberOfStudents(), 0))
+                .reduce(0, (a,b) -> a+b);
 
-        // Miramos el número de trabajos asignados a cada director
-        for (Integer i : directorsCount.keySet()) {
-            // Penalizamos según cuánto nos pasamos del número de trabajos
-            fitness -= _CONFIG.WEIGHT_MAX * Math.max(directorsCount.get(i) - DIRECTORS.get(i).getMaxNumberOfStudents(), 0);
-        }
-        return fitness;
+        return fitness - loadPenalty;
     }
 
     @Override

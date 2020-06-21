@@ -16,6 +16,7 @@ import io.jenetics.util.Factory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Optimizador de asignaciones con algoritmo genético
@@ -46,27 +47,24 @@ public class OptimizerDirectorForStudentA extends OptimizerDirectorForStudent {
             studentIndex++;
             IntegerChromosome studentChromosome = (IntegerChromosome) chromosome;
             Integer directorIndex = studentChromosome.intValue();
-            if (directorIndex == -1) {
-                fitness -= _CONFIG.WEIGHT_UNASSIGNED;
-                continue; // NO ASIGNADO
-            }
-            Student student = STUDENTS.get(studentIndex);
-            Director director = DIRECTORS.get(directorIndex);
-            fitness += student.match(director, _CONFIG.WEIGHT_ZONE, _CONFIG.WEIGHT_TYPE);
-            Integer count = directorsCount.get(directorIndex);
-            if (count == null) {
-                directorsCount.put(directorIndex, 1);
-            } else {
-                directorsCount.put(directorIndex, count + 1);
+            if (directorIndex >= 0) {
+                Student student = STUDENTS.get(studentIndex);
+                Director director = DIRECTORS.get(directorIndex);
+                fitness += student.match(director, _CONFIG.WEIGHT_ZONE, _CONFIG.WEIGHT_TYPE);
             }
         }
+        // Restricción del número de trabajos */
+        int loadPenalty = gt.stream()
+                .map( c -> (IntegerChromosome) c)
+                .collect(Collectors.groupingBy(
+                        IntegerChromosome::intValue,
+                        Collectors.summingInt(x -> 1)))
+                .entrySet()
+                .stream()
+                .map((item) -> (item.getKey() == -1) ? (item.getValue() * _CONFIG.WEIGHT_UNASSIGNED) : _CONFIG.WEIGHT_MAX * Math.max(item.getValue() - DIRECTORS.get(item.getKey()).getMaxNumberOfStudents(), 0))
+                .reduce(0, (a, b) -> a + b);
 
-        // Miramos el número de trabajos asignados a cada director
-        for (Integer i : directorsCount.keySet()) {
-            // Penalizamos según cuánto nos pasamos del número de trabajos
-            fitness -= _CONFIG.WEIGHT_MAX * Math.max(directorsCount.get(i) - DIRECTORS.get(i).getMaxNumberOfStudents(), 0);
-        }
-        return fitness;
+        return fitness - loadPenalty;
     }
 
     @Override

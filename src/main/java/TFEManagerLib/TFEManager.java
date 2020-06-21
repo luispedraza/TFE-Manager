@@ -206,8 +206,8 @@ public class TFEManager {
         if (skipAssigned) {
             proposals = (ArrayList<Student>) proposals.stream().filter(s -> s.getDirectorName().isEmpty()).collect(Collectors.toList());
         }
-//        OptimizerDirectorForStudentA optim = new OptimizerDirectorForStudentA(proposals, directors, config);
-        OptimizerDirectorForStudentB optim = new OptimizerDirectorForStudentB(proposals, directors, config);
+//        OptimizerDirectorForStudentB optim = new OptimizerDirectorForStudentB(proposals, directors, config);
+        OptimizerDirectorForStudentA optim = new OptimizerDirectorForStudentA(proposals, directors, config);
 
         // Lanzamos la optimización:
         optim.optimDirectorsForStudents(proposals.size(), callbackUpdate, callbackEnd);

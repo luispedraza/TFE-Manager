@@ -18,13 +18,13 @@ import java.util.HashMap;
 public class PDFManager {
 
     // Nombres de campos en la propuesta del alumnos (PDF)
-    public static final String PROPOSAL_NAME = "NOMBRE";
-    public static final String PROPOSAL_SURNAME = "APELLIDOS";
-    public static final String PROPOSAL_COUNTRY = "PAIS";
-    public static final String PROPOSAL_TITLE = "TITULO";
-    public static final String PROPOSAL_TYPE = "TIPO";
-    public static final String PROPOSAL_FORMER_DIRECTOR = "DIRECTOR-ANTERIOR";
-    public static final String PROPOSAL_CONTINUE_DIRECTOR = "CAMBIAR";
+    public static final String PROPOSAL_NAME = "nombre";
+    public static final String PROPOSAL_SURNAME = "apellido";
+    public static final String PROPOSAL_COUNTRY = "pais";
+    public static final String PROPOSAL_TITLE = "titulo";
+    public static final String PROPOSAL_TYPE = "tipo";
+    public static final String PROPOSAL_FORMER_DIRECTOR = "director_anterior";
+    public static final String PROPOSAL_CONTINUE_DIRECTOR = "cambiar";
     public static final String PROPOSAL_LINE = "LINEA%d";   // No sabemos el número de líneas que habrá en la propuesta
 
     // Nombres de campos en el formulario de revisión (PDF)

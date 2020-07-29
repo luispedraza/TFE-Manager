@@ -111,7 +111,8 @@
                   <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="CARGAR INFORMACIÓN DE PROGRESO DE REVISIÓN"/>
+                  <background color="-14139104"/>
+                  <text value="CARGAR INFORMACIÓN DE PROGRESO DE REVISIÓN +"/>
                   <toolTipText value="Se carga información de calificaciones de una entrega para actualizar el seguimiento sobre la lista maestra"/>
                 </properties>
               </component>
@@ -128,7 +129,8 @@
                   <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="ASIGNAR DIRECTORES AUTOMÁTICAMENTE"/>
+                  <background color="-14139104"/>
+                  <text value="ASIGNAR DIRECTORES AUTOMÁTICAMENTE +"/>
                 </properties>
               </component>
             </children>

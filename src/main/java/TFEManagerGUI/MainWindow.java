@@ -278,7 +278,7 @@ public class MainWindow extends JDialog {
             typeChooser.setAlwaysOnTop(true);
             typeChooser.setResizable(false);
             typeChooser.setVisible(true);
-            String type = typeChooser.getOption();
+            int type = typeChooser.getOption();
 
             // SOLICITAMOS EL ARCHIVO
             String pathExcelFile = null;

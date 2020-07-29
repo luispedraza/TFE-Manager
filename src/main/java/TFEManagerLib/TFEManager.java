@@ -173,11 +173,10 @@ public class TFEManager {
      * Carga la información de progreso de revisión
      *
      * @param path: ruta del excel de calificaciones
-     * @param type: tipo de calificación: BORRADOR1, BORRADOR2, BORRADOR2
+     * @param type: tipo de calificación según constantes definidas en la clase ExcelManager
      */
-    public void loadProgress(String path, String type) throws Exception {
+    public void loadProgress(String path, int type) throws Exception {
         HashMap<String, Submission> progress = excelManager.readGradesFromPlatform(path);
-        System.out.println(progress);
         excelManager.saveGradingsProgress(progress, type);
     }
 

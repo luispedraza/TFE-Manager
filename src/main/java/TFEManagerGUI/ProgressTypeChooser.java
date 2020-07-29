@@ -1,5 +1,7 @@
 package TFEManagerGUI;
 
+import TFEManagerLib.ExcelManager;
+
 import javax.swing.*;
 import java.awt.event.*;
 
@@ -66,10 +68,10 @@ public class ProgressTypeChooser extends JDialog {
         System.exit(0);
     }
 
-    public String getOption() {
-        if (draft1.isSelected()) return "BORRADOR1";
-        if (draft2.isSelected()) return "BORRADOR2";
-        if (draft3.isSelected()) return "BORRADOR3";
-        return null;
+    public int getOption() {
+        if (draft1.isSelected()) return ExcelManager.GRADINGS_DRAFT1;
+        if (draft2.isSelected()) return ExcelManager.GRADINGS_DRAFT2;
+        if (draft3.isSelected()) return ExcelManager.GRADINGS_DRAFT3;
+        return -1;
     }
 }

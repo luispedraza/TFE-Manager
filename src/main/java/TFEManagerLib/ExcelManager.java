@@ -24,6 +24,10 @@ import java.util.stream.Collectors;
  * Esta clase sirve para gestionar un archivo Excel
  */
 public class ExcelManager {
+    public static final int GRADINGS_DRAFT1 = 4; // ID del primer borrador, que es la columna en la pestaña de progreso del Excel
+    public static final int GRADINGS_DRAFT2 = 5; // ID del segundo borrador, que es la columna en la pestaña de progreso del Excel
+    public static final int GRADINGS_DRAFT3 = 6; // ID del tercer borrador, que es la columna en la pestaña de progreso del Excel
+
     private static final String DEFAULT_EXCEL_NAME = "lista_maestra.xlsx";
     private static final String STUDENTS_SHEET = "ALUMNOS";
     private static final String STUDENTS_TABLE_NAME = "ALUMNOS";
@@ -356,25 +360,15 @@ public class ExcelManager {
      * Guarda en la lista maestra la información de progreso de revisión
      *
      * @param progress : información del progreso de revisión
-     * @param type     : BORRADOR1, BORRADOR2, BORRADOR3
+     * @param type     : Identificador de la entrega que se está cargando, según las constantes de arriba
      */
-    public void saveGradingsProgress(HashMap<String, Submission> progress, String type) throws Exception {
+    public void saveGradingsProgress(HashMap<String, Submission> progress, int type) throws Exception {
         XSSFWorkbook wb = getWorkbook();
         XSSFSheet sheet = getSheet(wb, PROGRESS_SHEET);
         XSSFTable table = getTable(sheet, PROGRESS_TABLE_NAME);
 
         int ID_COLUMN = 0;
-        int SUBMISSION_COLUMN = 0;
-        switch (type) {
-            case "BORRADOR1":
-                SUBMISSION_COLUMN = 5;
-                break;
-            case "BORRADOR2":
-                SUBMISSION_COLUMN = 6;
-                break;
-            case "BORRADOR3":
-                SUBMISSION_COLUMN = 7;
-        }
+        int SUBMISSION_COLUMN = type;
 
         int firstRow = table.getStartRowIndex();
         int endRow = table.getEndRowIndex();
